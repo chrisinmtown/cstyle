@@ -1,0 +1,1681 @@
+<html><head>
+<title>
+cant.happen
+</title></head>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H1>Can't Happen
+<br>
+or
+<br>
+/* NOTREACHED */
+<br>
+or
+<br>
+Real Programs Dump Core*
+</H1>
+<DL>
+<DT>&#32;<DD><DT><DD>
+NOTE:<I> * Paper delivered at the Dallas USENIX Conference, January 21 1985
+</I><DT>&#32;<DD></dl>
+<br>
+<DL><DD><I>&#169; 1984, 1985<br>
+Ian Darwin<br>
+SoftQuad, Inc.,<br>
+339 Bloor Street West, # 217,<br>
+Toronto, Ontario, Canada<br>
+M5S 1W7<br>
+utzoo!sq!ian<br>
+ian@sq.com<br>
+</I></DL>
+<DL><DD><I>Geoff Collyer<br>
+University of Toronto Computing Services<br>
+255 Huron Street - UTCS<br>
+Toronto, Ontario, Canada<br>
+M5S 1A1<br>
+geoff@utstat.toronto.edu (utzoo!utstat!geoff)<br>
+</I></DL>
+<DL><DD><H6>ABSTRACT</H6>
+programmers too often fail to check for failure of system calls
+or functions,
+taking the familiar teen-age attitude that
+``it can't happen to me (or my program)''.
+This paper will attempt to convince its audience to take prophylactic measures.
+Those who take such measures will be healthier -
+and less prone to surprises -
+than those who don't take such measures.
+<P>
+In the tradition of the classic
+<I>Elements of Programming Style</I>
+some real-world programs will be criticised publicly.
+Actual production (or
+<I>soi-disant</I>
+production)
+programs and subsystems will be examined.
+Each of these ``provides one or more lessons in style.''
+We present both before and after versions of most code fragments.
+</P>
+<P>
+Come on out and see if we abuse one of your programs -
+or your programming style!
+</DL>
+</P>
+<H6>Introduction
+</H6>
+<P>
+Many people think that errors can only happen to ``the other guy.''
+Unfortunately, current versions of 
+do not provide a system call to tell if you're running as the other guy...
+But I hear that Dennis is working on it!
+</P>
+<P>
+Why is net.bugs such an active newgroup?
+Why is the USENIX 84.2 tape filled with nothing but 4.2 bugs and fixes?
+Why does
+<I>each</I>
+release of System N claim to 
+<I>fix</I>
+hundreds of new bugs?
+They never, of course, claim to 
+<I>introduce</I>
+new bugs.
+Clearly something is rotten in the state of software.
+One thing that we see wrong is the attitude that
+``errors won't happen to me, so I don't need to check for them.''
+</P>
+<P>
+So by now you've gathered that our paper is about
+<I>programming style.</I>
+And I can already hear you asking: Who cares about style?
+Who has
+<I>time</I>?
+Why should I care?
+I'll tell you why.
+Because you - there in the fifteenth row - 
+your database is being corrupted by null pointers
+right this moment.
+And you - in the three-piece suit at the back -
+your kernel will die a horrible death during your next vacation,
+and you'll have to come back early to fix it.
+And you people milling about near the exit so you can sneak out
+if this is one of those dull papers -
+you won't find out what awaits your code
+unless you stay for the whole talk!
+</P>
+<P>
+Let me tell you briefly (I promise!) A Tale of Two Systems,
+the UNIX and the Emveeous.
+``There dwelt in the land of New Jersey the
+a fair maid whom savants travelled far to admire.''
+The Emveeous was envious of the
+for her natural grace;
+the 
+however, spurned the Emveeous, thinking him a course, vulgar fellow.
+One day her suspicions were confirmed when she saw that he
+had more manuals listing his errors and sins
+than she had manuals describing her entire life.
+But as the 
+grew into middle age and got busy,
+she became careless, and made many mistakes,
+and forgot to check these errors.
+And the scribes duly observed these errors,
+and duly recorded them.
+And the 
+died old and unhappy,
+for she saw in her final hour that her error messages
+manual
+had grown malignantly to become large, larger than that
+of that old simpleton, the Emveeous.
+</P>
+<P>
+Is there a moral in this sad tale?
+If there is, I believe it is this:
+If you want a system that forces you to do everything its way,
+that handholds and spoonfeeds you,
+that spends a third of its resources checking for errors
+you might have made,
+that spews myriad messages on your terminal at random intervals,
+that sings you a sad song when you leave out a comma,
+in short,
+``If you want MVS, you know where to find it.''
+</P>
+<P>
+Our plan is to present some guidelines
+for safe, surprise-free programming.
+Taking after
+<I>The Elements of Programming Style</I>,
+we'll present real-world examples, suggest improvements
+and draw conclusions.
+The examples are drawn from our own experience
+in maintaining code on the dozen 
+systems we currently maintain
+on four different computer architectures.
+They come from
+several UNIXes to which we have access
+(some source and some binary),
+and from public domain code.
+Many of these real-world examples have been in use for years,
+which shows that it's possible for latent bugs to go 
+undetected for long periods of time.
+Scratch any large production project and you'll find latent bugs;
+we picked these examples because they were at hand.
+</P>
+<P>
+The remainder of the paper consists of sections
+on planning (`The art of thinking'),
+read the manual (`rtfm'),
+not reinventing the wheel,
+Style,
+and
+coding blunders.
+This paper is concerned with the C programming language;
+discussion of programming style in
+<I>awk</I>,
+<I>lex/yacc</I>,
+and in
+<I>sh</I>
+is left for a future project.
+</P>
+<P>
+We hope that those whose code we have criticised
+will take it as constructive criticism
+rather than as personal criticism.
+Our aim is to improve, not to insult.
+</P>
+<H6>1 Examples
+</H6>
+<P>
+Pontification without proof is pointless.
+Here are some examples of ineffective code and how
+it can be improved.
+</P>
+<H6>1.1 The art of thinking
+</H6>
+<P>
+The art of thinking (before you code) often seems a lost art.
+Such safeguards as validating the input before you read it and
+keeping the user interface constant from one command to the next,
+are good things whose time has not (we hope) truly passed.
+</P>
+<H6>1.1.1 Check the input?
+</H6>
+<P>
+There are times when it's easy to check the input
+for certain obvious errors.
+Many programs now check that their input file is not a directory;
+this is probably a good thing.
+Much work remains to be done in the area of input validation.
+Here's a simple example from a binary-only system 
+(it happens to be UniSoft System V, but most any
+will exhibit this behaviour):
+<DL><DT><DD><TT><PRE>
+$ tc /tmp file1<br>
+t8d{ @T@t@T@T@mm@lg@7~@Ho@M@L@L@H@la@6v@h@`@L@N@V@H@s5r@g@4y@q@G@M@M@R@z<br>
+c@3d~@u@f@M@L@L@H@n2x@m@1@w@I@I@C@Hj@0{@I@P@H@P@;;lu@Nf@H@I@I@L@<br>
+	H@;;da@M/r@H<br>
+@I@I@L@Hd@.u@lk@9mk?RfRGRGRIRM7l @;<br>
+$<br>
+</PRE></TT></DL>
+</P>
+<P>
+On a Tek terminal, the results would be less spectacular
+but no less erroneous.
+Consider another example:
+<DL><DT><DD><TT><PRE>
+$ tc pascalprog.p<br>
+</PRE></TT></DL>
+The results would be similar to that shown.
+</P>
+<P>
+The only valid input to this program is a file created by the old (non-di)
+<I>troff</I>.
+These files invariably start with an initialise command,
+which has the octal value 0100.
+</P>
+<P>
+Note also that the second argument is ignored with no error message.
+The program behaves as if it `thinks' that all is well,
+but produces voluminous trash,
+in the presence of a single typographical error.
+</P>
+<P>
+How it might have looked:
+<DL><DT><DD><TT><PRE>
+$ tc /tmp file1<br>
+tc: /tmp: not troff output<br>
+tc: file1: cannot open (no such file or directory)<br>
+$<br>
+</PRE></TT></DL>
+How little work it would be to check for this error, and how much more
+pleasant it would make life,
+is something to cogitate on.
+<br>&#32;<br>
+---------------------------------
+Test input for plausibility and validity
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.1.2 Directories are fun
+</H6>
+<P>
+Directories can be a lot of fun when you read them into a program
+which expects a data file.
+Many places check, but many more do not.
+Here is how 4.2 Berkmail works.
+<DL><DT><DD><TT><PRE>
+$ Mail -f /usr/spool/mail<br>
+"/usr/spool/mail": 0 messages [Read only]<br>
+&amp; h<br>
+No applicable messages<br>
+&amp; x<br>
+$<br>
+</PRE></TT></DL>
+How it might behave:
+<DL><DT><DD><TT><PRE>
+$ Mail -f /usr/spool/mail<br>
+Mail: "/usr/spool/mail" is a directory!<br>
+$ <br>
+</PRE></TT></DL>
+</P>
+<H6>1.1.3 Don't change the interface
+</H6>
+<P>
+USG systems
+(PWB, System III, System V)
+come with
+<I>labelit</I>
+and its brethren.
+<DL><DT><DD><TT><PRE>
+$ labelit /dev/rgmc0a gmc0a root<br>
+Current fsname: ROOT, Current volname: gmc0a, \<br>
+	Blocks: 13566, Inodes: 1904<br>
+FS Units: 1Kb, Date last mounted: Thu Jan 3 20:09:25<br>
+NEW fsname = gmc0a, NEW volname\<br>
+	 = root -- DEL if wrong!! &#60;type DEL&#62;<br>
+<br>
+$<br>
+</PRE></TT></DL>
+</P>
+<P>
+There are a couple of problems with the
+example above:
+a strange interface, and no feedback 
+where feedback is called for.
+</P>
+<P>
+There is something quite backwards about this program's behaviour.
+The program tells you what it's going to do, says `DEL if wrong!!',
+waits 10 seconds, then goes ahead and does it!
+</P>
+<P>
+Everything else in
+either assumes that you know
+what you're doing, or asks
+with some user-friendly prompt like
+<DL><DT><DD><TT><PRE>
+last chance before scribbling on /dev/....<br>
+</PRE></TT></DL>
+</P>
+<P>
+What logic can there be for the decision to make this program use a whole
+new method of interaction?
+The rationale may be that USG systems are designed for large DP shops,
+with COBOL and Operators,
+and that Operators are somehow a lower class of human than normal
+users.
+I don't think many operators would like this line of reasoning.
+</P>
+<P>
+Scenario: you are converting from v7 to System III.
+You've just typed a command
+<DL><DT><DD><TT><PRE>
+volcopy /dev/hp1b /dev/hp0c<br>
+</PRE></TT></DL>
+that will mistakenly copy the distribution over top of what you've been
+working on all night, instead of vice versa.
+The phone rings
+or, worse, your manager walks in and just
+<I>has</I>
+to talk right this instant.
+<DL><DT><DD><TT><PRE>
+``Tom, I need to talk to you about those...''<br>
+``Not now, boss, this is important!''<br>
+``It'll only take a few seconds''<br>
+</PRE></TT></DL>
+It did - about ten seconds, in fact.
+Any other
+utility would wait until you get off the phone.
+Volcopy, however, will wait ten seconds.
+Well, I hope you got it right.
+</P>
+<P>
+Just as a person who holds another at gunpoint assumes full moral responsibility
+for the actions of his victim,
+the programmer who
+<I>forces</I>
+the user to interact with the program
+(as opposed to typing a command and having it done)
+takes on responsibility for the user's actions.
+The least this program could do, having 
+given me three lines of dull, boring information
+would be to give me some important information,
+like whether it went ahead and did the change or not!
+The system I was on was quite busy, and several seconds went by before I
+typed the DEL
+and several seconds more before the prompt came back.
+Was the change done?
+Quite honestly, at the time of writing, I do not know.
+Glad it was a labeling job, not a disk-to-disk volume copy!
+</P>
+<P>
+What does the program do if I have my INTR key set to CTRL/C
+and my erase key is DEL?
+Many Operators in UNIX shops are cross-trained to VMS,
+where the
+<I>stty</I>
+command is implemented globally by patching the system image.
+Should this be taken into account?
+</P>
+<P>
+Here's how it could have been:
+<DL><DT><DD><TT><PRE>
+$ labelit /dev/rgmc0a gmc0a root<br>
+Current fsname: ROOT, Current volname: gmc0a, \<br>
+	Blocks: 13566, Inodes: 1904<br>
+About to change fsname to gmc0a, volname to\<br>
+	root - type a `y' to continue:y<br>
+$<br>
+</PRE></TT></DL>
+</P>
+<P>
+In this case no confirmation is necessary; if I type y it will do it,
+if not, not.
+This is repeatable and predictable, so no feedback is needed,
+although it would not be out of line (given the importance of the operation)
+to printf ``done'' after the write.
+</P>
+<P>
+The conventional 
+interface is widely used and understood.
+The next major interface will probably be something like what the
+Blit (I'm sorry, the 5620 DMD) provides.
+Let's not go half-way in the interim.
+<br>&#32;<br>
+---------------------------------
+Use a consistent dialogue.
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.2 Read the manual (rtfm)
+</H6>
+<P>
+The
+manual set is not yet delivered in a moving van
+(although I hear a group in ATT is working on it),
+so there's really no excuse for writing reams of C code
+before you've read most of the manual set.
+But people do it.
+</P>
+<H6>1.2.1 Signals - to catch or not to catch
+</H6>
+<P>
+Some 
+programmers have still not read
+<I>
+Programming
+</I>by Kernighan and Ritchie in Volume 2 of the
+Programmer's Manual.
+Their programs catch signals such as interrupt and quit like this:
+<DL><DT><DD><TT><PRE>
+#include &#60;signal.h&#62;<br>
+extern int onintr();<br>
+<br>
+signal(SIGINT, onintr);<br>
+</PRE></TT></DL>
+So you write the program, and test it once,
+and test it a second time hitting your INTR key, and it does the right thing.
+So you immediately declare it `in production', and post it to net.sources.
+And 5,000 people save copies of it - 200 of them on our machines alone -
+thank you very much!
+And a few of the 5,000 eventually get around to looking at what they've
+saved in their
+<I>src</I>
+subtrees, and a few of these actually compile the program.
+And it seems to do the right thing.
+And then one bright sunny day they background it, and then interrupt a
+<DL><DT><DD><TT><PRE>
+<I>rm *</I>
+</PRE></TT></DL>
+that they accidentally typed afterwards.
+And your program wakes up and says ``Hello, I'm Fred. You hit interrupt.
+What do you want to do now?'' and confuses the heck out of someone,
+who doesn't know what his erroneous remove has done.
+Or worse, it's a long-running program, and they background it with
+the output piped to
+<I>lpr</I>,
+and after they interrupt the faulty
+<I>rm</I>
+command and an hour later find they got no output,
+they come to me and say ``Your line printer spooler is busted.''
+and I waste half an hour tracking it down.
+Again, thank you!
+</P>
+<P>
+It's not really that hard to catch signals correctly,
+although it does add an extra 001 line(s) of code.
+Here's a sample:
+<DL><DT><DD><TT><PRE>
+#include &#60;signal.h&#62;<br>
+extern int onintr();<br>
+<br>
+if (signal(SIGINT, SIG_IGN) != SIG_IGN) /* iff not ignoring interrupts */<br>
+	(void) signal(SIGINT, onintr); /* then catch them */<br>
+</PRE></TT></DL>
+Programs which catch keyboard signals even in the background
+can make their users wary of ever typing interrupt or quit
+(or hanging up their connection),
+since the users aren't sure whether or not some background program
+will spring to life and erroneously catch the resulting signal.
+This is arguably a design flaw in the
+signal mechanism.
+Perhaps
+should ignore attempts to catch signals which were being ignored
+when the current program was
+<I>exec</I>ed.
+This would make the use of backgrounding with
+<B>&amp;</B>
+and
+<I>nohup</I>
+fool-proof.
+However, 
+is what it is.
+<br>&#32;<br>
+---------------------------------
+Don't blindly catch signals
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>A Digression on Lint
+</H6>
+<P>
+The previous example illustrates one of many common
+errors which can be easily caught if you are developing code
+on a real
+system.
+The
+<I>lint</I>
+program contains much of the debugging code that is left out of
+the C compiler,
+although there is a tendency in newer compilers to reinsert
+some of this checking.
+We strongly advise that all programs be checked for lint,
+and that you
+check the output carefully.
+It's well-nigh impossible to silence
+<I>lint</I>
+about some few functions (such as
+<I>malloc()</I>)
+but in general 
+<I>lint</I>
+will give you good advise.
+<DL><DT><DD><TT><PRE>
+Lint is a scroll of forgiveness<br>
+for many sins of programming.<br>
+Read it wisely, and you will prosper.<br>
+Fail to read it and you will<br>
+hear maniacal laughter.<br>
+</PRE></TT></DL>
+<br>&#32;<br>
+---------------------------------
+Thou shalt use lint.
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.2.2 System Calls
+</H6>
+<P>
+In what program do we find the following code sequence:
+<DL><DT><DD><TT><PRE>
+open("/", 0);<br>
+dup(0);<br>
+dup(0);<br>
+</PRE></TT></DL>
+V7
+<I>init</I>,
+alas.
+There are two other occurrences,
+in which the opens are ``open(tty, 2);'' and ``open(ctty, 2);''.
+The author
+<I>knew</I>,
+by god,
+that those system calls could
+<I>never</I>
+fail.
+As a result,
+when the kernel file or inode tables fill,
+<I>init</I>
+fails to re-populate some terminals with
+<I>init</I>
+children and thus
+<I>getty</I>'s.
+Thus those terminals will never inherit
+<I>init</I>'s
+until the next crash or reboot.
+We know:
+the file and inode tables aren't supposed to fill,
+thus it
+<B>can't happen</B>.
+A common counter-argument is that in such a case there is nothing
+sensible to be done.
+Yet a moment's thought often reveals a better alternative
+than failing to check.
+In this case,
+since the code in question is running in a child of
+<I>init</I>,
+<I>init</I>
+can sleep briefly and try again if a system call such as
+<I>dup</I>
+fails or if an
+<I>open</I>
+fails due to resource exhaustion.
+<DL><DT><DD><TT><PRE>
+</PRE></TT></DL>
+</P>
+<H6>1.2.3 /dev/kmem - open sewer or open sore?
+</H6>
+<P>
+A common disease in programs written at Berkeley is
+to open
+<I>/dev/kmem</I>
+and grub the load averages out by the dirtiest means possible.
+The following is from the 4.2BSD 
+<I>sendmail</I>
+source, conf.c,
+slightly reformatted for brevity.
+<DL><DT><DD><TT><PRE>
+#include &#60;nlist.h&#62;<br>
+struct	nlist Nl[] = {<br>
+#define	X_AVENRUN	0<br>
+	{ "_avenrun" },	{ 0 },<br>
+};<br>
+<br>
+getla()<br>
+{<br>
+	static int kmem = -1;<br>
+	double avenrun[3];<br>
+<br>
+	/* <br>
+	 * kmem opened here and nlist <br>
+	 * called for /vmunix with Nl<br>
+	 */<br>
+	(void) lseek(kmem, (long) Nl[X_AVENRUN].n_value, 0);<br>
+	(void) read(kmem, avenrun, sizeof(avenrun));<br>
+	return ((int) (avenrun[0] + 0.5));<br>
+}<br>
+</PRE></TT></DL>
+<B>(void) read</B>
+should be avoided.
+The running kernel may not be /vmunix and the read may not return as many
+bytes as expected, leaving trash in avenrun.
+<DL><DT><DD><TT><PRE>
+/* same declarations */<br>
+<br>
+getla()<br>
+{<br>
+	static int kmem = -1;<br>
+	double avenrun[3];<br>
+	extern off_t lseek();<br>
+<br>
+	/* <br>
+	 * kmem opened here and nlist <br>
+	 * called for /vmunix with Nl<br>
+	 */<br>
+	if (lseek(kmem, (long) Nl[X_AVENRUN].n_value, 0) &#60; 0 ||<br>
+	    read(kmem, avenrun, sizeof avenrun) != sizeof avenrun)<br>
+		return -1;		/* can't be a valid load average */<br>
+	return ((int) (avenrun[0] + 0.5));<br>
+}<br>
+</PRE></TT></DL>
+Data that you ``know'' are there, won't be.
+<br>&#32;<br>
+---------------------------------
+Assume that system calls will fail capriciously.
+---------------------------------
+<br>&#32;<br>
+</P>
+<P>
+Once this routine is correct, it should be put in a system library
+so that programmers will not keep reinventing it.
+Apparently it was in 2.9BSD but not in 4.2BSD;
+perhaps this will be included in the next release of 4.2.
+</P>
+<H6>1.2.4 Files will always open and they never need to be closed
+</H6>
+<P>
+The USENET `B' News system in its present (late 1984) state
+is a fruitful source of examples for a paper on our topic.
+Here is one small example:
+inews.c often fails to check that fopen succeeded
+and fails to close open FILEs.
+<DL><DT><DD><TT><PRE>
+	actfp = fopen(ACTIVE, "r+");<br>
+	for(;;) {<br>
+		fpos = ftell(actfp);<br>
+		if (fgets(afline, sizeof afline, actfp) == NULL) {<br>
+			unlock();<br>
+			return FALSE;		/* No such newsgroup locally */<br>
+		}<br>
+	...<br>
+	fclose(actfp);<br>
+</PRE></TT></DL>
+Stdio tends to be unamused when handed null pointers,
+as it would be if ACTIVE could not be opened for reading and writing
+for any number of reasons:
+no such file,
+no permission,
+full i-node table,
+full file table,
+etc.
+If fgets encounters end of file,
+this code will return,
+leaving ACTIVE open.
+<DL><DT><DD><TT><PRE>
+	actfp = fopen(ACTIVE, "r+");<br>
+	if (actfp == NULL)<br>
+		xerror("Cannot update %s\n", ACTIVE);<br>
+	for(;;) {<br>
+		fpos = ftell(actfp);<br>
+		if (fgets(afline, sizeof afline, actfp) == NULL) {<br>
+			unlock();<br>
+			fclose(actfp);<br>
+			return FALSE;		/* No such newsgroup locally */<br>
+		}<br>
+	...<br>
+	fclose(actfp);<br>
+</PRE></TT></DL>
+Files will sometimes be unopenable for reasons you don't foresee when coding;
+it is as well to be prepared for such possibilities,
+however unlikely you (erroneously) believe them to be.
+<br>&#32;<br>
+---------------------------------
+Don't assume God likes you: open and fopen will fail.
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.2.5 System calls never fail in my programs
+</H6>
+<P>
+The ultimate arrogance is to assume that the system calls and functions
+invoked by one's program can never fail.
+The following is from 4.2BSD,
+<B>/usr/src/lib/libc/net/ruserpass.c</B>.
+This module is a fruitful source of examples, so we shall return to it later.
+<DL><DT><DD><TT><PRE>
+ruserpass(host, aname, apass)<br>
+	char *host, **aname, **apass;<br>
+{<br>
+<br>
+	renv(host, aname, apass);<br>
+	if (*aname == 0 || *apass == 0)<br>
+		rnetrc(host, aname, apass);<br>
+	if (*aname == 0) {<br>
+		char *myname = getlogin();<br>
+		*aname = malloc(16);<br>
+		printf("Name (%s:%s): ", host, myname);<br>
+		fflush(stdout);<br>
+		if (read(2, *aname, 16) &#60;= 0)<br>
+		...<br>
+</PRE></TT></DL>
+This code knows that
+<I>getlogin</I>
+and
+<I>malloc</I>
+can never, ever fail.
+Unfortunately it is wrong.
+Redirecting all three standard file descriptors away from any terminal
+(e.g. as
+<A href="/magic/man2html/1/nohup"><I>nohup</I>(1)
+</A>does)
+will make
+<I>getlogin</I>
+fail consistently.
+When this happens,
+<I>ruserpass</I>
+will cheerfully dereference
+<I>myname</I>,
+which is now a null pointer,
+possibly causing a core dump.
+</P>
+<P>
+<I>Malloc</I>
+seldom fails on working programs in 4.2BSD on a VAX.
+As a result, programmers develop the nasty habit of
+failing to check for 
+<I>malloc</I>
+failing.
+In addition to making their own debugging harder
+(since 
+<I>malloc</I>
+can fail when you are debugging a program, even on 4.2),
+this causes endless grief for those using non-paging
+<br>&#32;<br>
+---------------------------------
+All the world's NOT a VAX.
+---------------------------------
+<br>&#32;<br>
+<DL><DT><DD><TT><PRE>
+ruserpass(host, aname, apass)<br>
+char *host, **aname, **apass;<br>
+{<br>
+	renv(host, aname, apass);<br>
+	if (*aname == 0 || *apass == 0)<br>
+		rnetrc(host, aname, apass);<br>
+	if (*aname == 0) {<br>
+		char *myname = getlogin();<br>
+<br>
+		if (myname == NULL)<br>
+			myname = "unknown";<br>
+		*aname = malloc(16);<br>
+		if (*aname == NULL)<br>
+			error("can't allocate memory for password",<br>
+				 (char *)NULL);<br>
+		printf("Name (%s:%s): ", host, myname);<br>
+		fflush(stdout);<br>
+		if (read(2, *aname, 16) &#60;= 0)<br>
+		...<br>
+</PRE></TT></DL>
+</P>
+<br>&#32;<br>
+This version will behave sanely when functions or system calls fail,
+unlike the original.
+<br>&#32;<br>
+---------------------------------
+Do something sensible when system calls or functions fail
+---------------------------------
+<br>&#32;<br>
+<H6>1.3 Don't Reinvent the Wheel
+</H6>
+<P>
+The C libraries contain many, many valuable routines.
+So does /bin.
+Why reinvent them?
+I know not, but people continue to reinvent.
+</P>
+<H6>1.3.1 Use existing tools
+</H6>
+<P>
+What does this do?
+<DL><DT><DD><TT><PRE>
+if (freopen("/usr/lib/whatis", "r", stdin) == NULL) {<br>
+	perror("/usr/lib/whatis");<br>
+	exit (1);<br>
+}<br>
+gotit = calloc(1, (unsigned) blklen((int *)argv));<br>
+while (fgets(buf, sizeof buf, stdin) != NULL)<br>
+	for (vp = argv; *vp; vp++)<br>
+		if (match(buf, *vp)) {<br>
+			printf("%s", buf);<br>
+			gotit[vp - argv] = 1;<br>
+			for (vp++; *vp; vp++)<br>
+				if (match(buf, *vp))<br>
+					gotit[vp - argv] = 1;<br>
+			break;<br>
+		}<br>
+for (vp = argv; *vp; vp++)<br>
+	if (gotit[vp - argv] == 0)<br>
+		printf("%s: nothing apropriate\n", *vp);<br>
+</PRE></TT></DL>
+</P>
+<P>
+What would happen if the 
+<I>calloc</I>
+call failed?
+</P>
+<P>
+The Berkeley system contains the command
+<I>apropos</I>
+used to find manual keywords.
+While its name might more appropriately have been
+<I>findman</I>,
+the program 
+<I>knows</I>
+that it is to be called as `apropos',
+because it looks at argv[0].
+It is glued into the source for the
+<I>man</I>
+command.
+At any rate, the code attempts to reimplement 
+<I>grep</I>,
+and does so in a way that is possibly correct but inarguably slow.
+Here is our 
+<I>findman</I>,
+which runs about three times as fast as 
+<I>apropos</I>.
+<DL><DT><DD><TT><PRE>
+#! /bin/sh<br>
+<br>
+# findman - find manual pages given topic(s)<br>
+<br>
+PATH=/bin:/usr/bin:/usr/ucb ; export PATH<br>
+INDEX=/usr/lib/whatis<br>
+<br>
+for f<br>
+do<br>
+	grep $f $INDEX || echo `basename $0`:\<br>
+		 nothing appropriate for $f<br>
+done<br>
+</PRE></TT></DL>
+</P>
+<P>
+This code could be further speeded up by using
+<I>egrep</I>
+or
+<I>fgrep</I>,
+or by using the -y/-i option for case insensitivity,
+but our change will work as shown on almost any conceivable
+system.
+</P>
+<P>
+There has been some debate on USENET recently
+(and three months ago, and six months ago, and ...)
+about replacing C programs with shell files and
+<I>vice versa</I>.
+Our criteria state that a program must do one function that is unique,
+and do it well, to be a C program.
+When you reinvent a shell file to be a C program,
+you lose the benefit of years of tuning (`hacking'?)
+which has gone into the underlying tool, in this case
+<I>grep</I>.
+You also lose the generality of the well-formed tool,
+in this case the ability to grep for regular expressions,
+do case-insensitive searches, etc.
+<br>&#32;<br>
+---------------------------------
+Don't reinvent the flat tire
+---------------------------------
+<br>&#32;<br>
+</P>
+<P>
+This is also a technical objection to the (probably inevitable)
+process of `unbundling'
+and the rise of the 
+<I>cat(1) Reference Manual</I>.
+When the standard 
+tools become options, as they will in the next few years
+due to marketing pressures to conform to the
+<I>lowest</I>
+common denominator
+(and because of all those people who tried to buy
+systems with 10MB hard-floppy winchesters),
+then the use of the standard tools may become a lost art
+in new programmers.
+</P>
+<H6>1.3.2 Parsing Program Arguments (argv scanning)
+</H6>
+<P>
+What does this do on your 4.2 system?
+<DL><DT><DD><TT><PRE>
+/bin/mail -r<br>
+</PRE></TT></DL>
+There are billions of different ways of parsing 
+<I>argv</I>,
+the list of command line arguments passed to a C program.
+The problem is that they are all different.
+The USG long ago recognised this as a serious problem,
+and implemented
+<A href="/magic/man2html/3/getopt"><I>getopt</I>(3)
+</A>to handle the problem.
+Several public domain versions of this routine have been posted to
+<I>net.sources</I>.
+At the Dallas UniForum in January, 1985,
+AT&amp;T 
+<I>published</I>
+the source for the latest version of System V 
+<A href="/magic/man2html/1/getopt"><I>getopt</I>(1)
+</A>and
+<A href="/magic/man2html/3/getopt"><I>getopt</I>(3)
+</A>in hopes that people will use these functions.
+The library routine
+<I>getopt</I>
+really should be in every C library on every
+system in the world.
+If it's not on your system, add it. And use it.
+</P>
+<P>
+Use of
+<A href="/magic/man2html/3/getopt"><I>getopt</I>(3)
+</A>is a standard at our installation.
+We have in a file called
+<I>/usr/pub/template.c</I>
+the skeleton of a complete C program
+with all the argument checking and basic declarations already
+built in.
+Copies of this file will be posted to net.sources
+or may be had by electronic mail request to either author.
+</P>
+<P>
+People are always trying to build more complicated `argv crackers'.
+To our mind,
+<A href="/magic/man2html/3/getopt"><I>getopt</I>(3)
+</A>has proven satisfactory in the construction of dozens of small programs
+and the reshaping of dozens of others.
+<A href="/magic/man2html/3/getopt"><I>getopt</I>(3)
+</A>isn't IBM TSO's IKJPARSE, but then again, this is 
+</P>
+<P>
+Here is my (Darwin's) current version of
+<I>/usr/pub/template.c</I>,
+which I hack from with an editor to create almost any new C program
+or to clean up an existing one.
+To make a new program, I need only edit all the `xxx' strings,
+so I can concentrate on writing a
+<I>process()</I>
+that gets the job done instead of typing argc and argv.
+How many times have you typed `main(argc, argv)' in your life?
+<DL><DT><DD><TT><PRE>
+/*<br>
+ * name - purpose xxx<br>
+ */<br>
+<br>
+#include &#60;stdio.h&#62;<br>
+#include &#60;sys/types.h&#62;<br>
+#include &#60;sys/stat.h&#62;<br>
+<br>
+#define	MAXSTR	500<br>
+<br>
+int	debug;<br>
+char	*progname;<br>
+struct stat statbuf;<br>
+void	error(), exit();<br>
+<br>
+/*<br>
+ * main - parse arguments and handle options<br>
+ */<br>
+main(argc, argv)<br>
+int argc;<br>
+char *argv[];<br>
+{<br>
+	int c;<br>
+	int errflg = 0;<br>
+	FILE *in;<br>
+	extern int optind;<br>
+	extern char *optarg;<br>
+	extern FILE *efopen();<br>
+<br>
+	progname = argv[0];<br>
+<br>
+	while ((c = getopt(argc, argv, "dxxx")) != EOF)<br>
+		switch (c) {<br>
+		case 'xxx':<br>
+			xxx<br>
+			break;<br>
+		case 'd':<br>
+			++debug;<br>
+			break;<br>
+		case '?':<br>
+		default:<br>
+			errflg++;<br>
+			break;<br>
+		}<br>
+	if (errflg) {<br>
+		(void) fprintf(stderr, "usage: %s xxx [file] ...\n", progname);<br>
+		exit(2);<br>
+	}<br>
+<br>
+	if (optind &#62;= argc)<br>
+		process(stdin, "stdin");<br>
+	else<br>
+		for (; optind &#60; argc; optind++)<br>
+			if (strcmp(argv[optind], "-") == 0)<br>
+				process(stdin, "-");<br>
+			else {<br>
+				in = efopen(argv[optind], "r");<br>
+				if (fstat(fileno(in), &amp;statbuf) != 0)<br>
+					error("can't fstat %s", argv[optind]);<br>
+				if (statbuf.st_mode &amp; S_IFDIR)<br>
+					error("%s is directory!", argv[optind]);<br>
+				process(in, argv[optind]);<br>
+				(void) fclose(in);<br>
+			}<br>
+	exit(0);<br>
+}<br>
+<br>
+/*<br>
+ * process - process input file<br>
+ */<br>
+process(in, inname)<br>
+FILE *in;<br>
+char *inname;<br>
+{<br>
+	xxx<br>
+}<br>
+</PRE></TT></DL>
+<br>&#32;<br>
+---------------------------------
+Scan command line arguments in a standard way
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.3.3 csh - the self-contained shell
+</H6>
+<P>
+The Berkeley
+shell
+<I>csh</I>
+is reasonably well known and widely used
+and its externals have been subject to some criticism.
+The internals of
+<I>csh</I>
+are at least as bad,
+but lesser known.
+</P>
+<P>
+<I>Csh</I>
+contains its own versions of
+<I>malloc</I>
+and
+<I>_doprnt</I>.
+It is thus unable to use
+<I>stdio</I>
+or some other functions in the C library.
+When we attempted to link
+<I>csh</I>
+with a faster version of
+<I>getpwent</I>
+that uses
+<I>stdio</I>
+and an
+<I>mdbm</I>
+data base for the password file,
+we found that
+<I>csh</I>
+failed mysteriously.
+</P>
+<P>
+Our fix was to make
+<I>csh</I>
+use the old, slow
+<I>getpwent</I>.
+Such is the price of bad coding.
+(Neither of us uses
+<I>csh</I>,
+so we don't much care about its performance.)
+</P>
+<P>
+The reason that
+<I>csh</I>
+was written this way is that it contains so many features
+that it wouldn't fit on PDP-11
+unless the C library was hacked out.
+In our view, a better approach would have been to eliminate
+a few features - this shell has enough bells and whistles
+that one or two could profitably be dropped.
+</P>
+<P>
+Don't provide private versions of C library functions
+unless they are declared
+<I>static</I>
+(i.e. invisible to other object files).
+<br>&#32;<br>
+---------------------------------
+Don't fight the C library; use it.
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.4 C Style and Portability
+</H6>
+<P>
+Coding style is in some ways a matter of personal preference.
+But there are some things that just don't work,
+or which are indicative of underlying sloppiness,
+or are just poor practice.
+Portability at a working level means the refusal to include
+code that is bound up in the shape of the particular digital computer
+we happen to be running on.
+</P>
+<H6>1.4.1 Magic numbers
+</H6>
+<P>
+Using a literal numeric constant in-line is almost always a bad idea,
+since the reader of such code is given little clue how the number
+was derived or what it represents.
+We return to 4.2BSD's 
+<B>ruserpass</B>.
+<DL><DT><DD><TT><PRE>
+ruserpass(host, aname, apass)<br>
+	char *host, **aname, **apass;<br>
+{<br>
+<br>
+	renv(host, aname, apass);<br>
+	if (*aname == 0 || *apass == 0)<br>
+		rnetrc(host, aname, apass);<br>
+	if (*aname == 0) {<br>
+		char *myname = getlogin();<br>
+		*aname = malloc(16);<br>
+		printf("Name (%s:%s): ", host, myname);<br>
+		fflush(stdout);<br>
+		if (read(2, *aname, 16) &#60;= 0)<br>
+		...<br>
+</PRE></TT></DL>
+Note the magic numbers: 0, 2 and 16.
+The first three zeroes are null pointers.
+The last zero is used to test for an error while reading the password
+<I>or</I>
+end of file (a zero count).
+The 2 is the file descriptor of the standard error output.
+16 is the (arbitrary) maximum length of a password,
+including the null byte at the end.
+<DL><DT><DD><TT><PRE>
+#define MAXPWLEN 15<br>
+#define STDERR 2<br>
+ruserpass(host, aname, apass)<br>
+char *host, **aname, **apass;<br>
+{<br>
+	renv(host, aname, apass);<br>
+	if (*aname == NULL || *apass == NULL)<br>
+		rnetrc(host, aname, apass);<br>
+	if (*aname == NULL) {<br>
+		char *myname = getlogin();<br>
+<br>
+		*aname = malloc(MAXPWLEN+1);	/* 1 is for\<br>
+			 the null byte */<br>
+		printf("Name (%s:%s): ", host, myname);<br>
+		fflush(stdout);<br>
+		if (read(STDERR, *aname, MAXPWLEN) &#60;= 0) /* \<br>
+			 error or EOF */<br>
+		...<br>
+</PRE></TT></DL>
+These may seem trivial,
+but in larger programs it isn't always obvious that the many occurrences
+of some magic number are (or are not) related.
+#define'ing these numbers also makes changing them fairly easy.
+<br>&#32;<br>
+---------------------------------
+Use #define to give numbers explanatory names.
+---------------------------------
+<br>&#32;<br>
+</P>
+<P>
+On the other hand,
+grabbing a random #define'd symbol that happens to have the right value,
+and using it,
+is no better.
+In particular,
+<I>stdio.h</I>'s
+BUFSIZ is often used incorrectly to mean ``a bunch of characters''.
+This practice originates on Version 7,
+where BUFSIZ was 512, a convenient size for holding strings,
+names, etc.
+But this is unportable, since some 
+<I>stdio</I>
+implementation might use 48 as its BUFSIZ.
+Better to use a name such as MAXSTR for maximum string length,
+and use your own criteria for what's reasonable.
+</P>
+<P>
+As an exercise, consider what the value for MAXSTR should be.
+Is 100 enough? 256? 512?
+How can you prevent overrunning strings, no matter how big
+you make them?
+Remember that users are creative,
+and somebody will find a way to try to exceed whatever you specify.
+Remember that some machines still have limited memory, 
+so you can't make your strings 5120 bytes each.
+Think about
+<A href="/magic/man2html/3/strncmp"><I>strncmp</I>(3);
+</A>is its design useful here?
+</P>
+<H6>1.4.2 _doprnt considered unportable
+</H6>
+<P>
+Berkeley in 4.2BSD documented the
+<B>internal</B>
+<I>stdio</I>
+interface
+<I>_doprnt</I>.
+This was a mistake.
+Other
+<I>stdio</I>
+implementations often do not contain a
+<I>_doprnt</I>
+or anything like it.
+The Berkeley
+<I>curses</I>
+has used
+<I>_doprnt</I>
+for a long time,
+even before 4.2BSD:
+<DL><DT><DD><TT><PRE>
+/*<br>
+ * This routine actually executes the printf and adds it to the window<br>
+ *<br>
+ * This is really a modified version of "sprintf".  As such,<br>
+ * it assumes that sprintf interfaces with the other printf functions<br>
+ * in a certain way.  If this is not how your system works, you<br>
+ * will have to modify this routine to use the interface that your<br>
+ * "sprintf" uses.<br>
+ */<br>
+_sprintw(win, fmt, args)<br>
+WINDOW	*win;<br>
+char	*fmt;<br>
+int	*args; {<br>
+<br>
+	FILE	junk;<br>
+	char	buf[512];<br>
+<br>
+	junk._flag = _IOWRT + _IOSTRG;<br>
+	junk._ptr = buf;<br>
+	junk._cnt = 32767;<br>
+	_doprnt(fmt, args, &amp;junk);<br>
+	putc('\0', &amp;junk);<br>
+	return waddstr(win, buf);<br>
+}<br>
+</PRE></TT></DL>
+This is coded as if it were internal to
+<I>stdio</I>,
+yet it is not.
+The design error is in offering to provide an interface with a variable
+number of arguments,
+something which may be unimplementable on some machines
+and which on others is only expressed portably using
+<I>&#60;varargs.h&#62;</I>.
+A better design would have been to take a single string as an argument
+rather than a
+<I>printf</I>
+format and arguments.
+The caller should format the arguments into
+a character buffer first using
+<I>sprintf</I>
+and pass the address of the buffer to this function.
+System V Release 2 includes
+<I>vsprintf()</I>
+in its stdio, but this is far from standard yet.
+<DL><DT><DD><TT><PRE>
+No after version is offered,<br>
+since the design is fatally flawed.<br>
+</PRE></TT></DL>
+Don't assume that you can write functions that take a variable number
+of arguments.
+If you must do so,
+use
+<I>&#60;varargs.h&#62;</I>.
+<br>&#32;<br>
+---------------------------------
+Avoid variable number of arguments in functions.
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>1.4.3 Nested arguments vs checking
+</H6>
+<P>
+It's all too common to see a line of nested function calls.
+The main problem is that it discourages proper checking
+of system function return calls.
+This code, taken from net.sources in early 1985, is typical:
+<DL><DT><DD><TT><PRE>
+/* Blast into a users terminal.  Great fun, \<br>
+	and sometimes useful. */<br>
+<br>
+#include&#60;sgtty.h&#62;<br>
+#include&#60;stdio.h&#62;<br>
+#include&#60;sys/file.h&#62;<br>
+<br>
+int errno;<br>
+<br>
+main(argc,argv)<br>
+int argc;<br>
+char *argv[];<br>
+{	<br>
+	errno = 0;<br>
+	if (argc != 2) fprintf(stderr,"blast: need\<br>
+		 tty number (only).\n");<br>
+	else blast(open(argv[1],O_RDWR,0666));<br>
+}<br>
+<br>
+blast(fd)<br>
+register FILE *fd;<br>
+{<br>
+	char c;<br>
+<br>
+	if (errno) return;<br>
+<br>
+	ioctl(fd,TIOCNXCL,0);		/* turn off exclusive use */<br>
+<br>
+	while ( (c=getchar()) != EOF) ioctl(fd,TIOCSTI,&amp;c);<br>
+}<br>
+</PRE></TT></DL>
+Notice that the error message (`need tty number only') and the open call
+do not agree; the open seems to want /dev/ttyNN.
+But the open itself is not checked. Or is it?
+Notice the obscure line `errno = 0'; the subprogram checks this and returns silently
+if errno !=0.
+Programs that exit silently on error conditions
+can be frustrating to use,
+and can almost always be improved upon 
+with little work.
+</P>
+<P>
+But that's not all. 
+Note the declarations in the function.
+The variable `fd' is returned by open(2), so it's a file descriptor (int).
+But it's declared in the subprogram as FILE *, a
+<B>stdio</B>
+stream pointer.
+But it's 
+<I>used</I>
+in the subprogram as a file descriptor again.
+</P>
+<P>
+Here's how some of the code might look:
+<DL><DT><DD><TT><PRE>
+/*<br>
+ * blast - blast text into user's terminal input buffer (4.2 only)<br>
+ */<br>
+<br>
+#include &#60;sgtty.h&#62;<br>
+#include &#60;stdio.h&#62;<br>
+#include &#60;sys/file.h&#62;<br>
+<br>
+void error();<br>
+<br>
+main(argc,argv)<br>
+int	argc;<br>
+char	*argv[];<br>
+{	<br>
+	int myfile;<br>
+<br>
+	if (argc != 2) {<br>
+		(void) fprintf(stderr,"usage: blast /dev/ttyname\n");<br>
+		exit(1);<br>
+	}<br>
+	if ((myfile = open(argv[1], O_RDWR, 0666)) &#60; 0)<br>
+		error("can't open terminal %s", argv[1]);<br>
+	else<br>
+		blast(myfile);<br>
+	close(myfile);<br>
+	exit(0);<br>
+}<br>
+</PRE></TT></DL>
+There may be other problems in the subprobgram;
+they are left as an exercise for the reader.
+</P>
+<H6>1.5 Coding
+</H6>
+<P>
+Coding errors and omissions are last, but not least,
+on our list of suggested improvements.
+</P>
+<H6>1.5.1 isascii, the forgotten macro
+</H6>
+<P>
+</P>
+<P>
+When we moved our PDP-11/70 from PWB 1.0 to Version 7,
+some of our users had become dependant on the RJE software
+to access an attached slave processor (an IBM 3033).
+We had to provide support for this access,
+so we put up the System III RJE software.
+Months later we put up
+<I>sendmail</I>,
+and had a month of intermittent looping sendmails
+(we spoke to each other about `harpooning sendwhales' at the time).
+</P>
+<P>
+Programmers often seem unaware that most of the macros defined
+in &#60;ctype.h&#62; are only defined for arguments which are ASCII characters.
+4.2BSD's
+<B>sendmail</B>
+sometimes uses these macros without first checking that
+the characters being tested are legal ASCII characters, via
+<I>isascii</I>.
+As a result,
+giving
+<I>sendmail</I>
+an address containing a character with the
+0200 bit set will cause it to loop.
+<DL><DT><DD><TT><PRE>
+	if (isspace(*s))<br>
+		s++;<br>
+</PRE></TT></DL>
+This attempts to skip spaces,
+but will do undefined things if *s isn't an ASCII character,
+possibly including referencing outside allocated memory,
+which may produce a core dump.
+</P>
+<P>
+The System III RJE had 
+a bug which occasionally produced trash in the name field,
+which it passed to 
+<I>mail</I>
+by the
+<I>exec</I>
+system call parameter list,
+and causing the sendmail loops which we observed
+since sendmail didn't properly validate its input.
+Clearly a case of USG and Berkeley code attacking each other!
+</P>
+<P>
+Here's how this code should be done:
+<DL><DT><DD><TT><PRE>
+	if (isascii(*s) &amp;&amp; isspace(*s))<br>
+		s++;<br>
+</PRE></TT></DL>
+This will stop skipping whitespace upon encountering a non-ASCII character.
+<br>&#32;<br>
+---------------------------------
+Use isascii before other ctype.h macros
+---------------------------------
+<br>&#32;<br>
+Maybe the &#60;ctype.h&#62; macros should do this validation.
+They probably should, but they don't.
+If you are writing for
+rather than some hypothetical future system,
+you need to call
+<I>isascii()</I>
+if you want portable code.
+</P>
+<H6>1.5.2 scanf sometimes stops scanning too soon
+</H6>
+<P>
+Programmers sometimes fail to test that scanf scanned as many items
+as they expected.
+This leaves the remaining variables pointed to by scanf's arguments
+containing their previous contents,
+often trash if the variables are uninitialised.
+B news 2.10.1 contained such a bug in rfuncs.c,
+as shown below.
+<DL><DT><DD><TT><PRE>
+	while (fgets(buf, sizeof buf, af)) {<br>
+		sscanf(buf, "%s %ld", n, &amp;s);<br>
+		if (strcmp(n, ng) == 0) {<br>
+</PRE></TT></DL>
+This code will leave garbage in
+<I>n</I>
+at end of file
+and in
+<I>s</I>
+at end of file or if the second item in
+<I>buf</I>
+isn't numeric.
+<DL><DT><DD><TT><PRE>
+	while (fgets(buf, sizeof buf, af) != NULL)<br>
+		if (sscanf(buf, "%s %ld", n, &amp;s) == 2 &amp;&amp;<br>
+			 strcmp(n, ng) == 0) {<br>
+</PRE></TT></DL>
+This will only attempt to use
+<I>n</I>
+(and later
+<I>s</I>)
+if
+<I>sscanf</I>
+actually scanned two items.
+<br>&#32;<br>
+---------------------------------
+Expect scanf to stop scanning inconveniently soon
+---------------------------------
+<br>&#32;<br>
+</P>
+<H6>2 ``Code it now, we'll fix it later''
+</H6>
+<P>
+Careful coding takes longer.
+Like careful flying, on the part of the airline captains
+who will fly most of you home from this conference.
+Both take longer, but both give you a warm feeling.
+</P>
+<P>
+`Later' never comes.
+</P>
+<P>
+In a `pressure-cooker' environment
+there is a strong tendency to `get the thing out the door'
+without concern for software quality.
+I perceive this as a general failing of North American management;
+there is almost everywhere a pressure to provide the 
+<I>appearance of productivity</I>
+regardless of true costs and long-range effectiveness.
+</P>
+<P>
+The only answer to this is to fight bottom line with bottom line.
+If you add up the costs of one programmer-year
+for each major 
+shop, to include the time spent porting `portable' code,
+you will have a starting point for the real costs.
+Add in all the in-the-field debugging, including costs
+of debugging which are transferred to the end-user
+by shipping undebugged code, you'll be on your way.
+Don't forget to translate customer debugging time into customer dissatisfaction.
+My first guess at a conversion factor is
+<DL><DT><DD><TT><PRE>
+One unhappy customer == Ten lost sales<br>
+</PRE></TT></DL>
+If you find your management pushing to you to `code now, fix later',
+just remind them that `later' never comes.
+<DL><DT><DD><TT><PRE>
+``Our competitors' code is done more carefully than mine.<br>
+I guess <I>their</I> bottom line extends to the horizon.''<br>
+</PRE></TT></DL>
+</P>
+<H6>3 Conclusion
+</H6>
+<P>
+We can't close without citing two good guys.
+Despite its plethora of bugs and its
+<A href="/magic/man2html/1/crypt"><I>crypt</I>(1)-output-like
+</A>configuration file,
+<I>sendmail</I>
+is careful about returning mail that would otherwise
+fall on the floor.
+The Honey Danber version of
+<I>uucp</I>
+is good in the same way, and may be better coded -
+we'll have to see.
+</P>
+<P>
+A second, smaller-scale winner is the
+multi-key database (MDBM)
+posted to the net in mid- to late 1984.
+We built an entire password database structure on top of
+this package,
+and used it in a large student environment
+(several thousands of students over half a dozen 
+systems)
+We ran across one obscure bug, but since the author,
+Chris Torek,
+had taken the trouble to check for ``impossible'' errors,
+we got the message ``MDBM BUG...''
+instead of a scrambled eggs database. Thanks.
+</P>
+<P>
+Just to sum up,
+we've presented some guidelines for good programming
+and shown how they can reduce bugs.
+Reducing bugs means reducing costs.
+</P>
+<P>
+Some of these guidelines are so well-known that they are almost truisms;
+many of them appear in your 
+<I>fortune</I>
+file when you log in.
+Others are our own invention or are paraphrases of originals.
+</P>
+<P>
+But guidelines are guidelines, and they are useful only if they are 
+put to work in day-to-day programming.
+That's where you come in.
+</P>
+<H6>4 Recommended Reading
+</H6>
+<P>
+For a view similar to ours, see Kernighan and Plaugher in
+<I>The Elements of Programming Style</I>
+(2nd Edition, McGraw-Hill, 1978)
+and
+the
+<I>Software Tools</I>
+books (by the same authors, Addison-Wesley).
+</P>
+<P>
+For a countervailing view, see
+some (a lot?) of the code which appears in the USENET newsgroup
+<I>net.sources</I>.
+</P>
+<H6>Acknowledgement
+</H6>
+<P>
+Thanks to Bruce Freeman for assisting with some of the examples.
+Our positions at the University of Toronto
+have afforded us the opportunity to peruse
+a tremendous amount of questionable code 
+over the past `N' years.
+</P>
+<P>
+Thanks to Laura Creighton for reading several revisions of the manuscript with a critical eye.
+</P>
+<P>
+Program fragments listed herein are copyright &#169; by 
+AT&amp;T, The Regents of the University of California,
+and other interested parties.
+Public Domain code is by the USENET News Project,
+Mike Newton,
+and others.
+The story of the
+and the Emveeous
+was inspired by Doug McIlroy's `The
+and the Echo', of which our tale is but a pale echo.
+</P>
+<P>
+The template file
+<I>/usr/pub/template.c</I>
+was adapted by Henry Spencer
+from the example in the 
+<A href="/magic/man2html/3/getopt"><I>getopt</I>(3)
+</A>manual page while he was writing the public-domain implementation of
+<I>getopt</I>;
+the version presented here has been extensively hacked over,
+so Henry should not be blamed for its present state.
+</P>
+<P>
+Some of the `mottos' used are excerpted from
+<I>The Elements of Programming Style</I>
+(see under `Recommended Reading').
+</P>
+<P>
+Most of the paper was typed by one or another of the authors.
+Read `we' for `I', and `I' for `we', throughout.
+</P>
+<P>
+Mark Horton provided useful feedback on the paper
+after the presentation at Dallas; some of his suggestions
+are incorporated into the present version.
+<br>&#32;<br>
+
+
+<HR>
+<ADDRESS>
+Archived by Chris Lott.
+<BR>
+<A HREF="index.html">Collection index</A>
+</ADDRESS>
+
+
+</body></html>

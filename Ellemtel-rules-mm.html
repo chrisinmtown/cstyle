@@ -1,0 +1,4443 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+
+<html>
+<head>
+ <title>Programming in C++, Rules and Recommendations</title>
+ <link rev="made" href="mailto:msmakela@tcs.hut.fi">
+ <meta name="keywords" content="C++, programming, style, recommendations">
+ <meta name="description" content="Ellemtel's rules and recommendations
+  for writing easy-to-maintain C++ programs.">
+</head>
+<body>
+
+<h1>Programming in C++, Rules and Recommendations</h1>
+
+<p>FN/Mats Henricson and Erik Nyquist</p>
+<p>Copyright © 1990-1992 by
+<address>
+<br>Ellemtel Telecommunication Systems Laboratories
+<br>Box 1505
+<br>125 25 Älvsjö
+<br>Sweden
+<br>Tel: int + 46 8 727 30 00
+</address>
+
+<p><em>Ath:</em> þessari HTML útgáfu af R&amp;R var hnuplað frá Plús Plús hf.
+Þeir eiga allan heiðurinn af henni!
+<br>(Sorry, no translation for the sentence about the conversion to HTML.)</p>
+
+<p>Permission is granted to any individual or institution to use,
+copy, modify, and distribute this document, provided that this
+complete copyright and permission notice is maintained intact in all
+copies.</p>
+
+<p>Ellemtel Telecommunication Systems Laboratories makes no
+representations about the suitability of this document or the examples
+described herein for any purpose.  It is provided "as is" without any
+expressed or implied warranty.</p>
+
+<p>Original translation from Swedish by Joseph Supanich in 1992</p>
+
+<h1><a name="toc">Table of Contents</a></h1>
+<dl>
+ <dt>1 <a name="toc1" href="#1">Introduction</a></dt>
+ <dt>2 <a name="toc2" href="#2">Terminology</a></dt>
+ <dt>3 <a name="toc3" href="#3">General Recommendations </a></dt>
+ <dt>4 <a name="toc4" href="#4">Source Code in Files</a></dt>
+ <dd><dl>
+  <dt>4.1 <a name="toc4.1" href="#4.1">Structure of Code</a></dt>
+  <dt>4.2 <a name="toc4.2" href="#4.2">Naming Files</a></dt>
+  <dt>4.3 <a name="toc4.3" href="#4.3">Comments</a></dt>
+  <dt>4.4 <a name="toc4.4" href="#4.4">Include Files</a></dt>
+ </dl></dd>
+ <dt>5 <a name="toc5" href="#5">Assigning Names</a></dt>
+ <dt>6 <a name="toc6" href="#6">Style</a></dt>
+ <dd><dl>
+  <dt>6.1 <a name="toc6.1" href="#6.1">Classes</a></dt>
+  <dt>6.2 <a name="toc6.2" href="#6.2">Functions</a></dt>
+  <dt>6.3 <a name="toc6.3" href="#6.3">Compound Statements</a></dt>
+  <dt>6.4 <a name="toc6.4" href="#6.4">Flow Control Statements</a></dt>
+  <dt>6.5 <a name="toc6.5" href="#6.5">Pointers and References</a></dt>
+  <dt>6.6 <a name="toc6.6" href="#6.6">Miscellaneous</a></dt>
+ </dl></dd>
+ <dt>7 <a name="toc7" href="#7">Classes</a></dt>
+ <dd><dl>
+  <dt>7.1 <a name="toc7.1" href="#7.1">Considerations Regarding Access Rights</a></dt>
+  <dt>7.2 <a name="toc7.2" href="#7.2">Inline Functions</a></dt>
+  <dt>7.3 <a name="toc7.3" href="#7.3">Friends</a></dt>
+  <dt>7.4 <a name="toc7.4" href="#7.4"><code>const</code> Member Functions</a></dt>
+  <dt>7.5 <a name="toc7.5" href="#7.5">Constructors and Destructors</a></dt>
+  <dt>7.6 <a name="toc7.6" href="#7.6">Assignment Operators</a></dt>
+  <dt>7.7 <a name="toc7.7" href="#7.7">Operator Overloading</a></dt>
+  <dt>7.8 <a name="toc7.8" href="#7.8">Member Function Return Types</a></dt>
+  <dt>7.9 <a name="toc7.9" href="#7.9">Inheritance</a></dt>
+ </dl></dd>
+ <dt>8 <a name="toc8" href="#8">Class Templates</a></dt>
+ <dt>9 <a name="toc9" href="#9">Functions</a></dt>
+ <dd><dl>
+  <dt>9.1 <a name="toc9.1" href="#9.1">Function Arguments</a></dt>
+  <dt>9.2 <a name="toc9.2" href="#9.2">Function Overloading</a></dt>
+  <dt>9.3 <a name="toc9.3" href="#9.3">Formal Arguments</a></dt>
+  <dt>9.4 <a name="toc9.4" href="#9.4">Return Types and Values</a></dt>
+  <dt>9.5 <a name="toc9.5" href="#9.5">Inline Functions</a></dt>
+  <dt>9.6 <a name="toc9.6" href="#9.6">Temporary Objects</a></dt>
+  <dt>9.7 <a name="toc9.7" href="#9.7">General</a></dt>
+ </dl></dd>
+ <dt>10 <a name="toc10" href="#10">Constants</a></dt>
+ <dt>11 <a name="toc11" href="#11">Variables</a></dt>
+ <dt>12 <a name="toc12" href="#12">Pointers and References</a></dt>
+ <dt>13 <a name="toc13" href="#13">Type Conversions</a></dt>
+ <dt>14 <a name="toc14" href="#14">Flow Control Structures</a></dt>
+ <dt>15 <a name="toc15" href="#15">Expressions</a></dt>
+ <dt>16 <a name="toc16" href="#16">Memory Allocation</a></dt>
+ <dt>17 <a name="toc17" href="#17">Fault Handling</a></dt>
+ <dt>18 <a name="toc18" href="#18">Portable Code</a></dt>
+ <dd><dl>
+  <dt>18.1 <a name="toc18.1" href="#18.1">Data Abstraction</a></dt>
+  <dt>18.2 <a name="toc18.2" href="#18.2">Sizes of Types</a></dt>
+  <dt>18.3 <a name="toc18.3" href="#18.3">Type Conversions</a></dt>
+  <dt>18.4 <a name="toc18.4" href="#18.4">Data Representation</a></dt>
+  <dt>18.5 <a name="toc18.5" href="#18.5">Underflow/Overflow</a></dt>
+  <dt>18.6 <a name="toc18.6" href="#18.6">Order of Execution</a></dt>
+  <dt>18.7 <a name="toc18.7" href="#18.7">Temporary Objects</a></dt>
+  <dt>18.8 <a name="toc18.8" href="#18.8">Pointer Arithmetic</a></dt>
+ </dl></dd>
+ <dt>19 <a name="toc19" href="#19">References</a></dt>
+ <dt>20 <a name="toc20" href="#20">Summary of Rules</a></dt>
+ <dt>21 <a name="toc21" href="#21">Summary of Recommendations</a></dt>
+ <dt>22 <a name="toc22" href="#22">Summary of Portability Recommendations</a></dt>
+</dl>
+
+<h1><a name="1" href="#toc1">1</a> Introduction</h1>
+
+<p>The purpose of this document is to define one style of programming
+in C++.  The rules and recommendations presented here are not final,
+but should serve as a basis for continued work with C++.  This
+collection of rules should be seen as a dynamic document; suggestions
+for improvements are encouraged.  A form for requesting new rules or
+changes to rules has been included as an appendix to this document.
+Suggestions can also be made via e-mail to one of the following
+addresses:</p>
+
+<ul>
+ <li><a href="mailto:erik.nyquist@eua.ericsson.se">erik.nyquist@eua.ericsson.se</a></li>
+ <li><a href="mailto:mats.henricson@eua.ericsson.se">mats.henricson@eua.ericsson.se</a></li>
+</ul>
+
+<p>Programs that are developed according to these rules and
+recommendations should be:</p>
+<ul>
+ <li>correct</li>
+ <li>easy to maintain.</li>
+</ul>
+<p>In order to reach these goals, the programs should:</p>
+<ul>
+ <li>have a consistent style,</li>
+ <li>be easy to read and understand,</li>
+ <li>be portable to other architectures,</li>
+ <li>be free of common types of errors,</li>
+ <li>be maintainable by different programmers.</li>
+</ul>
+
+<p>Questions of design, such as how to design a class or a class
+hierarchy, are beyond the scope of this document.  Recommended books
+on these subjects are indicated in the chapter entitled <a
+href="#19">References</a>.</p>
+
+<p>In order to obtain insight into how to effectively deal with the
+most difficult aspects of C++, the examples of code which are provided
+should be carefully studied.  C++ is a difficult language in which
+there may be a very fine line between a feature and a bug.  This
+places a large responsibility upon the programmer.  In the same way as
+for C, C++ allows a programmer to write compact and, in some sense,
+unreadable code.</p>
+
+<p>Code written in bold type is meant to serve as a warning.  The
+examples often include class definitions having the format <code>class
+<var>name</var> {};</code>.  These are included so that the examples
+may be compiled; it is not recommended that class definitions be
+written in this way.  In order to make the code more compact, the
+examples provided do not always follow the rules.  In such cases, the
+rule which is broken is indicated.</p>
+
+<p>Many different C++ implementations are in use today.  Most are
+based on the C++ Language System by AT&amp;T.  The component of this
+product which translates C++ code to C is called Cfront.  The
+different versions of Cfront (2.0, 2.1 &amp; 3.0 are currently in use)
+are referred to in order to point out the differences between
+different implementations.</p>
+
+<h3><a name="rule0">Rule 0</a></h3>
+<p>Every time a rule is broken, this must be clearly documented.</p>
+
+<h1><a name="2" href="#toc2">2</a> Terminology</h1>
+
+<ol>
+ <li>An identifier is a name which is used to refer to a variable,
+ constant, function or type in C++.  When necessary, an identifier may
+ have an internal structure which consists of a prefix, a name, and a
+ suffix (in that order).</li>
+
+ <li>A class is a user-defined data type which consists of data
+ elements and functions which operate on that data.  In C++, this may
+ be declared as a class; it may also be declared as a struct or a
+ union.  Data defined in a class is called member data and functions
+ defined in a class are called member functions.</li>
+
+ <li>A class/struct/union is said to be an abstract data type if it
+ does not have any public or protected member data.</li>
+
+ <li>A structure is a user-defined type for which only public data is
+ specified.</li>
+
+ <li>Public members of a class are member data and member functions
+ which are everywhere accessible by specifying an instance of the
+ class and the name.</li>
+
+ <li>Protected members of a class are member data and member functions
+ which are accessible by specifying the name within member functions
+ of derived classes.</li>
+
+ <li>A class template defines a family of classes.  A new class may be
+ created from a class template by providing values for a number of
+ arguments.  These values may be names of types or constant
+ expressions.</li>
+
+ <li>A function template defines a family of functions.  A new
+ function may be created from a function template by providing values
+ for a number of arguments.  These values may be names of types or
+ constant expressions.</li>
+
+ <li>An enumeration type is an explicitly declared set of symbolic
+ integral constants.  In C++ it is declared as an <code>enum</code>.</li>
+
+ <li>A typedef is another name for a data type, specified in C++ using
+ a <code>typedef</code> declaration.</li>
+
+ <li>A reference is another name for a given variable.  In C++, the
+ `address of' (<code>&amp;</code>) operator is used immediately after
+ the data type to indicate that the declared variable, constant, or
+ function argument is a reference.</li>
+
+ <li>A macro is a name for a text string which is defined in a
+ <code>#define</code> statement.  When this name appears in source
+ code, the compiler replaces it with the defined text string.</li>
+
+ <li>A constructor is a function which initializes an object.</li>
+
+ <li>A copy constructor is a constructor in which the first argument
+ is a reference to an object that has the same type as the object to
+ be initialized.</li>
+
+ <li>A default constructor is a constructor which needs no arguments.</li>
+
+ <li>An overloaded function name is a name which is used for two or
+ more functions or member functions having different types.</li>
+
+ <li>An overridden member function is a member function in a base
+ class which is re-defined in a derived class.  Such a member function
+ is declared <code>virtual</code>.</li>
+
+ <li>A pre-defined data type is a type which is defined in the
+ language itself, such as <code>int</code>.</li>
+
+ <li>A user-defined data type is a type which is defined by a
+ programmer in a <code>class</code>, <code>struct</code>,
+ <code>union</code>, <code>enum</code>, or <code>typedef</code>
+ definition or as an instantiation of a class template.</li>
+
+ <li>A pure virtual function is a member function for which no
+ definition is provided.  Pure virtual functions are specified in
+ abstract base classes and must be defined (overridden) in derived
+ classes.</li>
+
+ <li>An accessor is a function which returns the value of a data member.</li>
+
+ <li>A forwarding function is a function which does nothing more than
+ call another function.</li>
+
+ <li>A constant member function is a function which may not modify
+ data members.</li>
+
+ <li>An exception is a run-time program anomaly that is detected in a
+ function or member function.  Exception handling provides for the
+ uniform management of exceptions.  When an exception is detected, it
+ is thrown (using a throw expression) to the exception handler.</li>
+
+ <li>A catch clause is code that is executed when an exception of a
+ given type is raised.  The definition of an exception handler begins
+ with the keyword <code>catch</code>.</li>
+
+ <li>An abstract base class is a class from which no objects may be
+ created; it is only used as a base class for the derivation of other
+ classes.  A class is abstract if it includes at least one member
+ function that is declared as pure virtual.</li>
+
+ <li>An iterator is an object which, when invoked, returns the next
+ object from a collection of objects.</li>
+
+ <li>The scope of a name refers to the context in which it is visible.</li>
+
+ <li>A compilation unit is the source code (after preprocessing) that
+ is submitted to a compiler for compilation (including syntax
+ checking).</li>
+</ol>
+
+<h1><a name="3" href="#toc3">3</a> General Recommendations </h1>
+
+<h3><a name="rec1">Rec. 1</a></h3>
+<p>Optimize code only if you know that you have a performance problem.
+Think twice before you begin.</p>
+
+<h3><a name="rec2">Rec. 2</a></h3>
+<p>If you use a C++ compiler that is based on Cfront, always compile
+with the <code>+w</code> flag set to eliminate as many warnings as
+possible.</p>
+
+<p>Various tests are said to have demonstrated that programmers
+generally spend a lot of time optimizing code that is never executed.
+If your program is too slow, use <code>gprof++</code> or an equivalent
+tool to determine the exact nature of the problem before beginning to
+optimize.</p>
+
+<p>Code that is accepted by a compiler is not always correct (in
+accordance with the definition of the C++ language).  Two reasons for
+this are that changes are made in the language and that compilers may
+contain bugs.  In the short term, very little can be done about the
+latter.  In order to reduce the amount of code that must be rewritten
+for each new compiler release, it is common to let the compiler
+provide warnings instead of reporting errors for such code until the
+next major release.  Cfront provides the <code>+w</code> flag to
+direct the compiler to give warnings for these types of language
+changes.</p>
+
+<h1><a name="4" href="#toc4">4</a> Source Code in Files</h1>
+<h2><a name="4.1" href="#toc4.1">4.1</a> Structure of Code</h2>
+
+<h3><a name="rule1">Rule 1</a></h3>
+<p>Include files in C++ always have the file name extension ".hh".</p>
+<h3><a name="rule2">Rule 2</a></h3>
+<p>Implementation files in C++ always have the file name extension ".cc".</p>
+<h3><a name="rule3">Rule 3</a></h3>
+<p>Inline definition files always have the file name extension ".icc".</p>
+<h3><a name="rec3">Rec. 3</a></h3>
+<p>An include file should not contain more than one class definition.</p>
+<h3><a name="rec4">Rec. 4</a></h3>
+<p>Divide up the definitions of member functions or functions into as many files as possible.</p>
+<h3><a name="rec5">Rec. 5</a></h3>
+<p>Place machine-dependent code in a special file so that it may be
+easily located when porting code from one machine to another.</p>
+
+<p>The purpose of these conventions is to provide a uniform
+interpretation of file names.  One reason for this is that it is
+easier to make tools which base their behaviour on the file name
+extension.</p>
+
+<p>There are two kinds of include files in C++: those which contain
+code that is accepted by both ANSI-C and C++ compilers and those which
+contain code that is only accepted by C++ compilers.  It is
+appropriate to distinguish between the two in order to avoid
+unpleasant compilation errors (from using the wrong kind of include
+file).</p>
+
+<p>If a ".cc" file contains a large number of function definitions,
+the object file produced by the compiler may be unnecessarily large.
+In order to obtain the smallest possible executable files, it is
+necessary to have a separate file for each function definition.  This
+is because the standard UNIX linker <code>ld</code> links all
+functions in an object file even if only one of them is actually used.
+It is especially important to remember that virtual functions are
+always linked.  On the other hand, there are problems in managing a
+large number of files, since sufficiently powerful tools are not
+currently available.  Also, the time necessary to compile a program
+consisting of a large number of files is longer.</p>
+
+<p>Some debuggers cannot debug inline functions.  By placing inline
+functions in a separate file and by including that file in the
+implementation file, thus treating the inline functions as ordinary
+functions, it is possible to debug the functions while testing the
+program.  For this to work some special preprocessor techniques must
+be used.  The inline definition file must not be included by the
+include file for the class and the keyword <code>inline</code> must be
+removed.</p>
+
+<p>When tools for managing C++ code are not available, it is much
+easier for those who use and maintain classes if there is only one
+class definition in each file and if implementations of member
+functions in different classes are not present in the same file.</p>
+
+<h3><em>Exception to <a name="exr1" href="#rule1">Rule 1</a></em></h3>
+<p>Include files which contain code that is accepted by both C and C++
+compilers should have the file name extension ".h".</p>
+
+<h3><em>Exception to <a name="exr2" href="#rule2">Rule 2</a></em></h3>
+<p>When using a compiler that does not accept the extension ".cc", the
+extension ".C" is used instead.</p>
+
+<h3><em>Exception to <a name="exr3" href="#rule3">Rule 3</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex1">Example 1</a></h3>
+<p>Inline definitions in a separate file for conditional compilation</p>
+<pre> // AnyClass.hh
+ #ifndef OUTLINE
+ #include "AnyClass.icc"
+ #endif
+
+ //AnyClass.cc
+ #ifdef OUTLINE
+ #define inline
+ #include "AnyClass.icc"
+ #undef inline
+ #endif
+</pre>
+
+<h2><a name="4.2" href="#toc4.2">4.2</a> Naming Files</h2>
+
+<h3><a name="rec6">Rec. 6</a></h3>
+<p>Always give a file a name that is unique in as large a context as
+possible.</p>
+
+<h3><a name="rec7">Rec. 7</a></h3>
+<p>An include file for a class should have a file name of the form
+&lt;<var>class name</var>&gt; + extension.  Use uppercase and
+lowercase letters in the same way as in the source code.</p>
+
+<p>There is always a risk for name collisions when the file name is
+part of identifier names that are generated by the compiler.  This is
+a problem in using any Cfront-based compiler.</p>
+
+<p>AT&amp;T's Cfront-based compiler creates two functions for every
+file in order to call constructors and destructors of static objects
+in the proper order.  These functions are named:</p>
+<p><code>char __sti__<var>file_cc</var>___Fv(); //filename is <var>file.cc</var></code></p>
+<p><code>char __std__<var>file_cc</var>___Fv(); //filename is <var>file.cc</var></code></p>
+
+<p>It is easily understood that if a program has two files with the
+same name but in different subdirectories, there will be name
+collisions between the functions generated above.</p>
+
+<p>Since class names must generally be unique within a large context,
+it is appropriate to utilize this characteristic when naming its
+include file.  This convention makes it easy to locate a class
+definition using a file-based tool.</p>
+
+<h2><a name="4.3" href="#toc4.3">4.3</a> Comments</h2>
+<h3><a name="rule4">Rule 4</a></h3>
+<p>Every file that contains source code must be documented with an
+introductory comment that provides information on the file name and
+its contents.</p>
+
+<h3><a name="rule5">Rule 5</a></h3>
+<p>All files must include copyright information.</p>
+
+<h3><a name="rule6">Rule 6</a></h3>
+<p>All comments are to be written in English.</p>
+
+<h3><a name="rec8">Rec. 8</a></h3>
+<p>Write some descriptive comments before every function.</p>
+
+<h3><a name="rec9">Rec. 9</a></h3>
+<p>Use <code>//</code> for comments.</p>
+
+<p>It is necessary to document source code.  This should be compact
+and easy to find.  By properly choosing names for variables, functions
+and classes and by properly structuring the code, there is less need
+for comments within the code.</p>
+
+<p>Note that comments in include files are meant for the users of
+classes, while comments in implementation files are meant for those
+who maintain the classes.</p>
+
+<p>All our code must be copyright marked.  If the code has been
+developed over a period of years, each year must be stated.</p>
+
+<p>The standardization of comments makes it possible to automatically
+generate man-pages from source code.  This may be used to keep source
+code and documentation together until adequate tools for information
+management are available.</p>
+
+<p>Comments are often said to be either strategic or tactical.  A
+strategic comment describes what a function or section of code is
+intended to do, and is placed before this code.  A tactical comment
+describes what a single line of code is intended to do, and is placed,
+if possible, at the end of this line.  Unfortunately, too many
+tactical comments can make code unreadable.  For this reason, it is
+recommended to primarily use strategic comments, unless trying to
+explain very complicated code.</p>
+
+<p>If the characters <code>//</code> are consistently used for writing
+comments, then the combination <code>/* */</code> may be used to make
+comments out of entire sections of code during the development and
+debugging phases.  C++, however, does not allow comments to be nested
+using <code>/* */</code>.</p>
+
+<h3><em>Exception to <a name="exr4" href="#rule4">Rule 4</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr5" href="#rule5">Rule 5</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr6" href="#rule6">Rule 6</a></em></h3>
+<p>No exceptions.</p>
+<h3><a name="ex2">Example 2</a></h3>
+<p>Documentation of a file</p>
+<pre> //
+ // File: test.cc
+ // Description: This is a test program
+ // Rev: A
+ // Created: Thur. Oct 31, 1991, 12:30:14
+ // Author: Erik Nyquist
+ // mail: erik.nyquist@eua.ericsson.se
+ //
+ // Copyright Ellemtel Utvecklings AB 1991
+ // BOX 1505
+ // 125 25 ALVSJO
+ // SWEDEN
+ // tel int + 46 8 727 3000
+ //
+ // The copyright to the computer program(s) herein
+ // is the property of Ellemtel Utvecklings AB, Sweden.
+ // The program(s) may be used and/or copied only with
+ // the written permission of Ellemtel Utvecklings AB
+ // or in accordance with the terms and conditions
+ // stipulated in the agreement/contract under which
+ // the program(s) have been supplied.
+ //
+</pre>
+
+<h3><a name="ex3">Example 3</a></h3>
+<p>Strategic and Tactical Comments</p>
+<pre> // THE NEXT TWO LINES ARE STRATEGIC COMMENTS
+ // This function does some complicated things. It works like this:
+ // blah-blah-blah ...
+ int
+ insanelyGreatAndComplicatedFunction( int i )
+ {
+ int index = i++ + ++i * i-- - --i; // THIS IS A TACTICAL COMMENT
+
+ return index;
+ }
+</pre>
+<h2><a name="4.4" href="#toc4.4">4.4</a> Include Files</h2>
+
+<h3><a name="rule7">Rule 7</a></h3>
+<p>Every include file must contain a mechanism that prevents multiple
+inclusions of the file.</p>
+
+<h3><a name="rule8">Rule 8</a></h3>
+<p>When the following kinds of definitions are used (in implementation
+files or in other include files), they must be included as separate
+include files:</p>
+
+<ul>
+ <li>classes that are used as base classes,</li>
+ <li>classes that are used as member variables,</li>
+ <li>classes that appear as return types or as argument types in
+ function/member function prototypes.</li>
+ <li>function prototypes for functions/member functions used in inline
+ member functions that are defined in the file.</li>
+</ul>
+
+<h3><a name="rule9">Rule 9</a></h3>
+<p>Definitions of classes that are only accessed via pointers
+(<code>*</code>) or references (<code>&amp;</code>) shall not be
+included as include files.</p>
+
+<h3><a name="rule10">Rule 10</a></h3>
+<p>Never specify relative UNIX names in <code>#include</code> directives.</p>
+
+<h3><a name="rule11">Rule 11</a></h3>
+<p>Every implementation file is to include the relevant files that
+contain:</p>
+<ul>
+ <li>declarations of types and functions used in the functions that
+ are implemented in the file.</li>
+
+ <li>declarations of variables and member functions used in the
+ functions that are implemented in the file.</li>
+</ul>
+
+<h3><a name="rec10">Rec. 10</a></h3>
+<p>Use the directive <code>#include
+"<var>filename.hh</var>"</code> for user-prepared include files.</p>
+
+<h3><a name="rec11">Rec. 11</a></h3>
+<p>Use the directive <code>#include
+&lt;<var>filename.hh</var>&gt;</code> for include files from
+libraries.</p>
+
+<h3><a name="rec12">Rec. 12</a></h3>
+<p>Every implementation file should declare a local constant string
+that describes the file so the UNIX command <code>what</code> can be
+used to obtain information on the file revision.</p>
+
+<h3><a name="rec13">Rec. 13</a></h3>
+<p>Never include other files in an ".icc" file.</p>
+
+<p>The easiest way to avoid multiple includes of files is by using an
+<code>#ifndef</code>/<code>#define</code> block in the beginning of
+the file and an <code>#endif</code> at the end of the file.</p>
+
+<p>The number of files included should be minimized.  If a file is
+included in an include file, then every implementation file that
+includes the second include file must be re-compiled whenever the
+first file is modified.  A simple modification in one include file can
+make it necessary to re-compile a large number of files.</p>
+
+<p>When only referring to pointers or references to types defined in a
+file, it is often not necessary to include that file.  It may suffice
+to use a forward declaration to inform the compiler that the class
+exists.  Another alternative is to precede each declaration of a
+pointer to the class with the keyword <code>class</code>.</p>
+
+<p>True portable code is independent of the underlying operating
+system.  For this reason, relative UNIX search paths should be avoided
+when including files.  The processing of such search paths depends on
+the compiler and UNIX should not be taken for granted.  Instead,
+search paths should be provided in <code>make</code> files as options
+for the compiler.</p>
+
+<p>If a file only contains information that is only needed in an
+implementation file, that file should not be included in another
+include file.  Otherwise, when the information is no longer needed in
+the implementation file, it may be necessary to re-compile each file
+that uses the interface defined in the include file.</p>
+
+<p>Every C++ course teaches the difference between the include
+directives for user-prepared and for library include files.  If the
+file name is bracketed between <code>&lt;</code> and
+<code>&gt;</code>, the preprocessor will not search for the file in
+the default directory.  This reduces the risk of unintended name
+collisions between user-prepared and library include files.</p>
+
+<p>By declaring a local constant string, the compiler becomes
+self-identifying.  This may be used to easily determine the version of
+the program that is used.  The string must begin with the characters
+<code>@(#)</code> to be read by the UNIX <code>what</code>
+command.</p>
+
+<h3><em>Exception to <a name="exr7" href="#rule7">Rule 7</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr8" href="#rule8">Rule 8</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr9" href="#rule9">Rule 9</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr10" href="#rule10">Rule 10</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr11" href="#rule11">Rule 11</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex4">Example 4</a></h3>
+<p>Technique for preventing multiple inclusion of an include file</p>
+<pre> #ifndef FOO_HH
+ #define FOO_HH
+
+ // The rest of the file
+
+ #endif
+</pre>
+
+<h3><a name="ex5">Example 5</a></h3>
+<p>Never use explicit UNIX path names</p>
+<pre> // NOT RECOMMENDED
+ #include &lt;../include/fnutt.h&gt;
+
+ // NOT GUARANTEED TO WORK
+ #include &lt;sys/socket.h&gt;
+</pre>
+
+<h3><a name="ex6">Example 6</a></h3>
+<p>Local constant string for identifying implementation files.</p>
+<pre> static const char* sccsid =
+ "@(#) Exception.cc, rev. A, Copyright Ellemtel Utvecklings AB 1991";
+</pre>
+
+<h3><a name="ex7">Example 7</a></h3>
+<p>Include file for the class PackableString</p>
+<pre> // file: PackableString.hh
+ #ifndef PACKABLESTRING_HH
+ #define PACKABLESTRING_HH
+
+ #include "String.hh"
+ #include "Packable.hh"
+
+ // It is not necessary to extern-declare class Buffer when
+ // each pointer declaration specifies the keyword class as shown below.
+ // An explicit extern-declaration makes the code easier to
+ // understand.
+
+ extern class Buffer;
+
+ class PackableString : public String, public Packable
+ {
+ public:
+ PackableString( const String&amp; s );
+ class Buffer* put( class Buffer* outbuffer );
+ // ...
+ };
+
+ #endif
+</pre>
+
+<h3><a name="ex8">Example 8</a></h3>
+<p>Implementation file for the class PackableString</p>
+<pre> // PackableString.cc
+
+ #include "PackableString.hh"
+
+ // To be able to use Buffer-instances, Buffer.hh MUST be included.
+
+ #include "Buffer.hh"
+
+ Buffer*
+ PackableString::put( Buffer* outbuffer )
+ {
+ // ...
+ }
+</pre>
+
+<h1><a name="5" href="#toc5">5</a> Assigning Names</h1>
+
+<h3><a name="rule12">Rule 12</a></h3>
+<p>The identifier of every globally visible class, enumeration type,
+type definition, function, constant, and variable in a class library
+is to begin with a prefix that is unique for the library.</p>
+
+<h3><a name="rule13">Rule 13</a></h3>
+<p>The names of variables, constants, and functions are to begin with
+a lowercase letter.</p>
+
+<h3><a name="rule14">Rule 14</a></h3>
+<p>The names of abstract data types, structures, typedefs, and
+enumerated types are to begin with an uppercase letter.</p>
+
+<h3><a name="rule15">Rule 15</a></h3>
+<p>In names which consist of more than one word, the words are written
+together and each word that follows the first is begun with an
+uppercase letter.</p>
+
+<h3><a name="rule16">Rule 16</a></h3>
+<p>Do not use identifiers which begin with one or two underscores
+(`<code>_</code>' or `<code>__</code>').</p>
+
+<h3><a name="rule17">Rule 17</a></h3>
+<p>A name that begins with an uppercase letter is to appear directly
+after its prefix.</p>
+
+<h3><a name="rule18">Rule 18</a></h3>
+<p>A name that begins with a lowercase letter is to be separated from
+its prefix using an underscore (`<code>_</code>').</p>
+
+<h3><a name="rule19">Rule 19</a></h3>
+<p>A name is to be separated from its suffix using an underscore
+(`<code>_</code>').</p>
+
+<h3><a name="rec14">Rec. 14</a></h3>
+<p>Do not use typenames that differ only by the use of uppercase and
+lowercase letters.</p>
+
+<h3><a name="rec15">Rec. 15</a></h3>
+<p>Names should not include abbreviations that are not generally
+accepted.</p>
+
+<h3><a name="rec16">Rec. 16</a></h3>
+<p>A variable with a large scope should have a long name.</p>
+
+<h3><a name="rec17">Rec. 17</a></h3>
+<p>Choose variable names that suggest the usage.</p>
+
+<h3><a name="rec18">Rec. 18</a></h3>
+<p>Write code in a way that makes it easy to change the prefix for
+global identifiers.</p>
+
+<h3><a name="rec19">Rec. 19</a></h3>
+<p>Encapsulate global variables and constants, enumerated types, and
+typedefs in a class.</p>
+
+<p>In this chapter, it is important to distinguish between identifiers
+and names.  The name is that part of an identifier that shows its
+meaning.  An identifier consists of a prefix, a name, and a suffix (in
+that order).  The prefix and the suffix are optional.  A suffix is
+only used by tools that generate C++ code, to avoid name collisions
+with user-written C++ code and is not given further consideration
+here.</p>
+
+<p>It is recommended identifiers not be extremely long, to reduce the
+risk for name collisions when using tools that truncate long
+identifiers.</p>
+
+<p>The Unix command <code>ar</code> truncates file names that are
+longer than 15 characters.  Cfront normally modifies generated
+C-identifiers that are longer than 31 characters by truncating them
+and adding a hash value that is generated from the truncated part of
+the string.</p>
+
+<p>The use of two underscores (`<code>__</code>') in identifiers is
+reserved for the compiler's internal use according to the ANSI-C
+standard.</p>
+
+<p>Underscores (`<code>_</code>') are often used in names of library
+functions (such as <code>_main</code> and <code>_exit</code>).  In
+order to avoid collisions, do not begin an identifier with an
+underscore.</p>
+
+<p>One rule of thumb is that a name which cannot be pronounced is a
+bad name.  A long name is normally better than a short, cryptic name,
+but the truncation problem must be taken into consideration.
+Abbreviations can always be misunderstood.  Global variables,
+functions and constants ought to have long enough names to avoid name
+conflicts, but not too long.</p>
+
+<p>Classes should be named so that "<code>object.function</code>" is
+easy to read and appears to be logical.</p>
+
+<p>There are many class libraries available for purchase and there may
+be tens of thousands of classes in a large project! Because of this,
+it is important to be careful that name collisions do not occur.  One
+way of preventing collisions is to have strict rules for assigning
+names to globally visible objects (such as our use of a prefix).  In
+this way, classes from several different class libraries may be used
+at the same time.</p>
+
+<p>Names for the following types of objects are to be prefixed:</p>
+<ul>
+ <li>Type names (classes, typedefs, enums, structs, unions, etc.)</li>
+ <li>Global variables and constants</li>
+ <li>Function names (not member functions names)</li>
+ <li>Preprocessor macros (<code>#define</code>)</li>
+</ul>
+
+<p>The use of prefixes can sometimes be avoided by using a class to
+limit the scope of the name.  Static variables in a class should be
+used instead of global variables and constants, enumerated data types,
+and typedefs.  Although nested classes may be used in C++, these give
+rise to too many questions (in connection with the language
+definition) to be able to recommend their use.</p>
+
+<h3><em>Exception to <a name="exr12" href="#rule12">Rule 12</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr13" href="#rule13">Rule 13</a></em></h3>
+<p>No exceptions.  (At times, an identifier begins with an
+abbreviation written in uppercase letters, to emphasize the way in
+which the name is used.  Such an abbreviation is considered to be a
+prefix.)</p>
+
+<h3><em>Exception to <a name="exr14" href="#rule14">Rule 14</a></em></h3>
+<p>If the last letter in a word is in uppercase, an underscore is to
+be used as a word separator.</p>
+
+<h3><em>Exception to <a name="exr15" href="#rule15">Rule 15</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr16" href="#rule16">Rule 16</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr17" href="#rule17">Rule 17</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr18" href="#rule18">Rule 18</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr19" href="#rule19">Rule 19</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex9">Example 9</a></h3>
+<p>Exception using compound names</p>
+<pre> const char* functionTitle = "EUA_Special";
+ int currentIO_Stream = 1; // Last Character in currentIO is in uppercase!
+</pre>
+
+<h3><a name="ex10">Example 10</a></h3>
+<p>Choice of names</p>
+<pre> int groupID; // instead of grpID
+ int nameLength; // instead of namLn
+ PrinterStatus resetPrinter; // instead of rstprt
+</pre>
+
+<h3><a name="ex11">Example 11</a></h3>
+<p>Ambiguous names</p>
+<pre> void termProcess(); // Terminate process or
+ // terminal process?
+</pre>
+
+<h3><a name="ex12">Example 12</a></h3>
+<p>Names having numeric characters can cause errors which are
+difficult to locate.</p>
+<pre> int I0 = 13; // Names with digits can be
+ int IO = I0; // difficult to read.
+</pre>
+
+<h3><a name="ex13">Example 13</a></h3>
+<p>Definition of a class in the class library Emc2</p>
+<pre> class Emc2Class
+ {
+ public:
+ Emc2Class(); // Default constructor
+ // ...
+ private:
+ int id;
+ // ...
+ };
+</pre>
+
+<h3><a name="ex14">Example 14</a></h3>
+<p>One way to avoid global functions and classes</p>
+<pre> // Instead of declaring:
+ void Emc2_myFunc1();
+ void Emc2_myFunc2();
+ class Emc2MyClass { /* ... */ };
+
+ // Encapsulate the functions using an abstract class:
+ class Emc2
+ {
+ public:
+ static void myFunc1();
+ static void myFunc2();
+ class MyClass { /* ... */ };
+ private:
+ virtual dummy() = 0; // Trick to make the class abstract
+ };
+
+ // Now, functions and classes may be accessed by using the scope-operator:
+ Emc2::myFunc1();
+ Emc2::myFunc2();
+ Emc2::MyClass myObject;
+</pre>
+
+<h1><a name="6" href="#toc6">6</a> Style</h1>
+<h2><a name="6.1" href="#toc6.1">6.1</a> Classes</h2>
+
+<h3><a name="rule20">Rule 20</a></h3>
+<p>The <code>public</code>, <code>protected</code>, and
+<code>private</code> sections of a class are to be declared in that
+order (the <code>public</code> section is declared before the
+<code>protected</code> section which is declared before the
+<code>private</code> section).</p>
+
+<h3><a name="rule21">Rule 21</a></h3>
+<p>No member functions are to be defined within the class
+definition.</p>
+
+<p>By placing the <code>public</code> section first, everything that
+is of interest to a user is gathered in the beginning of the class
+definition.  The <code>protected</code> section may be of interest to
+designers when considering inheriting from the class.  The
+<code>private</code> section contains details that should have the
+least general interest.</p>
+
+<p>A member function that is defined within a class definition
+automatically becomes inline.  Class definitions are less compact and
+more difficult to read when they include definitions of member
+functions.  It is easier for an inline member function to become an
+ordinary member function if the definition of the inline function is
+placed outside of the class definition.  This rule will be in effect
+at least as long as traditional text editors are used.</p>
+
+<p>A similar problem is that members are private if no access
+specifier is explicitly given.  This problem is avoided by following
+Rule 20.</p>
+
+<h3><em>Exception to <a name="exr20" href="#rule20">Rule 20</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr21" href="#rule21">Rule 21</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex15">Example 15</a></h3>
+<p>A class definition in accordance with the style rules</p>
+<pre> class String : private Object
+ {
+ public:
+ String(); // Default constructor
+ String( const String&amp; s ); // Copy constructor
+ unsigned length() const;
+ // ...
+ protected:
+ int checkIndex( unsigned index ) const;
+ // ...
+ private:
+ unsigned noOfChars;
+ // ...
+ };
+</pre>
+
+<h3><a name="ex16">Example 16</a></h3>
+<p>No definitions of member functions within the class definition (See
+<a href="#ex1">Example 1</a>)</p>
+<pre> // Instead of writing like this:
+ class String
+ {
+ public:
+ int length() const // No !!
+ {
+ return len;
+ }
+ // ...
+ private:
+ int len;
+ };
+
+ // Do it this way:
+ class String
+ {
+ public:
+ int length() const;
+ // ...
+ private:
+ int len;
+ };
+
+ inline
+ int
+ String::length() const
+ {
+ return len;
+ }
+</pre>
+
+<h2><a name="6.2" href="#toc6.2">6.2</a> Functions</h2>
+
+<h3><a name="rec20">Rec. 20</a></h3>
+<p>Always provide the return type of a function explicitly.</p>
+
+<h3><a name="rec21">Rec. 21</a></h3>
+<p>When declaring functions, the leading parenthesis and the first
+argument (if any) are to be written on the same line as the function
+name.  If space permits, other arguments and the closing parenthesis
+may also be written on the same line as the function name.  Otherwise,
+each additional argument is to be written on a separate line (with the
+closing parenthesis directly after the last argument).</p>
+
+<h3><a name="rec22">Rec. 22</a></h3>
+<p>In a function definition, the return type of the function should be
+written on a separate line directly above the function name.</p>
+
+<h3><a name="rec23">Rec. 23</a></h3>
+<p>Always write the left parenthesis directly after a function name.</p>
+
+<p>If no return type is explicitly provided for a function, it is, by
+default, an <code>int</code>.  It is recommended to always provide the
+return type explicitly, to increase the readability of the code.  By
+defining the return type on a separate line directly above the
+function definition, the function name is more easily seen.</p>
+
+<p>The other recommendations are meant to give a uniform appearance to
+the code that is written.  Until such time as formatting tools are
+available, programmers should follow these guidelines.</p>
+
+<h3><a name="ex17">Example 17</a></h3>
+<p>The left parenthesis always directly after the function name</p>
+<pre>
+ void foo (); // No!!
+ void foo(); // Better
+</pre>
+
+<h3><a name="ex18">Example 18</a></h3>
+<p>Right and wrong ways of declaring formal arguments for a function
+(in function definition)</p>
+<pre>
+ // Right:
+ int
+ myComplicatedFunction( unsigned unsignedValue,
+ int intValue,
+ char* charPointerValue,
+ int* intPointerValue,
+ myClass* myClassPointerValue,
+ unsigned* unsignedPointerValue );
+
+ // Wrong:
+ int
+ myComplicatedFunction( unsigned unsignedValue, int intValue,
+ char* charPointerValue, int* intPointerValue, myClass* myClassPointerValue,
+ unsigned* unsignedPointerValue );
+</pre>
+
+<h2><a name="6.3" href="#toc6.3">6.3</a> Compound Statements</h2>
+
+<h3><a name="rec24">Rec. 24</a></h3>
+
+<p>Braces ("<code>{}</code>") which enclose a block are to be placed
+in the same column, on separate lines directly before and after the
+block.</p>
+
+<p>The placement of braces seems to have been the subject of the
+greatest debate concerning the appearance of both C and C++ code.  We
+recommend the style which, in our opinion, gives the most readable
+code.  Other styles may well provide more compact code.</p>
+
+<h2><a name="6.4" href="#toc6.4">6.4</a> Flow Control Statements</h2>
+
+<h3><a name="rec25">Rec. 25</a></h3>
+<p>The flow control primitives <code>if</code>, <code>else</code>,
+<code>while</code>, <code>for</code> and <code>do</code> should be
+followed by a block, even if it is an empty block.</p>
+
+<p>At times, everything that is to be done in a loop may be easily
+written on one line in the loop statement itself.  It may then be
+tempting to conclude the statement with a semicolon at the end of the
+line.  This may lead to misunderstanding since, when reading the code,
+it is easy to miss such a semicolon.  It seems to be better, in such
+cases, to place an empty block after the statement to make completely
+clear what the code is doing.</p>
+
+<h3><a name="ex19">Example 19</a></h3>
+<p>Flow control structure without statements</p>
+<pre>
+ // No block at all - No!
+ while ( /* Something */ );
+
+ // Empty block - better!
+ while ( /* Something */ )
+ {
+ // Empty !
+ }
+</pre>
+
+<h2><a name="6.5" href="#toc6.5">6.5</a> Pointers and References</h2>
+
+<h3><a name="rec26">Rec. 26</a></h3>
+<p>The dereference operator `<code>*</code>' and the address-of
+operator `<code>&amp;</code>' should be directly connected with the
+type names in declarations and definitions.</p>
+
+<p>The characters `<code>*</code>' and `<code>&amp;</code>' should be
+written together with the types of variables instead of with the names
+of variables in order to emphasize that they are part of the type
+definition.  Instead of saying that <code>*i</code> is an
+<code>int</code>, say that <code>i</code> is an <code>int*</code>.</p>
+
+<p>Traditionally, C recommendations indicate that `<code>*</code>'
+should be written together with the variable name, since this reduces
+the probability of making a mistake when declaring several variables
+in the same declaration statement (the operator `<code>*</code>' only
+applies to the variable on which it operates).  Since the declaration
+of several variables in the same statement is not recommended,
+however, such an advice is unneeded.</p>
+
+<h3><a name="ex20">Example 20</a></h3>
+<p><code>*</code> and <code>&amp;</code> together
+with the type</p>
+<pre> char*
+ Object::asString()
+ {
+ // Something
+ };
+
+ char* userName = 0;
+ int sfBook = 42;
+ int&amp; anIntRef = sfBook;
+</pre>
+
+<h3><a name="ex21">Example 21</a></h3>
+<p>Declaration of several variables in the same statement</p>
+<pre> // NOT RECOMMENDED
+ char* i,j; // i is declared pointer to char, while j is declared char
+</pre>
+
+<h2><a name="6.6" href="#toc6.6">6.6</a> Miscellaneous</h2>
+
+<h3><a name="rec27">Rec. 27</a></h3>
+<p>Do not use spaces around `<code>.</code>' or `<code>-&gt;</code>',
+nor between unary operators and operands.</p>
+
+<h3><a name="rec28">Rec. 28</a></h3>
+<p>Use the c++ mode in GNU Emacs to format code.</p>
+
+<p>In our opinion, code is more readable if spaces are not used around
+the <code>.</code> or <code>-&gt;</code> operators.  The same applies
+to unary operators (those that operate on one operand), since a space
+may give the impression that the unary operand is actually a binary
+operator.</p>
+
+<p>Ordinary spaces should be used instead of tabs.  Since different
+editors treat tab characters differently, the work in perfecting a
+layout may have been wasted if another editor is later used.  Tab
+characters can be removed using the UNIX command <code>expand</code>.
+One alternative is to format code using the editor GNU Emacs.</p>
+
+<p>We recommend that everyone use GNU Emacs to format code.  Code will
+then have a uniform appearance regardless of who has written it.</p>
+
+<h1><a name="7" href="#toc7">7</a> Classes</h1>
+<h2><a name="7.1" href="#toc7.1">7.1</a> Considerations
+Regarding Access Rights</h2>
+
+<h3><a name="rule22">Rule 22</a></h3>
+<p>Never specify <code>public</code> or <code>protected</code> member
+data in a class.</p>
+
+<p>The use of public variables is discouraged for the following reasons:</p>
+
+<ol>
+ <li>A public variable represents a violation of one of the basic
+ principles of object-oriented programming, namely, encapsulation of
+ data.  For example, if there is a class of the type
+ <code>BankAccount</code>, in which <code>account_balance</code> is a
+ public variable, the value of this variable may be changed by any
+ user of the class.  However, if the variable has been declared
+ private, its value may be changed only by the member functions of the
+ class.</li>
+
+ <li>An arbitrary function in a program can change public data which
+ may lead to errors that are difficult to locate.</li>
+
+ <li>If public data is avoided, its internal representation may be
+ changed without users of the class having to modify their code.  A
+ principle of class design is to maintain the stability of the public
+ interface of the class.  The implementation of a class should not be
+ a concern for its users.</li>
+</ol>
+
+<p>The use of protected variables in a class are not recommended,
+since its variables become visible to its derived classes.  The names
+of types or variables in a base class may then not be changed since
+the derived classes may depend on them.  If a derived class, for some
+reason, must access data in its base class, one solution may be to
+make a special protected interface in the base class, containing
+functions which return private data.  This solution would not imply
+any degradation of performance if the functions are defined
+<code>inline</code>.</p>
+
+<p>The use of structs is also discouraged since these only contain
+public data.  In interfaces with other languages (such as C), it may,
+however, be necessary to use structs.</p>
+
+<h3><em>Exception to <a name="exr22" href="#rule22">Rule 22</a></em></h3>
+<p>In interfaces with other languages (such as C), it may be necessary
+to use structs having public data.</p>
+
+<h3><a name="ex22">Example 22</a></h3>
+<p>The correct way to encapsulate data so that future changes are
+possible.</p>
+<pre> // Original class:
+
+ class Symbol {};
+ class OldSymbol : public Symbol {};
+
+ class Priority
+ {
+ public:
+ // returns pd
+ int priority();
+
+ // returns symbol
+ class Symbol* getSymbol() const;
+ // ...
+ private:
+ int pd;
+ OldSymbol symbol;
+ };
+
+
+ // Modified class:
+ // The programmer has chosen to change the private data from an int
+ // to an enum. A user of the class `Priority' does not have to change
+ // any code, since the enum return-value from the member function
+ // priority() is automatically converted to an int.
+
+ class Symbol {};
+ class NewSymbol : public Symbol {};
+ enum Priority { low, high, urgent };
+
+ class Priority
+ {
+ public:
+ // Interface intact through implicit cast, returns priority_data
+ Priority priority();
+
+ // Interface intact, object of new subclass to symbol returned
+ class Symbol* getSymbol() const;
+ // ...
+
+ private:
+ Priority priority_data; // New representation/name of internal data
+ NewSymbol symbol;
+ };
+</pre>
+
+<h2><a name="7.2" href="#toc7.2">7.2</a> Inline Functions</h2>
+
+<h3><a name="rec29">Rec. 29</a></h3>
+<p>Access functions are to be <code>inline</code>.</p>
+
+<h3><a name="rec30">Rec. 30</a></h3>
+<p>Forwarding functions are to be <code>inline</code>.</p>
+
+<h3><a name="rec31">Rec. 31</a></h3>
+<p>Constructors and destructors must not be <code>inline</code>.</p>
+
+<p>The normal reason for declaring a function <code>inline</code> is
+to improve its performance.</p>
+
+<p>Small functions, such as access functions, which return the value
+of a member of the class and so-called forwarding functions which
+invoke another function should normally be <code>inline</code>.</p>
+
+<p>Correct usage of inline functions may also lead to reduced size of
+code.</p>
+
+<p>Warning: functions which invoke other inline functions often become
+too complex for the compiler to be able to make them inline despite
+their apparent smallness.</p>
+
+<p>This problem is especially common with constructors and
+destructors.  A constructor always invokes the constructors of its
+base classes and member data before executing its own code.  Always
+avoid inline constructors and destructors!</p>
+
+<h2><a name="7.3" href="#toc7.3">7.3</a> Friends</h2>
+
+<h3><a name="rec32">Rec. 32</a></h3>
+<p>Friends of a class should be used to provide additional functions
+that are best kept outside of the class.</p>
+
+<p>Operations on an object are sometimes provided by a collection of
+classes and functions.</p>
+
+<p>A friend is a nonmember of a class, that has access to the
+nonpublic members of the class.  Friends offer an orderly way of
+getting around data encapsulation for a class.  A friend class can be
+advantageously used to provide functions which require data that is
+not normally needed by the class.</p>
+
+<p>Suppose there is a list class which needs a pointer to an internal
+list element in order to iterate through the class.  This pointer is
+not needed for other operations on the list.  There may then be
+reason, such as obtaining smaller list objects, for an list object not
+to store a pointer to the current list element and instead to create
+an iterator, containing such a pointer, when it is needed.</p>
+
+<p>One problem with this solution is that the iterator class normally
+does not have access to the data structures which are used to
+represent the list (since we also recommend private member data).</p>
+
+<p>By declaring the iterator class as a <code>friend</code>, this
+problem is avoided without violating data encapsulation.</p>
+
+<p>Friends are good if used properly.  However, the use of many
+friends can indicate that the modularity of the system is poor.</p>
+
+<h2><a name="7.4" href="#toc7.4">7.4</a> <code>const</code> Member Functions</h2>
+
+<h3><a name="rule23">Rule 23</a></h3>
+<p>A member function that does not affect the state of an object (its
+instance variables) is to be declared <code>const</code>.</p>
+
+<h3><a name="rule24">Rule 24</a></h3>
+<p>If the behaviour of an object is dependent on data outside the
+object, this data is not to be modified by <code>const</code> member
+functions.</p>
+
+<p>Member functions declared as <code>const</code> may not modify
+member data and are the only functions which may be invoked on a
+<code>const</code> object.  (Such an object is clearly unusable
+without <code>const</code> methods.)  A <code>const</code> declaration
+is an excellent insurance that objects will not be modified (mutated)
+when they should not be.  A great advantage that is provided by C++ is
+the ability to overload functions with respect to their
+<code>const</code>-ness.  (Two member functions may have the same name
+where one is <code>const</code> and the other is not.)</p>
+
+<p>Non-<code>const</code> member functions are sometimes invoked as
+so-called 'lvalues' (as a location value at which a value may be
+stored).  A <code>const</code> member function may never be invoked as
+an 'lvalue'.</p>
+
+<p>The behaviour of an object can be affected by data outside the
+object.  Such data must not be modified by a <code>const</code> member
+function.</p>
+
+<p>At times, it is desirable to modify data in a <code>const</code>
+object (such a having a cache of data for performance reasons).  In
+order to avoid explicit type conversions from a <code>const</code>
+type to a non-<code>const</code> type, the only way is to store the
+information outside the object.  (See <a href="#ex55">example 55</a>.)
+This type of data should be seen as external data which does not
+affect the behaviour of the class.</p>
+
+<h3><em>Exception to <a name="exr23" href="#rule23">Rule 23</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr24" href="#rule24">Rule 24</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex23">Example 23</a></h3>
+<p><code>const</code>-declared access functions to internal data in a class</p>
+<pre> class SpecialAccount : public Account
+ {
+ public:
+ int insertMoney();
+ // int getAmountOfMoney(); No! Forbids ANY constant object to
+ // access the amount of money.
+ int getAmountOfMoney() const; // Better!
+ // ...
+ private:
+ int moneyAmount;
+ };
+</pre>
+
+<h3><a name="ex24">Example 24</a></h3>
+<p>Overloading an operator/function with respect to
+<code>const</code>-ness</p>
+<pre> #include &lt;iostream.h&gt;
+ #include &lt;string.h&gt;
+ static unsigned const cSize = 1024;
+ class InternalData {};
+
+ class Buffer
+ {
+ public:
+ Buffer( char* cp );
+
+ // Inline functions in this class are written compactly so the example
+ // may fit on one page. THIS is NOT to be done in practice (See <a href="#rule21">Rule 21</a>).
+
+ // A. non-const member functions: result is an lvalue
+ char&amp; operator[]( unsigned index ) { return buffer[index]; }
+ InternalData&amp; get() { return data; }
+
+ // B. const member functions: result is not an lvalue
+ char operator[]( unsigned index ) const { return buffer[index]; }
+ const InternalData&amp; get() const { return data; }
+
+ private:
+ char buffer[cSize];
+ InternalData data;
+ };
+
+ inline Buffer::Buffer( char* cp )
+ {
+ strncpy( buffer , cp , sizeof( buffer ) );
+ }
+
+ main()
+ {
+ const Buffer cfoo = "peter"; // This is a constant buffer
+ Buffer foo = "mary"; // This buffer can change
+
+ foo[2]='c'; // calls char&amp; Buffer::operator[](unsigned)
+ cfoo[2] = 'c' // ERROR: cfoo[2] is not an lvalue.
+
+ // cfoo[2] means that Buffer::operator[](unsigned) const is called.
+
+ cout &lt;&lt; cfoo[2] &lt;&lt; ":" &lt;&lt; foo[2] &lt;&lt; endl; // OK! Only rvalues are needed
+
+ foo.get() = cfoo.get();
+ cfoo.get() = foo.get(); // ERROR: cfoo.get() is not an lvalue
+ }
+</pre>
+
+<h2><a name="7.5" href="#toc7.5">7.5</a> Constructors and
+Destructors</h2>
+
+<h3><a name="rule25">Rule 25</a></h3>
+<p>A class which uses "<code>new</code>" to allocate instances managed
+by the class, must define a copy constructor.</p>
+
+<h3><a name="rule26">Rule 26</a></h3>
+<p>All classes which are used as base classes and which have virtual
+functions, must define a virtual destructor.</p>
+
+<h3><a name="rec33">Rec. 33</a></h3>
+<p>Avoid the use of global objects in constructors and destructors.</p>
+
+<p>A copy constructor is recommended to avoid surprises when an object
+is initialized using an object of the same type.  If an object manages
+the allocation and deallocation of an object on the heap (the managing
+object has a pointer to the object to be created by the class'
+constructor), only the value of the pointer will be copied.  This can
+lead to two invocations of the destructor for the same object (on the
+heap), probably resulting in a run-time error.</p>
+
+<p>The corresponding problem exists for the assignment operator
+(`<code>=</code>').  See <a href="#7.6">7.6: Assignment
+Operators</a>.</p>
+
+<p>If a class, having virtual functions but without virtual
+destructors, is used as a base class, there may be a surprise if
+pointers to the class are used.  If such a pointer is assigned to an
+instance of a derived class and if <code>delete</code> is then used on
+this pointer, only the base class' destructor will be invoked.  If the
+program depends on the derived class' destructor being invoked, the
+program will fail.</p>
+
+<p>In connection with the initialization of statically allocated
+objects, it is not certain that other static objects will be
+initialized (for example, global objects).  This is because the order
+of initialization of static objects which is defined in various
+compilation units, is not defined in the language definition.  There
+are ways of avoiding this problem, all of which require some extra
+work.</p>
+
+<p>You must know what you are doing if you invoke virtual functions
+from a constructor in the class.  If virtual functions in a derived
+class are overridden, the original definition in the base class will
+still be invoked by the base class' constructor.  Override, then, does
+not always work when invoking virtual functions in constructors.  See
+<a href="#ex30">Example 30</a>.</p>
+
+<h3><em>Exception to <a name="exr25" href="#rule25">Rule 25</a></em></h3>
+<p>Sometimes, it is
+desired to let objects in a class share a data area.  In such a case,
+it is not necessary to define a copy constructor.  Instead, it is
+necessary to make sure that this data area is not deallocated as long
+as there are pointers to it.</p>
+
+<h3><em>Exception to <a name="exr26" href="#rule26">Rule 26</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex25">Example 25</a></h3>
+<p>Definition of a "dangerous" class not having a copy constructor</p>
+<pre> #include &lt;string.h&gt;
+
+ class String
+ {
+ public:
+ String( const char* cp = ""); // Constructor
+ ~String(); // Destructor
+ // ...
+ private:
+ char* sp;
+ // ...
+ };
+
+ String::String(const char* cp) : sp( new char[strlen(cp)] ) // Constructor
+ {
+ strcpy(sp,cp);
+ }
+
+ String::~String() // Destructor
+ {
+ delete sp;
+ }
+
+ // "Dangerous" String class
+ void
+ main()
+ {
+ String w1;
+ String w2 = w1;
+ // WARNING: IN A BITWISE COPY OF w1::sp,
+ // THE DESTRUCTOR FOR W1::SP WILL BE CALLED TWICE:
+ // FIRST, WHEN w1 IS DESTROYED; AGAIN, WHEN w2 IS DESTROYED.
+ }
+</pre>
+
+<h3><a name="ex26">Example 26</a></h3>
+<p>"Safe" class having copy constructor and default constructor</p>
+<pre> #include &lt;string.h&gt;
+
+ class String
+ {
+ public:
+ String( const char* cp = ""); // Constructor
+ String( const String&amp; sp ); // Copy constructor
+ ~String(); // Destructor
+ // ...
+ private:
+ char* sp;
+ // ...
+ };
+
+ String::String( const char* cp ) : sp( new char[strlen(cp)] ) // Constructor
+ {
+ strcpy(sp,cp);
+ }
+
+ String::String( const String&amp; stringA ) : sp( new char[strlen(stringA.sp)] )
+ {
+ strcpy(sp,stringA.sp);
+ }
+
+ String::~String() // Destructor
+ {
+ delete sp;
+ }
+
+ // "Safe" String class
+ void
+ main()
+ {
+ String w1;
+ String w2 = w1; // SAFE COPY: String::String( const String&amp; ) CALLED.
+ }
+</pre>
+
+<h3><a name="ex27">Example 27</a></h3>
+<p>Definitions of classes not having virtual destructors</p>
+<pre> class Fruit
+ {
+ public:
+ ~Fruit(); // Forgot to make destructor virtual!!
+ // ...
+ };
+
+ class Apple : public Fruit
+ {
+ public:
+ ~Apple(); // Destructor
+ // ...
+ };
+
+ // "Dangerous" usage of pointer to base class
+
+ class FruitBasket
+ {
+ public:
+ FruitBasket(); // Create FruitBasket
+ ~FruitBasket(); // Delete all fruits
+ // ...
+ void add(Fruit*); // Add instance allocated on the free store
+ // ...
+ private:
+ Fruit* storage[42]; // Max 42 fruits stored
+ int numberOfStoredFruits;
+ };
+
+ void
+ FruitBasket::add(Fruit* fp)
+ {
+ // Store pointer to fruit
+ storage[numberOfStoredFruits++] = fp;
+ }
+
+ FruitBasket::FruitBasket() : numberOfStoredFruits(0)
+ {
+ }
+
+ FruitBasket::~FruitBasket()
+ {
+ while (numberOfStoredFruits&gt;0)
+ {
+ delete storage[--numberOfStoredFruits]; // Only Fruit::~Fruit is called !!
+ }
+ }
+</pre>
+
+<h3><a name="ex28">Example 28</a></h3>
+<p>Dangerous use of static objects in constructors</p>
+<pre> // Hen.hh
+ class Egg;
+
+ class Hen
+ {
+ public:
+ Hen(); // Default constructor
+ ~Hen(); // Destructor
+ // ...
+ void makeNewHen(Egg*);
+ // ...
+ };
+
+ // Egg.hh
+
+ class Egg { };
+
+ extern Egg theFirstEgg; // defined in Egg.cc
+
+ // FirstHen.hh
+
+ class FirstHen : public Hen
+ {
+ public:
+ FirstHen(); // Default constructor
+ // ...
+ };
+
+ extern FirstHen theFirstHen; // defined in FirstHen.cc
+
+ // FirstHen.cc
+
+ FirstHen theFirstHen; // FirstHen::FirstHen() called
+
+ FirstHen::FirstHen()
+ {
+ // The constructor is risky because theFirstEgg is a global object
+ // and may not yet exist when theFirstHen is initialized.
+ // Which comes first, the chicken or the egg ?
+
+ makeNewHen(&amp;theFirstEgg);
+ }
+</pre>
+
+<h3><a name="ex29">Example 29</a></h3>
+<p>One way of ensuring that global objects have been initialized</p>
+<pre> // WARNING!!! THIS CODE IS NOT FOR BEGINNERS !!!
+
+ // PortSetup.hh
+
+ class PortSetup
+ {
+ public:
+ PortSetup(); // Constructor: initializes flag
+ void foo(); // Only works correctly if flag is 42
+ private:
+ int flag; // Always initialized to 42
+ };
+
+ extern PortSetup portSetup; // Must be initialized before use
+
+ // Create one instance of portSetupInit in each translation unit
+ // The constructor for portSetupInit will be called once for each
+ // translation unit. It initializes portSetup by using the placement
+ // syntax for the "new" operator.
+
+ static
+ class PortSetupInit
+ {
+ public:
+ PortSetupInit(); // Default constructor
+ private:
+ static int isPortSetup;
+ } portSetupInit;
+
+ // PortSetup.cc
+
+ #include "PortSetup.hh"
+ #include &lt;new.h&gt;
+
+ // ...
+
+ PortSetupInit::PortSetupInit() // Default constructor
+ {
+ if (!isPortSetup)
+ {
+ new (&amp;portSetup) PortSetup;
+ isPortSetup = 1;
+ }
+ }
+
+</pre>
+
+<h3><a name="ex30">Example 30</a></h3>
+<p>Override of virtual functions does not work in the base class' constructors</p>
+<pre> class Base
+ {
+ public:
+ Base(); // Default constructor
+ virtual void foo() { cout &lt;&lt; "Base::foo" &lt;&lt; endl; }
+ // ...
+ };
+
+ Base::Base()
+ {
+ foo(); // Base::foo() is ALWAYS called.
+ }
+
+ // Derived class overrides foo()
+ class Derived : public Base
+ {
+ public:
+ virtual void foo() { cout &lt;&lt; "Derived::foo" &lt;&lt; endl; } //foo is overridden
+ // ...
+ };
+
+ main()
+ {
+ Derived d; // Base::foo() called when the Base-part of
+ // Derived is constructed.
+ }
+
+</pre>
+
+<h2><a name="7.6" href="#toc7.6">7.6</a> Assignment Operators</h2>
+
+<h3><a name="rule27">Rule 27</a></h3>
+<p>A class which uses "<code>new</code>" to allocate instances managed
+by the class, must define an assignment operator.</p>
+
+<h3><a name="rule28">Rule 28</a></h3>
+<p>An assignment operator which performs a destructive
+action must be protected from performing this action on the object
+upon which it is operating.</p>
+
+<h3><a name="rec34">Rec. 34</a></h3>
+<p>An assignment operator ought to return a <code>const</code>
+reference to the assigning object.</p>
+
+<p>An assignment is not inherited like other operators.  If an
+assignment operator is not explicitly defined, then one is
+automatically defined instead.  Such an assignment operator does not
+perform bit-wise copying of member data; instead, the assignment
+operator (if defined) for each specific type of member data is
+invoked.  Bit-wise copying is only performed for member data having
+primitive types.</p>
+
+<p>One consequence of this is that bit-wise copying is performed for
+member data having pointer types.  If an object manages the allocation
+of the instance of an object pointed to by a pointer member, this will
+probably lead to problems: either by invoking the destructor for the
+managed object more than once or by attempting to use the deallocated
+object.  See also <a href="#rule25">Rule 25</a>.</p>
+
+<p>If an assignment operator is overloaded, the programmer must make
+certain that the base class' and the members' assignment operators are
+run.</p>
+
+<p>A common error is assigning an object to itself (<code>a =
+a</code>).  Normally, destructors for instances which are allocated on
+the heap are invoked before assignment takes place.  If an object is
+assigned to itself, the values of the instance variables will be lost
+before they are assigned.  This may well lead to strange run-time
+errors.  If <code>a = a</code> is detected, the assigned object should
+not be changed.</p>
+
+<p>If an assignment operator returns "<code>void</code>", then it is
+not possible to write <code>a = b = c</code>.  It may then be tempting
+to program the assignment operator so that it returns a reference to
+the assigning object.  Unfortunately, this kind of design can be
+difficult to understand.  The statement <code>(a = b) = c</code> can
+mean that <code>a</code> or <code>b</code> is assigned the value of
+<code>c</code> before or after <code>a</code> is assigned the value of
+<code>b</code>.  This type of code can be avoided by having the
+assignment operator return a <code>const</code> reference to the
+assigned object or to the assigning object.  Since the returned object
+cannot be placed on the left side of an assignment, it makes no
+difference which of them is returned (that is, the code in the above
+example is no longer correct).</p>
+
+<h3><em>Exception to <a name="exr27" href="#rule27">Rule 27</a></em></h3>
+<p>Sometimes, it is desirable to allow objects in a class to share a data
+area.  In such cases, it is not necessary to define an assignment
+operator.  Instead, it is necessary to make sure that the shared data
+area is no deallocated as long as there are pointers to it.</p>
+
+<h3><em>Exception to <a name="exr28" href="#rule28">Rule 28</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex31">Example 31</a></h3>
+<p>Incorrect and correct return values from an assignment operator</p>
+<pre> void
+ MySpecialClass::operator=( const MySpecialClass&amp; msp ); // Well ...?
+
+ MySpecialClass&amp;
+ MySpecialClass::operator=( const MySpecialClass&amp; msp ); // No!
+
+ const MySpecialClass&amp;
+ MySpecialClass::operator=( const MySpecialClass&amp; msp ); // Recommended
+</pre>
+
+<h3><a name="ex32">Example 32</a></h3>
+<p>Definition of a class with an overloaded assignment operator</p>
+<pre> class DangerousBlob
+ {
+ public:
+ const DangerousBlob&amp; operator=( const DangerousBlob&amp; dbr );
+ // ...
+ private:
+ char* cp;
+ };
+
+ // Definition of assignment operator
+
+ const DangerousBlob&amp;
+ DangerousBlob::operator=( const DangerousBlob&amp; dbr )
+ {
+ if ( this != &amp;dbr ) // Guard against assigning to the "this" pointer
+ {
+ delete cp; // Disastrous if this == &amp;dbr
+ }
+ // ...
+ }
+</pre>
+
+<h2><a name="7.7" href="#toc7.7">7.7</a> Operator Overloading</h2>
+
+<h3><a name="rec35">Rec. 35</a></h3>
+<p>Use operator overloading sparingly and in a uniform manner.</p>
+
+<h3><a name="rec36">Rec. 36</a></h3>
+<p>When two operators are opposites (such as <code>==</code> and
+<code>!=</code>), it is appropriate to define both.</p>
+
+<p>Operator overloading has both advantages and disadvantages.  One
+advantage is that code which uses a class with overloaded operators
+can be written more compactly (more readably).  Another advantage is
+that the semantics can be both simple and natural.  One disadvantage
+in overloading operators is that it is easy to misunderstand the
+meaning of an overloaded operator (if the programmer has not used
+natural semantics).  The extreme case, where the plus-operator is
+re-defined to mean minus and the minus-operator is re-defined to mean
+plus, probably will not occur very often, but more subtle cases are
+conceivable.</p>
+
+<p>Designing a class library is like designing a language! If you use
+operator overloading, use it in a uniform manner; do not use it if it
+can easily give rise to misunderstanding.</p>
+
+<p>If the <code>operator !=</code> has been designed for a class, then
+a user may well be surprised if the <code>operator ==</code> is not
+defined as well.</p>
+
+<h2><a name="7.8" href="#toc7.8">7.8</a> Member Function Return Types</h2>
+
+<h3><a name="rule29">Rule 29</a></h3>
+<p>A public member function must never return a non-<code>const</code>
+reference or pointer to member data.</p>
+
+<h3><a name="rule30">Rule 30</a></h3>
+<p>A public member function must never return a non-<code>const</code>
+reference or pointer to data outside an object, unless the object
+shares the data with other objects.</p>
+
+<p>By allowing a user direct access to the private member data of an
+object, this data may be changed in ways not intended by the class
+designer.  This may lead to reduced confidence in the designer's code:
+a situation to be avoided.</p>
+
+<p>A worse risk is having pointers which point to deallocated memory.
+<a href="#rule29">Rule 29</a> and <a href="#rule30">Rule 30</a>
+attempt to avoid this situation.</p>
+
+<p>Note that we do not forbid the use of protected member functions
+which return a <code>const</code> reference or pointer to member data.
+If protected access functions are provided, the problems described in
+<a href="#7.1">7.1</a> are avoided.</p>
+
+<h3><em>Exception to <a name="exr29" href="#rule29">Rule 29</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr30" href="#rule30">Rule 30</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex33">Example 33</a></h3>
+<p>Never return a non-<code>const</code> reference to member data from
+a public function.</p>
+<pre> class Account
+ {
+ public:
+ Account( int myMoney ) : moneyAmount( myMoney ) {};
+ const int&amp; getSafeMoney() const { return moneyAmount; }
+ int&amp; getRiskyMoney() const { return moneyAmount; } // No!
+ // ...
+ private:
+ int moneyAmount;
+ };
+
+ Account myAcc(10); // I'm a poor lonesome programmer a long way from home
+
+ myAcc.getSafeMoney() += 1000000; // Compilation error: assignment to constant
+
+ myAcc.getRiskyMoney() += 1000000; // myAcc::moneyAmount = 1000010 !!
+</pre>
+
+<h2><a name="7.9" href="#toc7.9">7.9</a> Inheritance</h2>
+
+<h3><a name="rec37">Rec. 37</a></h3>
+<p>Avoid inheritance for parts-of relations.</p>
+
+<h3><a name="rec38">Rec. 38</a></h3>
+<p>Give derived classes access to class type member data by declaring
+<code>protected</code> access functions.</p>
+
+<p>A common mistake is to use multiple inheritance for parts-of
+relations (when an object consists of several other objects, these are
+inherited instead of using instance variables.  This can result in
+strange class hierarchies and less flexible code.  In C++ there may be
+an arbitrary number of instances of a given type; if inheritance is
+used, direct inheritance from a class may only be used once.</p>
+
+<p>A derived class often requires access to base class member data in
+order to create useful member functions.  The advantage in using
+protected member functions is that the names of base class member data
+are not visible in the derived classes and thus may be changed.  Such
+access functions should only return the values of member data
+(read-only access).  This is best done by simply invoking
+<code>const</code> functions for the member data.</p>
+
+<p>The guiding assumption is that those who use inheritance know
+enough about the base class to be able to use the private member data
+correctly, while not referring to this data by name.  This reduces the
+coupling between base classes and derived classes.</p>
+
+<h1><a name="8" href="#toc8">8</a> Class Templates</h1>
+
+<h3><a name="rec39">Rec. 39</a></h3>
+<p>Do not attempt to create an instance of a class template using a
+type that does not define the member functions which the class
+template, according to its documentation, requires.</p>
+
+<h3><a name="rec40">Rec. 40</a></h3>
+<p>Take care to avoid multiple
+definition of overloaded functions in conjunction with the
+instantiation of a class template.</p>
+
+<p>It is not possible in C++ to specify requirements for type
+arguments for class templates and function templates.  This may imply
+that the type chosen by the user, does not comply with the interface
+as required by the template.  For example, a class template may
+require that a type argument have a comparison operator defined.</p>
+
+<p>Another problem with type templates can arise for overloaded
+functions.  If a function is overloaded, there may be a conflict if
+the element type appears explicitly in one of these.  After
+instantiation, there may be two functions which, for example, have the
+type <code>int</code> as an argument.  The compiler may complain about
+this, but there is a risk that the designer of the class does not
+notice it.  In cases where there is a risk for multiple definition of
+member functions, this must be carefully documented.</p>
+
+<h3><a name="ex34">Example 34</a></h3>
+<p>Problem when using
+parameterized types (Cfront 3.0 or other template compiler)</p>
+<pre> template &lt;class ET&gt;
+ class Conflict
+ {
+ public:
+ void foo( int a );
+ void foo( ET a ); // What if ET is an int or another integral type?
+ // The compiler will discover this, but ...
+ };
+</pre>
+
+<h1><a name="9" href="#toc9">9</a> Functions</h1>
+
+<p>Unless otherwise stated, the following rules also apply to member
+functions.</p>
+
+<h2><a name="9.1" href="#toc9.1">9.1</a> Function Arguments</h2>
+
+<h3><a name="rule31">Rule 31</a></h3>
+<p>Do not use unspecified function
+arguments (ellipsis notation).</p>
+
+<h3><a name="rec41">Rec. 41</a></h3>
+<p>Avoid functions with many arguments.</p>
+
+<h3><a name="rec42">Rec. 42</a></h3>
+<p>If a function stores a pointer
+to an object which is accessed via an argument, let the argument have
+the type pointer.  Use reference arguments in other cases.</p>
+
+<h3><a name="rec43">Rec. 43</a></h3>
+<p>Use constant references
+(<code>const &amp;</code>) instead of call-by-value, unless using a
+pre-defined data type or a pointer.</p>
+
+<p>The best known function which uses unspecified arguments is
+<code>printf()</code>.  The use of such functions is not advised since
+the strong type checking provided by C++ is thereby avoided.  Some of
+the possibilities provided by unspecified function arguments can be
+attained by overloading functions and by using default arguments.</p>
+
+<p>Functions having long lists of arguments look complicated, are
+difficult to read, and can indicate poor design.  In addition, they
+are difficult to use and to maintain.</p>
+
+<p>By using references instead of pointers as function arguments, code
+can be made more readable, especially within the function.  A
+disadvantage is that it is not easy to see which functions change the
+values of their arguments.  Member functions which store pointers
+which have been provided as arguments should document this clearly by
+declaring the argument as a pointer instead of as a reference.  This
+simplifies the code, since it is normal to store a pointer member as a
+reference to an object.</p>
+
+<p>One difference between references and pointers is that there is no
+null-reference in the language, whereas there is a null-pointer.  This
+means that an object must have been allocated before passing it to a
+function.  The advantage with this is that it is not necessary to test
+the existence of the object within the function.</p>
+
+<p>C++ invokes functions according to call-by-value.  This means that
+the function arguments are copied to the stack via invocations of copy
+constructors, which, for large objects, reduces performance.  In
+addition, destructors will be invoked when exiting the function.
+<code>const &amp;</code> arguments mean that only a reference to the
+object in question is placed on the stack (call-by-reference) and that
+the object's state (its instance variables) cannot be modified.  (At
+least some <code>const</code> member functions are necessary for such
+objects to be at all useful.)</p>
+
+<h3><em>Exception to <a name="exr31" href="#rule31">Rule 31</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex35">Example 35</a></h3>
+<p>References instead of pointers</p>
+<pre> // Unnecessarily complicated use of pointers
+ void addOneComplicated( int* integerPointer )
+ {
+ *integerPointer += 1;
+ }
+
+ addOneComplicated( &amp;j );
+
+ // Write this way instead:
+ void addOneEasy( int&amp; integerReference )
+ {
+ integerReference += 1;
+ }
+
+ addOneEasy( i );
+</pre>
+
+<h3><a name="ex36">Example 36</a></h3>
+<p>Different mechanisms for passing arguments</p>
+<pre> // a. A copy of the argument is created on the stack.
+ // The copy constructor is called on entry,
+ // and the destructor is called at exit from the function.
+ // This may lead to very inefficient code.
+
+ void foo1( String s );
+ String a;
+ foo1( a ); // call-by-value
+
+ // b. The actual argument is used by the function
+ // and it can be modified by the function.
+
+ void foo2( String&amp; s );
+ String b;
+ foo2( b ); // call-by-reference
+
+ // c. The actual argument is used by the function
+ // but it cannot be modified by the function.
+
+ void foo3( const String&amp; s );
+ String c;
+ foo3( c ); // call-by-constant-reference
+
+ // d. A pointer to the actual argument is used by the function.
+ // May lead to messy syntax when the function uses the argument.
+
+ void foo4( const String* s );
+ String d;
+ foo4( &amp;d ); // call-by-constant-pointer
+</pre>
+
+<h2><a name="9.2" href="#toc9.2">9.2</a> Function
+Overloading</h2>
+
+<h3><a name="rec44">Rec. 44</a></h3>
+<p>When overloading functions, all variations should have the same
+semantics (be used for the same purpose).</p>
+
+<p>Overloading of functions can be a powerful tool for creating a
+family of related functions that only differ as to the type of data
+provided as arguments.  If not used properly (such as using functions
+with the same name for different purposes), they can, however, cause
+considerable confusion.</p>
+
+<h3><a name="ex37">Example 37</a></h3>
+<p>Example of the proper usage of function overloading</p>
+<pre> class String
+ {
+ public: // Used like this:
+ // ... // String x = "abc123";
+ int contains( const char c ); // int i = x.contains( 'b' );
+ int contains( const char* cs ); // int j = x.contains( "bc1" );
+ int contains( const String&amp; s ); // int k = x.contains( x );
+ // ...
+ };
+</pre>
+
+<h2><a name="9.3" href="#toc9.3">9.3</a> Formal Arguments</h2>
+
+<h3><a name="rule32">Rule 32</a></h3>
+<p>The names of formal arguments to functions are to be specified and
+are to be the same both in the function declaration and in the
+function definition.</p>
+
+<p>The names of formal arguments may be specified in both the function
+declaration and the function definition in C++, even if these are
+ignored by the compiler in the declaration.  Providing names for
+function arguments is a part of the function documentation.  The name
+of an argument may clarify how the argument is used, reducing the need
+to include comments in, for example, a class definition.  It is also
+easier to refer to an argument in the documentation of a class if it
+has a name.</p>
+
+<h3><em>Exception to <a name="exr32" href="#rule32">Rule 32</a></em></h3>
+<p>No exceptions!</p>
+
+<h3><a name="ex38">Example 38</a></h3>
+<p>Declaration of formal arguments</p>
+<pre> int setPoint( int, int ); // No !
+ int setPoint( int x, int y ); // Good
+
+ int
+ setPoint( int x, int y )
+ {
+ // ...
+ }
+</pre>
+
+<h2><a name="9.4" href="#toc9.4">9.4</a> Return Types and Values</h2>
+
+<h3><a name="rule33">Rule 33</a></h3>
+<p>Always specify the return type
+of a function explicitly.</p>
+
+<h3><a name="rule34">Rule 34</a></h3>
+<p>A public function must never
+return a reference or a pointer to a local variable.</p>
+
+<p>Functions, for which no return type is explicitly declared,
+implicitly receive <code>int</code> as the return type.  This can be
+confusing for a beginner, since the compiler gives a warning for a
+missing return type.  Because of this, functions which return no value
+should specify void as the return type.</p>
+
+<p>If a function returns a reference or a pointer to a local variable,
+the memory to which it refers will already have been deallocated, when
+this reference or pointer is used.  The compiler may or may not give a
+warning for this.</p>
+
+<h3><em>Exception to <a name="exr33" href="#rule33">Rule 33</a></em></h3>
+<p>No
+exceptions!</p>
+
+<h3><em>Exception to <a name="exr34" href="#rule34">Rule 34</a></em></h3>
+<p>No
+exceptions!</p>
+
+<h3><a name="ex39">Example 39</a></h3>
+<p>Functions which return no value should be specified as having the
+return type <code>void</code>.</p>
+<pre> void
+ strangeFunction( const char* before, const char* after )
+ {
+ // ...
+ }
+</pre>
+
+<h2><a name="9.5" href="#toc9.5">9.5</a> Inline Functions</h2>
+
+<h3><a name="rule35">Rule 35</a></h3>
+<p>Do not use the preprocessor
+directive <code>#define</code> to obtain more efficient code; instead,
+use inline functions.</p>
+
+<h3><a name="rec45">Rec. 45</a></h3>
+<p>Use inline functions when they
+are really needed.</p>
+
+<p>See also <a href="#7.2">7.2</a>.
+
+<p>Inline functions have the advantage of often being faster to
+execute than ordinary functions.  The disadvantage in their use is
+that the implementation becomes more exposed, since the definition of
+an inline function must be placed in an include file for the class,
+while the definition of an ordinary function may be placed in its own
+separate file.</p>
+
+<p>A result of this is that a change in the implementation of an
+inline function can require comprehensive re-compiling when the
+include file is changed.  This is true for traditional file-based
+programming environments which use such mechanisms as
+<code>make</code> for compilation.</p>
+
+<p>The compiler is not compelled to actually make a function inline.
+The decision criteria for this differ from one compiler to another.
+It is often possible to set a compiler flag so that the compiler gives
+a warning each time it does not make a function inline (contrary to
+the declaration).  "Outlined inlines" can result in programs that are
+both unnecessarily large and slow.</p>
+
+<p>It may be appropriate to separate inline definitions from class
+definitions and to place these in a separate file.</p>
+
+<h3><em>Exception to <a name="exr35" href="#rule35">Rule 35</a></em></h3>
+<p>No
+exceptions</p>
+
+<h3><a name="ex40">Example 40</a></h3>
+<p>Inline functions are better than macros</p>
+<pre> // Example of problems with #define "functions"
+ #define SQUARE(x) ((x)*(x))
+ int a = 2;
+ int b = SQUARE(a++); // b = (2 * 3) = 6
+
+ // Inline functions are safer and easier to use than macros if you
+ // need an ordinary function that would have been unacceptable for
+ // efficiency reasons.
+ // They are also easier to convert to ordinary functions later on.
+ inline int square( int x )
+ {
+ return ( x * x );
+ };
+
+ int c = 2;
+ int d = square( c++ ); // d = ( 2 * 2 ) = 4
+</pre>
+
+<h2><a name="9.6" href="#toc9.6">9.6</a> Temporary Objects</h2>
+
+<h3><a name="rec46">Rec. 46</a></h3>
+<p>Minimize the number of temporary
+objects that are created as return values from functions or as
+arguments to functions.</p>
+
+<p>Temporary objects are often created when objects are returned from
+functions or when objects are given as arguments to functions.  In
+either case, a constructor for the object is first invoked; later, a
+destructor is invoked.  Large temporary objects make for inefficient
+code.  In some cases, errors are introduced when temporary objects are
+created.  It is important to keep this in mind when writing code.  It
+is especially inappropriate to have pointers to temporary objects,
+since the lifetime of a temporary object is undefined.  (See <a
+href="#18.7">18.7</a>.)</p>
+
+<h3><a name="ex41">Example 41</a></h3>
+<p>Temporary objects and one way of eliminating them</p>
+<pre> class BigObject { double big[123456]; };
+
+ // Example of a very inefficient function with respect to temporary objects:
+ BigObject
+ slowTransform( BigObject myBO )
+ {
+ // When entering slowTransform(), myBO is a copy of the function argument
+ // provided by the user. -&gt; A copy constructor for BigObject is executed.
+ // ... Transform myBO in some way
+ return myBO; // Transformed myBO returned to the user
+ }
+ // When exiting slowTransform(), a copy of myBO is returned to the
+ // user -&gt; copy-constructor for BigObject is executed, again.
+
+ // Much more efficient solution:
+ BigObject&amp;
+ fastTransform( BigObject&amp; myBO )
+ {
+ // When entering fastTransform(), myBO is the same object as the function
+ // argument provided by the user. -&gt; No copy-constructor is executed.
+
+ // Transform myBO in some way
+ return myBO; // Transformed myBO is returned to the user.
+ }
+ // When exiting fastTransform(), the very same myBO is returned
+ // to the user. -&gt; No copy constructor executed.
+
+ void main()
+ {
+ BigObject BO;
+ BO = slowTransform( BO );
+ BO = fastTransform( BO ); // Same syntax as slowTransform() !!
+ }
+</pre>
+
+<h2><a name="9.7" href="#toc9.7">9.7</a> General</h2>
+
+<h3><a name="rec47">Rec. 47</a></h3>
+<p>Avoid long and complex functions.</p>
+
+<p>Long functions have disadvantages:</p>
+<ol>
+ <li>If a function is too long, it can be difficult to comprehend.
+ Generally, it can be said that a function should not be longer than
+ two pages, since that is about how much that can be comprehended at
+ one time.</li>
+
+ <li>If an error situation is discovered at the end of an extremely
+ long function, it may be difficult for the function to clean up after
+ itself and to "undo" as much as possible before reporting the error
+ to the calling function.  By always using short functions, such an
+ error can be more exactly localized.</li>
+</ol>
+
+<p>Complex functions are difficult to test.  If a function consists of
+15 nested <code>if</code> statements, then there are 2**15 (or 32768)
+different branches to test in a single function.</p>
+
+<h1><a name="10" href="#toc10">10</a> Constants</h1>
+
+<h3><a name="rule36">Rule 36</a></h3>
+<p>Constants are to be defined
+using <code>const</code> or <code>enum</code>; never using
+<code>#define</code>.</p>
+
+<h3><a name="rule37">Rule 37</a></h3>
+<p>Avoid the use of numeric values
+in code; use symbolic values instead.</p>
+
+<p>The preprocessor performs a textual substitution for macros in the
+source code which is then compiled.  This has a number of negative
+consequences.  For example, if a constant has been defined using
+<code>#define</code>, the name of the constant is not recognized in
+many debuggers.  If the constant is represented by an expression, this
+expression may be evaluated differently for different instantiations,
+depending on the scope of the name.  In addition, macros are, at
+times, incorrectly written.</p>
+
+<p>Numerical values in code ("Magic Numbers") should be viewed with
+suspicion.  They can be the cause of difficult problems if and when it
+becomes necessary to change a value.  A large amount of code can be
+dependent on such a value never changing, the value can be used at a
+number of places in the code (it may be difficult to locate all of
+them), and values as such are rather anonymous (it may be that every
+`<code>2</code>' in the code should not be changed to a
+`<code>3</code>').</p>
+
+<p>From the point of view of portability, absolute values may be the
+cause of more subtle problems.  The type of a numeric value is
+dependent on the implementation.  Normally, the type of a numeric
+value is defined as the smallest type which can contain the value.</p>
+
+<h3><em>Exception to <a name="exr36" href="#rule36">Rule 36</a></em></h3>
+<p>No
+exceptions.</p>
+
+<h3><em>Exception to <a name="exr37" href="#rule37">Rule 37</a></em></h3>
+<p>Certain numerical values have a well established and clear meaning in
+a program.  For example, '<code>1</code>' and '<code>0</code>' are
+often used to represent `<code>true</code>' and `<code>false</code>',
+respectively.  These may be used directly in code without being
+considered to be "Magic".</p>
+
+<h3><a name="ex42">Example 42</a></h3>
+<p>Different ways of declaring constants.</p>
+<pre> // Constants using macros
+ #define BUFSIZE 7 // No type checking
+
+ // Constants using const
+ const int bufSize = 7; // Type checking takes place
+
+ // Constants using enums
+ enum SIZE { BufSize = 7 }; // Type checking takes place
+</pre>
+
+<h3><a name="ex43">Example 43</a></h3>
+<p>Declaration of const defined in another file</p>
+<pre> extern const char constantCharacter;
+ extern const String fileName;
+</pre>
+
+<h1><a name="11" href="#toc11">11</a> Variables</h1>
+
+<h3><a name="rule38">Rule 38</a></h3>
+<p>Variables are to be declared
+with the smallest possible scope.</p>
+
+<h3><a name="rule39">Rule 39</a></h3>
+<p>Each variable is to be declared
+in a separate declaration statement.</p>
+
+<h3><a name="rule40">Rule 40</a></h3>
+<p>Every variable that is declared
+is to be given a value before it is used.</p>
+
+<h3><a name="rule41">Rule 41</a></h3>
+<p>If possible, always use
+initialization instead of assignment.</p>
+
+<p>A variable ought to be declared with the smallest possible scope to
+improve the readability of the code and so that variables are not
+unnecessarily allocated.  When a variable that is declared at the
+beginning of a function is used somewhere in the code, it is not easy
+to directly see the type of the variable.  In addition, there is a
+risk that such a variable is inadvertently hidden if a local variable,
+having the same name, is declared in an internal block.</p>
+
+<p>Many local variables are only used in special cases which seldom
+occur.  If a variable is declared at the outer level, memory will be
+allocated even if it is not used.  In addition, when variables are
+initialized upon declaration, more efficient code is obtained than if
+values are assigned when the variable is used.</p>
+
+<p>A variable must always be initialized before use.  Normally, the
+compiler gives a warning if a variable is undefined.  It is then
+sufficient to take care of such cases.  Instances of a class are
+usually initialized even if no arguments are provided in the
+declaration (the empty constructor is invoked).  To declare a variable
+that has been initialized in another file, the keyword
+<code>extern</code> is always used.</p>
+
+<p>By always initializing variables, instead of assigning values to
+them before they are first used, the code is made more efficient since
+no temporary objects are created for the initialization.  For objects
+having large amounts of data, this can result in significantly faster
+code.</p>
+
+<h3><em>Exception to <a name="exr38" href="#rule38">Rule 38</a></em></h3>
+<p>No
+exceptions.</p>
+
+<h3><em>Exception to <a name="exr39" href="#rule39">Rule 39</a></em></h3>
+<p>No
+exceptions.</p>
+
+<h3><em>Exception to <a name="exr40" href="#rule40">Rule 40</a></em></h3>
+<p>No
+exceptions.</p>
+
+<h3><em>Exception to <a name="exr41" href="#rule41">Rule 41</a></em></h3>
+<p>In
+certain special cases, a variable is assigned the value of a
+complicated expression; it may then be unnecessary to give the
+variable an initial value.  See <a href="#ex44">Example 44</a>.</p>
+
+<h3><a name="ex44">Example 44</a></h3>
+<p>Initialization instead of Assignment</p>
+<pre> // Do not do this!
+ // int i;
+ // ... 1022 lines of code
+ // i = 10;
+
+ int j = 10; // Better
+
+ class Special // Array of this class is used to initialize
+ { // MyClass::complicated
+ public:
+ Special(); // Default constructor
+ int isValid() const;
+ int value() const;
+ };
+
+ const int Magic = 1066;
+ Special specialInit[Magic];
+
+ class MyClass
+ {
+ public:
+ MyClass( const char* init ); // Constructor
+ // ...
+ private:
+ String privateString;
+ int complicated;
+ };
+
+ // Do not do this! Inefficient code.
+ // Empty constructor + assignment operator called for privateString
+ //
+ // MyClass::MyClass( const char* init )
+ // {
+ // privateString = init;
+ // ...
+ // }
+
+ MyClass::MyClass( const char* init ) : privateString( init ) // Better
+ {
+ // Special case - complicated expression
+
+ for( int i = 0; i &lt; Magic; i++ ) // No! You should enclose "for"
+ if ( specialInit[i].isValid() ) // loops in braces! See <a href="#rec25">Rec. 25</a>!
+ {
+ complicated = specialInit[i].value();
+ break;
+ }
+ }
+</pre>
+
+<h1><a name="12" href="#toc12">12</a> Pointers and References</h1>
+
+<h3><a name="rule42">Rule 42</a></h3>
+<p>Do not compare a pointer to <code>NULL</code> or assign
+<code>NULL</code> to a pointer; use <code>0</code> instead.</p>
+
+<h3><a name="rec48">Rec. 48</a></h3>
+<p>Pointers to pointers should
+whenever possible be avoided.</p>
+
+<h3><a name="rec49">Rec. 49</a></h3>
+<p>Use a <code>typedef</code> to
+simplify program syntax when declaring function pointers.</p>
+
+<p>According to the ANSI-C standard, <code>NULL</code> is defined
+either as <code>(void*)0</code> or as <code>0</code>.  If this
+definition remains in ANSI-C++, problems may arise.  If
+<code>NULL</code> is defined to have the type void*, it cannot be
+assigned an arbitrary pointer without an explicit type conversion.
+For this reason, we recommend comparisons with <code>0</code> at least
+until the ANSI-C++ committee has made a decision.</p>
+
+<p>Pointers to pointers normally ought not be used.  Instead, a class
+should be declared, which has a member variable of the pointer type.
+This improves the readability of the code and encourages data
+abstraction.  By improving the readability of code, the probability of
+failure is reduced.  One exception to this rule is represented by
+functions which provide interfaces to other languages (such as C).
+These are likely to only allow pre-defined data types to be used as
+arguments in the interface, in which case pointers to pointers are
+needed.  Another example is the second argument to the
+<code>main</code> function, which must have the type
+<code>char*[]</code>.</p>
+
+<p>A function which changes the value of a pointer that is provided as
+an argument, should declare the argument as having the type reference
+to pointer (e.g. <code>char*&amp;</code>).  See <a
+href="#rec42">Rec. 42</a>!</p>
+
+<p><code>typedef</code> is a good way of making code more easily
+maintainable and portable.  See <a href="#18.1">chapter 18.1</a>, <a
+href="#prec1">Port. Rec. 1</a>.  Another reason to use
+<code>typedef</code> is that the readability of the code is improved.
+If pointers to functions are used, the resulting code can be almost
+unreadable.  By making a type declaration for the function type, this
+is avoided.</p>
+
+<p>Function pointers can be used as ordinary functions; they do not
+need to be dereferenced.</p>
+
+<h3><em>Exception to <a name="exr42" href="#rule42">Rule 42</a></em></h3>
+<p>No
+exceptions.</p>
+
+<h3><a name="ex45">Example 45</a></h3>
+<p>Different comparisons of pointers</p>
+<pre> char* sp = new char[100];
+ if ( !sp ) cout &lt;&lt; "New failed!" &lt;&lt; endl; // No!
+ if ( sp == 0 ) cout &lt;&lt; "New failed!" &lt;&lt; endl; // Best
+ if ( sp == NULL ) cout &lt;&lt; "New failed!" &lt;&lt; endl; // ERROR sometimes !!!
+</pre>
+
+<h3><a name="ex46">Example 46</a></h3>
+<p>Pointers to pointers are often unnecessary</p>
+<pre> #include &lt;iostream.h&gt;
+
+ void print_mij(int** m, int dim1, int dim2)
+ {
+ for (int i = 0; i &lt; dim1; i++)
+ {
+ for (int j = 0; j &lt; dim2; j++ )
+ cout &lt;&lt; " " &lt;&lt; ((int*)m)[i*dim2+j];
+ cout &lt;&lt; endl;
+ }
+ }
+
+ // Could be written as:
+
+ class Int_Matrix
+ {
+ public:
+ Int_Matrix(int dim1, int dim2);
+ int value(int,int) const;
+ int dim1() const;
+ int dim2() const;
+ // ..
+ };
+
+ void print_Mij(Int_Matrix m)
+ {
+ for (int i = 0; i &lt; m.dim1(); i++)
+ {
+ for (int j = 0; j &lt; m.dim2(); j++ )
+ cout &lt;&lt; " " &lt;&lt; m.value(i,j);
+ cout &lt;&lt; endl;
+ }
+ }
+</pre>
+
+<h3><a name="ex47">Example 47</a></h3>
+<p>Complicated declarations</p>
+<pre> // func1 is a function: int -&gt; (function : const char* -&gt; int)
+ // i.e. a function having one argument of type int and returning
+ // a pointer to a function having one argument of type const char*
+ // and returning an int.
+
+ int (*func1(int))(const char*);
+
+ // func1 of the same type as func2
+
+ typedef int FTYPE(const char*);
+ FTYPE* func2(int);
+
+ int (*(*func1p)(int))(const char*) = func2;
+
+ // Realistic example from signal.h
+
+ void (*signal(int,void (*)(int)))(int);
+</pre>
+
+<h3><a name="ex48">Example 48</a></h3>
+<p>Syntax simplification of
+function pointers using a <code>typedef</code></p>
+<pre> #include &lt;math.h&gt;
+
+ // Ordinary messy way of declaring pointers to functions:
+ // double ( *mathFunc ) ( double ) = sqrt;
+
+ // With a typedef, life is filled with happiness (chinese proverb):
+ typedef double MathFuncType( double );
+ MathFuncType* mathFunc = sqrt;
+
+ void
+ main()
+ {
+ // You can invoke the funktion in an easy or complicated way
+ double returnValue1 = mathFunc( 23.0 ); // Easy way
+ double returnValue2 = ( *mathFunc )( 23.0 ); // No! Correct, but complicated
+ }
+
+</pre>
+
+<h1><a name="13" href="#toc13">13</a> Type Conversions</h1>
+
+<h3><a name="rule43">Rule 43</a></h3>
+<p>Never use explicit type conversions (casts).</p>
+
+<h3><a name="rule44">Rule 44</a></h3>
+<p>Do not write code which depends on functions that use implicit type
+conversions.</p>
+
+<h3><a name="rule45">Rule 45</a></h3>
+<p>Never convert pointers to objects of a derived class to pointers to
+objects of a virtual base class.</p>
+
+<h3><a name="rule46">Rule 46</a></h3>
+<p>Never convert a <code>const</code> to a non-<code>const</code>.</p>
+
+<p>A type conversion may either be explicit or implicit, depending on
+whether it is ordered by the programmer or by the compiler.  Explicit
+type conversions (casts) are used when a programmer want to get around
+the compiler's typing system; for success in this endeavour, the
+programmer must use them correctly.  Problems which the compiler
+avoids may arise, such as if the processor demands that data of a
+given type be located at certain addresses or if data is truncated
+because a data type does not have the same size as the original type
+on a given platform.  Explicit type conversions between objects of
+different types lead, at best, to code that is difficult to read.</p>
+
+<p>Explicit type conversions (casts) can be motivated if a base class
+pointer to a derived class pointer is needed.  This happens when, for
+example, a heterogeneous container class is used to implement a
+container class to store pointers to derived class objects.  This new
+class can be made "type-safe" if the programmer excludes other objects
+than derived class pointers from being stored.  In order for this
+implementation to work, it is necessary that the base class pointers
+are converted to derived class pointers when they are removed from the
+heterogeneous container class.</p>
+
+<p>The above reason for using explicit casts will hopefully disappear
+when templates are introduced into C++.</p>
+
+<p>It is sometimes said that explicit casts are to object-oriented
+programming, what the goto statement was to structured
+programming.</p>
+
+<p>There are two kinds of implicit type conversions: either there is a
+conversion function from one type to another, written by the
+programmer, or the compiler does it according to the language
+standard.  Both cases can lead to problems.</p>
+
+<p>C++ is lenient concerning the variables that may be used as
+arguments to functions.  If there is no function which exactly matches
+the types of the arguments, the compiler attempts to convert types to
+find a match.  The disadvantage in this is that if more than one
+matching function is found, a compilation error will be the result.
+Even worse is that existing code which the compiler has allowed in
+other contexts, may contain errors when a new implicit type conversion
+is added to the code.  Suddenly, there may be more than one matching
+function.</p>
+
+<p>Another unpredictable effect of implicit type conversions is that
+temporary objects are created during the conversion.  This object is
+then the argument to the function; not the original object.  The
+language definition forbids the assignment of temporary objects to
+non-constant references, but most compilers still permit this.  In
+most cases, this can mean that the program does not work properly.  Be
+careful with constructors that use only one argument, since this
+introduces a new type conversion which the compiler can unexpectedly
+use when it seems reasonable in a given situation.</p>
+
+<p>Virtual base classes give rise to other type conversion problems.
+It is possible to convert a pointer, to an instance of a class which
+has a virtual base class, to a pointer to an object of that virtual
+base class.  The opposite conversion is not allowed, i.e. the type
+conversion is not reversible.  For this reason, we do not recommend
+the conversion of a derived class pointer to a virtual base class
+pointer.</p>
+
+<p>In order to return a non-<code>const</code> temporary object, it
+sometimes happens that an explicit type conversion is used to convert
+<code>const</code> member data to non-<code>const</code>.  This is bad
+practice that should be avoided, primarily because it should be
+possible for a compiler to allocate constants in ROM (Read Only
+Memory).</p>
+
+<h3><em>Exception to <a name="exr43" href="#rule43">Rule 43</a></em></h3>
+<p>An explicit type conversion (cast) is preferable to a doubtful
+implicit type conversion.</p>
+
+<p>Explicit type conversions may be used to convert a pointer to a
+base class to a pointer of a derived class within a type-safe
+container class that is implemented using a heterogeneous container
+class.</p>
+
+<p>Explicit type conversion must be used to convert an anonymous
+bit-stream to an object.  This situation occurs when unpacking a
+message in a message buffer.  Generally, explicit type conversions are
+needed for reading an external representation of an object.</p>
+
+<h3><em>Exception to <a name="exr44" href="#rule44">Rule 44</a></em></h3>
+<p>At times it is desirable to have constructors that use only one
+argument.  By performing an explicit type conversion, the correctness
+of the code does not depend on the addition.  See the <a
+href="#exr22">Exception to Rule 22</a>!</p>
+
+<h3><em>Exception to <a name="exr45" href="#rule45">Rule 45</a></em></h3>
+<p>If a virtual base class is to contain a pure virtual function which
+converts a virtual base class pointer to a derived class pointer, this
+can be made to work by defining the function in the derived class.
+Note that this implies that all derived classes must be known in the
+virtual base class.  See <a href="#ex52">Example 52</a>!</p>
+
+<h3><em>Exception to <a name="exr46" href="#rule46">Rule 46</a></em></h3>
+<p>No exceptions.  Use pointers to data allocated outside the class,
+when necessary.  See <a href="#ex54">Example 54</a> and <a
+href="#ex55">Example 55</a>.</p>
+
+<h3><a name="ex49">Example 49</a></h3>
+<p>Constructors with a single argument that may
+imply dangerous type conversions</p>
+<pre> class String
+ {
+ public:
+ String( int length ); // Allocation constructor
+ // ...
+ };
+
+ // Function that receives an object of type String as an argument
+ void foo( const String&amp; aString );
+
+ // Here we call this function with an int as argument
+ int x = 100;
+ foo( x ); // Implicit conversion: foo( String( x ) );
+</pre>
+
+<h3><a name="ex50">Example 50</a></h3>
+<p>A use of implicit type conversion</p>
+<pre> // String.hh
+
+ class String
+ {
+ public:
+ String( char* cp ); // Constructor
+ operator const char* () const; // Conversion operator to const char*
+ // ...
+ };
+
+ void foo( const String&amp; aString );
+ void bar( const char* someChars );
+
+ // main.cc
+
+ main()
+ {
+ foo( "hello" ); // Implicit type conversion char* -&gt; String
+ String peter = "pan";
+ bar( peter ); // Implicit type conversion String -&gt; const char*
+ }
+</pre>
+
+<h3><a name="ex51">Example 51</a></h3>
+<p>When implicit type conversion gives unpleasant results</p>
+<pre> // This function looks bulletproof, but it isn't.
+ // Newer versions of compilers should flag this as an error.
+ void
+ mySwap( int&amp; x, int&amp; y )
+ {
+ int temp = x;
+ x = y;
+ y = temp;
+ }
+
+ int i = 10;
+ unsigned int ui = 20;
+ mySwap( i, ui ); // What really happens here is:
+ // int T = int( ui ); // Implicit conversion
+ // mySwap( i, T ); // ui is of course not changed!
+ // Fortunately, the compiler warns for this !
+</pre>
+
+<h3><a name="ex52">Example 52</a></h3>
+<p>Conversion of derived class pointer to a virtual base class pointer
+is irreversible</p>
+<pre> class VirtualBase
+ {
+ public:
+ virtual class Derived* asDerived() = 0;
+ };
+
+ class Derived : virtual public VirtualBase
+ {
+ public:
+ virtual Derived* asDerived();
+ };
+
+ Derived*
+ Derived::asDerived()
+ {
+ return this;
+ }
+
+ void
+ main()
+ {
+ Derived d;
+ Derived* dp = 0;
+ VirtualBase* vp = (VirtualBase*)&amp;d;
+
+ dp = (Derived*)vp; // ERROR! Cast from virtual base class pointer
+ dp = vp-&gt;asDerived(); // OK! Cast in function asDerived
+ }
+</pre>
+
+<h3><a name="ex53">Example 53</a></h3>
+<p>Addition which leads to a compile-time error</p>
+<pre> // String.hh
+
+ class String
+ {
+ public:
+ String( char* cp ); // Constructor
+ operator const char* () const; // Conversion operator to const char*
+ // ...
+ };
+
+ void foo( const String&amp; aString );
+ void bar( const char* someChars );
+
+ // Word.hh
+
+ class Word
+ {
+ public:
+ Word( char* cp ); // Constructor
+ // ...
+ };
+
+ // Function foo overloaded
+
+ void foo( const Word&amp; aWord );
+
+ // ERROR: foo( "hello" ) MATCHES BOTH:
+ // void foo( const String&amp; );
+ // AND void foo( const Word&amp; );
+
+ //main.cc
+
+ main()
+ {
+ foo( "hello" ); // Error ambiguous type conversion !
+ String peter = "pan";
+ bar( peter ); // Implicit type conversion String -&gt; const char*
+ }
+</pre>
+
+<h3><a name="ex54">Example 54</a></h3>
+<p>For more efficient execution, remove
+<code>const</code>-ness when storing intermediate results</p>
+<pre> // This is code is NOT recommended
+
+ #include &lt;math.h&gt;
+
+ class Vector
+ {
+ public:
+ Vector(int, const int []); // Constructor
+ double length() const; // length = sqrt(array[1]*array[1] + ... )
+ void set(int x, int value);
+ // ...
+ private:
+ int size;
+ int* array;
+ double lengthCache; // to cache calculated length
+ int hasChanged; // is it necessary to re-calculate length ?
+ };
+
+ double
+ Vector::length() const
+ {
+ if (hasChanged) // Do we need to re-calculate length
+ {
+ ((Vector*)this)-&gt;hasChanged=0; // No! Cast away const
+ double quadLength = 0;
+ for ( int i = 0; i &lt; size; i++ )
+ {
+ quadLength += pow(array[i],2);
+ }
+ ((Vector*)this)-&gt;lengthCache = sqrt(quadLength); // No! Cast away const
+ }
+ return lengthCache;
+ }
+
+ void
+ Vector::set( int nr, int value )
+ {
+ if ( nr &gt;= size ) error( "Out Of Bounds");
+ array[nr]=value;
+ hasChanged = 1;
+ }
+</pre>
+
+<h3><a name="ex55">Example 55</a></h3>
+<p>Alternative to removing <code>const</code>-ness for more efficient execution</p>
+<pre>
+ // This is code is safer than Example 54 but could be inefficient
+
+ #include &lt;math.h&gt;
+
+ class Vector
+ {
+ public:
+ Vector(int, const int []); // Constructor
+ double length() const; // length = sqrt(array[1]*array[1] + ... )
+ void set(int x, int value);
+ // ...
+ private:
+ int size;
+ int* array;
+ double* lengthCache; // to cache length in
+ int* hasChanged; // is it necessary to re-calculate length ?
+ };
+
+ Vector::Vector(int sizeA, const int arrayA[])
+ : size(sizeA), array( new int[sizeA] ),
+ hasChanged(new int(1)), lengthCache(new double)
+ {
+ for ( int i = 0; i &lt; size; i++ )
+ {
+ array[i] = arrayA[i];
+ }
+ }
+
+ Vector::~Vector() // Destructor
+ {
+ delete array;
+ delete hasChanged;
+ delete lengthCache;
+ }
+
+ // Continue on next page !
+ double
+ Vector::length() const
+ {
+ if (hasChanged) // Do we need to re-calculate length ?
+ {
+ *hasChanged=0;
+ double quadLength = 0;
+ for ( int i = 0; i &lt; size; i++ )
+ {
+ quadLength += pow(array[i],2);
+ }
+ *lengthCache = sqrt(quadLength);
+ }
+ return lengthCache;
+ }
+
+ void
+ Vector::set( int nr, int value )
+ {
+ if ( nr &gt;= size ) error( "Out Of Bounds");
+ array[nr]=value;
+ *hasChanged = 1;
+ }
+</pre>
+
+<h1><a name="14" href="#toc14">14</a> Flow Control Structures</h1>
+
+<h3><a name="rule47">Rule 47</a></h3>
+<p>The code following a <code>case</code> label must always be
+terminated by a <code>break</code> statement.</p>
+
+<h3><a name="rule48">Rule 48</a></h3>
+<p>A <code>switch</code> statement must always contain a
+<code>default</code> branch which handles unexpected cases.</p>
+
+<h3><a name="rule49">Rule 49</a></h3>
+<p>Never use <code>goto</code>.</p>
+
+<h3><a name="rec50">Rec. 50</a></h3>
+<p>The choice of loop construct (<code>for</code>, <code>while</code>
+or <code>do</code>-<code>while</code>) should depend on the specific
+use of the loop.</p>
+
+<h3><a name="rec51">Rec. 51</a></h3>
+<p>Always use <code>unsigned</code> for variables which cannot
+reasonably have negative values.</p>
+
+<h3><a name="rec52">Rec. 52</a></h3>
+<p>Always use inclusive lower limits and exclusive upper limits.</p>
+
+<h3><a name="rec53">Rec. 53</a></h3>
+<p>Avoid the use of <code>continue</code>.</p>
+
+<h3><a name="rec54">Rec. 54</a></h3>
+<p>Use <code>break</code> to exit a loop if this avoids the use of flags.</p>
+
+<h3><a name="rec55">Rec. 55</a></h3>
+<p>Do not write logical expressions of the type <code>if(test)</code>
+or <code>if(!test)</code> when <code>test</code> is a pointer.</p>
+
+<p>Each loop construct has a specific usage.  A <code>for</code> loop
+is used only when the loop variable is increased by a constant amount
+for each iteration and when the termination of the loop is determined
+by a constant expression.  In other cases, <code>while</code> or
+<code>do</code>-<code>while</code> should be used.  When the
+terminating condition can be evaluated at the beginning of the loop,
+<code>while</code> should be used; <code>do</code>-<code>while</code>
+is used when the terminating condition is best evaluated at the end of
+the loop.</p>
+
+<p>Goto breaks the control flow and can lead to code that is difficult
+to comprehend.  In addition, there are limitations for when
+<code>goto</code> can be used.  For example, it is not permitted to
+jump past a statement that initializes a local object having a
+destructor.</p>
+
+<p>Variables representing size or length are typical candidates for
+<code>unsigned</code> declarations.  By following this recommendation
+some unpleasant errors can be avoided.</p>
+
+<p>It is best to use inclusive lower and exclusive upper limits.
+Instead of saying that x is in the interval <code>x&gt;=23</code> and
+<code>x&lt;=42</code>, use the limits <code>x&gt;=23</code> and
+<code>x&lt;43</code>.  The following important claims then apply:</p>
+
+<ul>
+ <li>The size of the interval between the limits is the difference
+ between the limits.</li>
+ <li>The limits are equal if the interval is empty.</li>
+ <li>The upper limit is never less than the lower limit.</li>
+</ul>
+
+<p>By being consistent in this regard, many difficult errors will be
+avoided.</p>
+
+<p>If the code which follows a case label is not terminated by
+<code>break</code>, the execution continues after the next case label.
+This means that poorly tested code can be erroneous and still seem to
+work.</p>
+
+<p><code>continue</code> can be used to exit from loops.  However,
+code may be more comprehensible by using an <code>else</code> clause
+instead.</p>
+
+<p>C++ has a very loose and, simultaneously, very free way of
+determining if an expression is true or false.  If an expression is
+evaluated as 0, it is false; otherwise, it is considered to be
+true.</p>
+
+<p>We do not recommend logical tests such as <code>if(pointer)</code>
+if <code>pointer</code> is a variable of pointer-type.  The only
+reason is readablity; many programmers find it difficult to read such
+code.</p>
+
+<p>Consider the scope within which an iteration variable is visible.
+A variable that is declared within a <code>for</code> statement is
+currently only visible in the nearest enclosing block.  The
+standardization committee for C++ is however discussing a language
+modification regarding this point.  No decision has yet been made.
+Still, this problem is avoided if the control structure is
+encapsulated in a compound statement.</p>
+
+<h3><em>Exception to <a name="exr47" href="#rule47">Rule 47</a></em></h3>
+
+<p>When several <code>case</code> labels are followed by the same
+block of code, only one <code>break</code> statement is needed.  Also,
+other statements than <code>break</code> may be used to exit a
+<code>switch</code> statement, such as <code>return</code>.</p>
+
+<h3><em>Exception to <a name="exr48" href="#rule48">Rule 48</a></em></h3>
+<p>No exceptions.</p>
+<h3><em>Exception to <a name="exr49" href="#rule49">Rule 49</a></em></h3>
+
+<p>For extremely time-critical applications or for fault handling,
+<code>goto</code> may be permitted.  Every such usage must be
+carefully motivated.</p>
+
+<h3><a name="ex56">Example 56</a></h3>
+<p>Problem using <code>unsigned</code> loop variables</p>
+<pre> for( unsigned int i = 3; i &gt;= 0; --i )
+ {
+ // This loop will never terminate, since i cycles through:
+ // 3, 2, 1, 0, 4294967295, 4294967294, etc ... on a SparcStation
+ // Note that this example does not follow the rules: i &gt;= 0
+ // in the for statement.  See next example !
+ }
+</pre>
+
+<h3><a name="ex57">Example 57</a></h3>
+<p>Visibility of variable declared in <code>for</code> loop</p>
+<pre> for ( int index = 0; index &lt; 10; index++ )
+ {
+ cout &lt;&lt; index;
+ }
+
+ int index = 3; // ERROR, THIS IS AN ILLEGAL RE-DECLARATION OF index
+ // BECAUSE index IS DECLARED IN BLOCK-SCOPE.
+</pre>
+
+<h3><a name="ex58">Example 58</a></h3>
+<p>Dangerous switch/case statement</p>
+<pre> switch ( tag )
+ {
+ case A:
+ {
+ // Do something
+ // Next statement is a call to foo() inside next case
+ }
+
+ case B:
+ {
+ foo();
+ // Do something else
+ break; // Now we leave the switch-statement
+ }
+
+ default:
+ {
+ // If no match in above cases, this is executed
+ exit( 1 );
+ }
+ }
+</pre>
+
+<h3><a name="ex59">Example 59</a></h3>
+<p>Good and bad ways of setting limits for loop variables</p>
+<pre> int a[10];
+ int ten = 10;
+ int nine = 9;
+
+ // Good way to do it:
+ for( int i = 0; i &lt; ten; i++ ) // Loop runs 10-0=10 times
+ {
+ a[i] = 0;
+ }
+
+ // Bad way to do it:
+ for( int j = 0; j &lt;= nine; j++ ) // Loop runs 10 times, but 9-0=9 !!!
+ {
+ a[j] = 0;
+ }
+</pre>
+
+<h3><a name="ex60">Example 60</a></h3>
+<p>Using <code>break</code> to exit a loop, no flags are needed.</p>
+<pre> do // This way:
+ {
+ if ( Something )
+ {
+ // Do something
+ break;
+ }
+ } while( someCondition );
+
+ int endFlag = 0; // Is better than this:
+ do
+ {
+ if ( /* Something */ )
+ {
+ // Do something
+ endFlag = 1;
+ }
+ } while( someCondition &amp;&amp; !endFlag );
+</pre>
+
+<h3><a name="ex61">Example 61</a></h3>
+<p>By using an extra `<code>else</code>' clause, <code>continue</code>
+is avoided and the code can be comprehended.</p>
+<pre> while( /* Something */ ) // This way is more clear
+ {
+ if( /* Something */ )
+ {
+ // Do something
+ }
+
+ else
+ {
+ // Do something else
+ }
+ }
+
+ while( /* Something */ ) // Than using continue
+ {
+ if( /* Something */ )
+ {
+ // Do something
+ continue; // No !
+ }
+ // Do something else
+ }
+</pre>
+
+<h1><a name="15" href="#toc15">15</a> Expressions</h1>
+
+<h3><a name="rec56">Rec. 56</a></h3>
+<p>Use parentheses to clarify the order of evaluation for operators in
+expressions.</p>
+
+<p>There are a number of common pitfalls having to do with the order
+of evaluation for operators in an expression.  Binary operators in C++
+have associativity (either leftwards or rightwards) and precedence.
+If an operator has leftwards associativity and occurs on both sides of
+a variable in an expression, then the variable belongs to the same
+part of the expression as the operator on its left side.</p>
+
+<p>In doubtful cases, parentheses always are to be used to clarify the
+order of evaluation.</p>
+
+<p>Another common mistake is to confuse the assignment operator and
+the equality operator.  Since the assignment operator returns a value,
+it is entirely permitted to have an assignment statement instead of a
+comparison expression.  This, however, most often leads straight to an
+error.</p>
+
+<p>C++ allows the overloading of operators, something which can easily
+become confusing.  For example, the operators <code>&lt;&lt;</code>
+(shift left) and <code>&gt;&gt;</code> (shift right) are often used
+for input and output.  Since these were originally bit operations, it
+is necessary that they have higher priority than relational operators.
+This means that parentheses must be used when outputting the values of
+logical expressions.</p>
+
+<h3><a name="ex62">Example 62</a></h3>
+<p>Problem with the order of evaluation</p>
+<pre> // Interpreted as ( a&lt;b )&lt;c, not ( a&lt;b ) &amp;&amp; ( b&lt;ac )
+ if ( a&lt;b&lt;c )
+ {
+ // ...
+ }
+
+ // Interpreted as a &amp; ( b&lt;8 ), not ( a &amp; b )&lt;8
+ if ( a &amp; b&lt;8 )
+ {
+ // ...
+ }
+</pre>
+
+<h3><a name="ex63">Example 63</a></h3>
+<p>When parentheses are recommended</p>
+<pre> int i = a &gt;= b &amp;&amp; c&lt;d &amp;&amp; e + f &lt; = g + h; // No!
+ int j = ( a &gt;= b ) &amp;&amp; ( c&lt;d ) &amp;&amp; (( e + f ) &lt; = ( g + h )); // Better
+</pre>
+
+<h1><a name="16" href="#toc16">16</a> Memory Allocation</h1>
+
+<h3><a name="rule50">Rule 50</a></h3>
+<p>Do not use <code>malloc</code>, <code>realloc</code> or
+<code>free</code>.</p>
+
+<h3><a name="rule51">Rule 51</a></h3>
+<p>Always provide empty brackets ("<code>[]</code>") for
+<code>delete</code> when deallocating arrays.</p>
+
+<h3><a name="rec57">Rec. 57</a></h3>
+<p>Avoid global data if at all possible.</p>
+
+<h3><a name="rec58">Rec. 58</a></h3>
+<p>Do not allocate memory and expect that someone else will deallocate
+it later.</p>
+
+<h3><a name="rec59">Rec. 59</a></h3>
+<p>Always assign a new value to a pointer that points to deallocated
+memory.</p>
+
+<p>In C++ data can be allocated statically, dynamically on the stack,
+or dynamically on the heap.  There are three categories of static
+data: global data, global class data, and static data local to a
+function.</p>
+
+<p>In C <code>malloc</code>, <code>realloc</code> and
+<code>free</code> are used to allocate memory dynamically on the heap.
+This may lead to conflicts with the use of the <code>new</code> and
+<code>delete</code> operators in C++.</p>
+
+<p>It is dangerous to:</p>
+<ol>
+ <li>invoke <code>delete</code> for a pointer obtained via
+ <code>malloc</code>/<code>realloc</code>,</li>
+
+ <li>invoke <code>malloc</code>/<code>realloc</code> for objects
+ having constructors,</li>
+
+ <li>invoke <code>free</code> for anything allocated using
+ <code>new</code>.</li>
+</ol>
+
+<p>Thus, avoid whenever possible the use of <code>malloc</code>,
+<code>realloc</code> and <code>free</code>.</p>
+
+<p>If an array <code>a</code> having a type <code>T</code> is
+allocated, it is important to invoke <code>delete</code> in the
+correct way.  Only writing <code>delete a;</code> will result in the
+destructor being invoked only for the first object of type
+<code>T</code>.  By writing <code>delete [m] a;</code> where
+<code>m</code> is an integer which is greater than the number of
+objects allocated earlier, the destructor for <code>T</code> will be
+invoked for memory that does not represent objects of type
+<code>T</code>.  The easiest way to do this correctly is to write
+<code>delete [] a;</code> since the destructor will then be invoked
+only for those objects which have been allocated earlier.</p>
+
+<p>Static data can cause several problems.  In an environment where
+parallel threads execute simultaneously, they can make the behaviour
+of code unpredictable, since functions having static data are not
+reentrant.</p>
+
+<p>One difference between ANSI-C and C++ is in how constants are
+declared.  If a variable is declared as a constant in ANSI-C, it has
+the storage class <code>extern</code> (global).  In C++, however, it
+normally has the storage class <code>static</code> (local).  The
+latter means that a new instance of the constant object is created
+each time a file includes the file which contains the declaration of
+the object, unless the variable is explicitly declared
+<code>extern</code> in the include file.</p>
+
+<p>An extern declaration in C++ does not mean that the variable is
+initialized; there must be a definition for this in a definition file.
+Static constants that are defined within a class are always external
+and must always be defined separately.</p>
+
+<p>It may, at times, be tempting to allocate memory for an object
+using <code>new</code>, expecting someone else to deallocate the
+memory.  For instance, a function can allocate memory for an object
+which is then returned to the user as the return value for the
+function.  There is no guarantee that the user will remember to
+deallocate the memory and the interface with the function then becomes
+considerably more complex.</p>
+
+<p>Pointers that point to deallocated memory should either be set to 0
+or be given a new value to prevent access to the released memory.
+This can be a very difficult problem to solve when there are several
+pointers which point to the same memory, since C++ has no garbage
+collection.</p>
+
+<h3><em>Exception to <a name="exr50" href="#rule50">Rule 50</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><em>Exception to <a name="exr51" href="#rule51">Rule 51</a></em></h3>
+<p>No exceptions.</p>
+
+<h3><a name="ex64">Example 64</a></h3>
+<p>Right and wrong ways to invoke <code>delete</code> for arrays with
+destructors</p>
+<pre> int n = 7;
+ T* myT = new T[n]; // T is a type with defined constructors and destructors
+ // ...
+ delete myT; // No! Destructor only called for first object in array a
+ delete [10] myT; // No! Destructor called on memory out of bounds in array a
+ delete [] myT; // OK, and always safe!
+</pre>
+
+<h3><a name="ex65">Example 65</a></h3>
+<p>Dangerous memory management</p>
+<pre> String myFunc( const char* myArgument )
+ {
+ String* temp = new String( myArgument );
+ return *temp;
+ // temp is never deallocated and the user of myFunc cannot deallocate
+ // because a temporary copy of that instance is returned.
+ }
+</pre>
+
+<h2><a name="17" href="#toc17">17</a> Fault Handling</h2>
+
+<h3><a name="rec60">Rec. 60</a></h3>
+<p>Make sure that fault handling is done so that the transfer to
+exception handling (when this is available in C++) may be easily
+made.</p>
+
+<h3><a name="rec61">Rec. 61</a></h3>
+<p>Check the fault codes which may be received from library functions
+even if these functions seem foolproof.</p>
+
+<p>In November 1990, the ANSI C++ committee accepted a proposal for
+exception handling which is described in chapter 15 of ref. 1.  When
+designing fault handling in code, it is appropriate to consider being
+able to make a smooth transfer to exception handling.  For example,
+instead of using ordinary fault codes, which may necessitate a lot of
+re-programming when exception handling is available, a call can be
+made to a function <code>void fault(const char*)</code> which sends a
+fault message (somewhere) and then terminates execution in some
+way.</p>
+
+<p>System functions (those which are specific to UNIX) ought to be
+used with care if the code is to be portable.  If such functions are
+used, the possible fault codes that may be received should be
+carefully checked.</p>
+
+<p>Two important characteristics of a robust system are that all
+faults are reported and, if the fault is so serious that continued
+execution is not possible, the process is terminated.  In this way,
+the propagation of faults through the system is avoided.  It is better
+to have a process crash, than to spread erroneous information to other
+processes.  In achieving this goal, it is important to always test
+fault codes from library functions.  The opening or closing of files
+may fail, allocation of data may fail, etc.  One test too many is
+better than one test too few.  Our own functions should preferably not
+return fault codes, but should instead take advantage of exception
+handling.</p>
+
+<h3><a name="ex66">Example 66</a></h3>
+<p>Future exception handling in C++</p>
+<pre> // The top function where we catch exceptions thrown in called functions
+ int f()
+ {
+ // We suspect that something can go wrong when function g() is called.
+ // Therefore, we enclose the call in a try block.
+ try
+ {
+ return g(); // This is the try block
+ }
+
+ // If any exceptions, having a given type, were thrown when g()
+ // was executing, they are caught in these two catch blocks.
+ catch ( int x ) // catches int
+ {
+ cerr &lt;&lt; "Number " &lt;&lt; x &lt;&lt; " happened !" &lt;&lt; endl;
+ return x;
+ }
+
+ catch ( char* x ) // catches char*
+ {
+ // Respond in some other way
+ }
+
+ // Anything else that is thrown, is thrown up to the function that calls f()
+ }
+
+ // This function has no try or catch block. When the exception is thrown
+ // in function h(), it is thrown up to the function f().
+ int g()
+ {
+ return h();
+ }
+
+ extern int somethingIsVeryWrongAndICannotHandleThisAnyMore();
+
+ int h()
+ {
+ // Here we find out that something went wrong, and throw an exception
+ if (somethingIsVeryWrongAndICannotHandleThisAnyMore())
+ {
+ // In this case, we throw an int as exception, but almost any object
+ // can be thrown. See Errata for "The Annotated C++ Reference Manual"
+ // section 15.7.
+ throw 2;
+ }
+
+ // Keep on trucking if all is OK
+ }
+</pre>
+
+<h1><a name="18" href="#toc18">18</a> Portable Code</h1>
+<h2><a name="18.1" href="#toc18.1">18.1</a> Data Abstraction</h2>
+
+<h3><a name="prec1">Port. Rec. 1</a></h3>
+<p>Avoid the direct use of pre-defined data types in declarations.</p>
+
+<p>An excellent way of transforming your world to a "vale of tears" is
+to directly use the pre-defined data types in declarations.  If it is
+later necessary, due to portability problems, to change the return
+type of a function, it may be necessary to make change at a large
+number of places in the code.  One way to avoid this is to declare a
+new type name using classes or typedefs to represent the types of
+variables used.  In this way, changes can be more easily made.  This
+may be used to give data a physical unit, such as kilogram or meter.
+Such code is more easily reviewed.  (For example, when the code is
+functioning poorly, it may be noticed that a variable representing
+meters has been assigned to a variable representing kilograms.)  It
+should be noted that a <code>typedef</code> does not create a new
+type, only an alternative name for a type.  This means that if you
+have declared <code>typedef int Error</code>, a variable of the type
+<code>Error</code> may be used anywhere where an <code>int</code> may
+be used.</p>
+
+<p>See also <a href="#12">chapter 12</a>, <a
+href="#rec49">Rec. 49</a>!</p>
+
+<h3><a name="ex67">Example 67</a></h3>
+<p>Type declarations using <code>typedef</code></p>
+<pre> // Instead of:
+ long int time;
+ short int mouseX;
+ char* menuName;
+
+ // Use (for example):
+ typedef long int TimeStamp;
+ typedef short int Coordinate;
+ class String { /* ... */ };
+
+ // and:
+ TimeStamp time;
+ Coordinate mouseX;
+ String menuName;
+</pre>
+
+<h2><a name="18.2" href="#toc18.2">18.2</a> Sizes of Types</h2>
+
+<h3><a name="prec2">Port. Rec. 2</a></h3>
+<p>Do not assume that an <code>int</code> and a <code>long</code> have
+the same size.</p>
+
+<h3><a name="prec3">Port. Rec. 3</a></h3>
+<p>Do not assume that an <code>int</code> is 32 bits long (it may be
+only 16 bits long).</p>
+
+<h3><a name="prec4">Port. Rec. 4</a></h3>
+<p>Do not assume that a <code>char</code> is signed or unsigned.</p>
+
+<h3><a name="prec5">Port. Rec. 5</a></h3>
+<p>Always set <code>char</code> to unsigned if 8-bit ASCII is used.</p>
+
+<p>In the definition of the C++ language, it has not yet been decided
+if a <code>char</code> is signed or unsigned.  This decision has
+instead been left to each compiler manufacturer.  If this is forgotten
+and this characteristic is exploited in one way or another, some
+difficult bugs may appear in the program when another compiler is
+used.</p>
+
+<p>If 8-bit ASCII is used (as is quite likely in the future) and
+comparisons are made of two characters, it is important that
+<code>unsigned char</code> is used.</p>
+
+<h2><a name="18.3" href="#toc18.3">18.3</a> Type Conversions</h2>
+
+<h3><a name="prec6">Port. Rec. 6</a></h3>
+<p>Be careful not to make type conversions from a "shorter" type to a "longer" one.</p>
+
+<h3><a name="prec7">Port. Rec. 7</a></h3>
+<p>Do not assume that pointers and integers have the same size.</p>
+
+<h3><a name="prec8">Port. Rec. 8</a></h3>
+<p>Use explicit type conversions for arithmetic using signed and unsigned values.</p>
+
+<p>A processor architecture often forbids data of a given size to be
+allocated at an arbitrary address.  For example, a word must begin on
+an "even" address for MC680x0.  If there is a pointer to a
+<code>char</code> which is located at an "odd" address, a type
+conversion from this <code>char</code> pointer to an <code>int</code>
+pointer will cause the program to crash when the <code>int</code>
+pointer is used, since this violates the processor's rules for
+alignment of data.</p>
+
+<h2><a name="18.4" href="#toc18.4">18.4</a> Data Representation</h2>
+
+<h3><a name="prec9">Port. Rec. 9</a></h3>
+<p>Do not assume that you know how an instance of a data type is represented in memory.</p>
+<h3><a name="prec10">Port. Rec. 10</a></h3>
+<p>Do not assume that <code>long</code>s, <code>float</code>s, <code>double</code>s or <code>long double</code>s may begin at arbitrary addresses.</p>
+
+<p>The representation of data types in memory is highly
+machine-dependent.  By allocating data members to certain addresses, a
+processor may execute code more efficiently.  Because of this, the
+data structure that represents a class will sometime include holes and
+be stored differently in different process architectures.  Code which
+depends on a specific representation is, of course, not portable.</p>
+
+<p>See <a href="#18.3">18.3</a> for explanation of <a
+href="#prec10">Port. Rec. 10</a>.</p>
+
+<h2><a name="18.5" href="#toc18.5">18.5</a> Underflow/Overflow</h2>
+
+<h3><a name="prec11">Port. Rec. 11</a></h3>
+<p>Do not depend on
+underflow or overflow functioning in any special way.</p>
+
+<h2><a name="18.6" href="#toc18.6">18.6</a> Order of Execution</h2>
+
+<h3><a name="prec12">Port. Rec. 12</a></h3>
+<p>Do not assume that the
+operands in an expression are evaluated in a definite order.</p>
+
+<h3><a name="prec13">Port. Rec. 13</a></h3>
+<p>Do not assume that you
+know how the invocation mechanism for a function is implemented.</p>
+
+<h3><a name="prec14">Port. Rec. 14</a></h3>
+<p>Do not assume that an
+object is initialized in any special order in constructors.</p>
+
+<h3><a name="prec15">Port. Rec. 15</a></h3>
+<p>Do not assume that
+static objects are initialized in any special order.</p>
+
+<p>If a value is modified twice in the same expression, the result of
+the expression is undefined except when the order of evaluation is
+guaranteed for the operators that are used.</p>
+
+<p>The order of initialization for static objects may present
+problems.  A static object may not be used in a constructor, if it is
+not initialized until after the constructor is run.  At present, the
+order of initialization for static objects, which are defined in
+different compilation units, is not defined.  This can lead to errors
+that are difficult to locate (see <a href="#ex69">Example 69</a>).
+There are special techniques for avoiding this.  See <a
+href="#ex29">Example 29</a>!</p>
+
+<h3><a name="ex68">Example 68</a></h3>
+<p>Do not depend on the order of initialization in constructors.</p>
+<pre> #include &lt;iostream.h&gt;
+ class X
+ {
+ public:
+ X(int y);
+ private:
+ int i;
+ int j;
+ };
+
+ inline X::X(int y) : j(y), i(j) // No! j may not be initialized before i !!
+ {
+ cout &lt;&lt; "i:" &lt;&lt; i &lt;&lt; " &amp; " &lt;&lt; "j:" &lt;&lt; j &lt;&lt; endl;
+ }
+
+ main()
+ {
+ X x(7); // Rather unexpected output: i:0 &amp; j:7
+ }
+</pre>
+
+<h3><a name="ex69">Example 69</a></h3>
+<p>Initialization of static objects</p>
+<pre> // Foo.hh
+
+ #include &lt;iostream.h&gt;
+ #include &lt;string.h&gt;
+
+ static unsigned int const Size = 1024;
+
+ class Foo
+ {
+ public:
+ Foo( char* cp ); // Constructor
+ // ...
+ private:
+ char buffer[Size];
+ static unsigned counter; // Number of constructed Foo:s
+ };
+
+ extern Foo foo_1;
+ extern Foo foo_2;
+
+ // Foo1.cc
+ #include "Foo.hh"
+
+ unsigned Foo::counter = 0;
+ Foo foo_1 = "one";
+
+ //Foo2.cc
+ #include "Foo.hh"
+
+ Foo foo_2 = "two";
+
+ Foo::Foo( char* cp ) // Irrational constructor
+ {
+ strncpy( buffer, cp, sizeof(buffer) );
+ foos[counter] = this;
+ switch ( counter++ )
+ {
+ case 0:
+ case 1:
+ cout &lt;&lt; ::foo_1.buffer &lt;&lt; "," &lt;&lt; ::foo_2.buffer &lt;&lt; endl;
+ break;
+ default:
+ cout &lt;&lt; "Hello, world" &lt;&lt; endl;
+ }
+ }
+ // If a program using Foo.hh is linked with Foo1.o and Foo2.o, either
+ // ,two or one, is written on standard output depending on
+ // one,two one,two the order of the files given to the linker.
+</pre>
+
+<h2><a name="18.7" href="#toc18.7">18.7</a> Temporary Objects</h2>
+
+<h3><a name="prec16">Port. Rec. 16</a></h3>
+<p>Do not write code which
+is dependent on the lifetime of a temporary object.</p>
+
+<p>Temporary objects are often created in C++, such as when functions
+return a value.  Difficult errors may arise when there are pointers in
+temporary objects.  Since the language does not define the life
+expectancy of temporary objects, it is never certain that pointers to
+them are valid when they are used.</p>
+
+<p>One way of avoiding this problem is to make sure that temporary
+objects are not created.  This method, however, is limited by the
+expressive power of the language and is not generally recommended.</p>
+
+<p>The C++ standard may someday provide an solution to this problem.
+In any case, it is a subject for lively discussions in the
+standardization committee.</p>
+
+<h3><a name="ex70">Example 70</a></h3>
+<p>Difficult error in a string class which lacks output operator</p>
+<pre> class String
+ {
+ public:
+ operator const char*() const; // Conversion operator to const char*
+ friend String operator+( const String&amp; left, const String&amp; right );
+ // ...
+ };
+
+ String a = "This may go to ";
+ String b = "h***!";
+ // The addition of a and b generates a new temporary String object.
+ // After it is converted to a char* by the conversion operator, it is
+ // no longer needed and may be deallocated. This means that characters
+ // which are already deallocated are printed to cout -&gt; DANGEROUS!!
+ cout &lt;&lt; a + b;
+</pre>
+
+<h2><a name="18.8" href="#toc18.8">18.8</a> Pointer Arithmetic</h2>
+
+<h3><a name="prec17">Port. Rec. 17</a></h3>
+<p>Avoid using shift operations instead of arithmetic operations.</p>
+
+<h3><a name="prec18">Port. Rec. 18</a></h3>
+<p>Avoid pointer arithmetic.</p>
+
+<p>Pointer arithmetic can be portable.  The operators <code>==</code>
+and <code>!=</code> are defined for all pointers of the same type,
+while the use of the operators <code>&lt;</code>, <code>&gt;</code>,
+<code>&lt;=</code>, <code>&gt;=</code> are portable only if they are
+used between pointers which point into the same array.</p>
+
+<h1><a name="19" href="#toc19">19</a> References</h1>
+
+<dl>
+ <dt>The Annotated C++ Reference Manual</dt>
+ <dd><ul>
+  <li>Bjarne Stroustrup/Margareth Ellis[ARM]</li>
+  <li>Addison Wesley 1990, ISBN 0-201-51459-1</li>
+  <li>This book forms the basis of the work in the ANSI-C++ committee.</li>
+ </ul></dd>
+ <dt>C++ Primer, Second Edition</dt>
+ <dd><ul>
+  <li>Stanley B. Lippman</li>
+  <li>Addison Wesley 1991, ISBN 0-201-54848-8</li>
+  <li>Very good for learning the basics of C++.</li>
+ </ul></dd>
+ <dt>The C++ Programming Language, Second Edition</dt>
+ <dd><ul>
+  <li>Bjarne Stroustrup</li>
+  <li>Addison Wesley 1991, ISBN 0-201-53992-6</li>
+  <li>This second edition has been completely updated with the current
+  (and future) language definition.  It will most certainly become a
+  standard reference book.</li>
+ </ul></dd>
+ <dt>Advanced C++ Programming Styles and Idioms</dt>
+ <dd><ul>
+  <li>James O. Coplien</li> 
+  <li>Addison Wesley 1992, ISBN 0-210-54855-0</li>
+  <li>Possibly the most advanced book on how to use C++.
+  Contains many tricks and tips.</li>
+ </ul></dd>
+ <dt>Object-oriented Software Construction</dt>
+ <dd><ul>
+  <li>Bertrand Meyer</li>
+  <li>Prentice Hall 1988, ISBN 0-13-629049-3 or 0-13-629031-0 PBK</li>
+  <li>Somewhat of a classic work.  Examples are written in Eiffel.</li>
+ </ul></dd>
+ <dt>Data Abstraction and Object-Oriented Programming in C++</dt>
+ <dd><ul>
+  <li>Keith E. Gorlen, Sanford M. Orlow, Perry S. Plexico</li>
+  <li>John Wiley &amp; Sons 1990, ISBN 0 471 92346 X pbk or 0 471 92751 1</li>
+  <li>The book that describes the class library NIH.  Includes many good
+  examples.</li>
+ </ul></dd>
+ <dt>Object-Oriented Design with Applications</dt>
+ <dd><ul>
+  <li>Grady Booch</li>
+  <li>Benjamin/Cummings 1991, ISBN 0-8053-0091-0</li>
+  <li>Treats the design and implementation of software in various
+  object-oriented languages.</li>
+ </ul></dd>
+ <dt>Recommended C Style and Coding Standards</dt>
+ <dd><ul>
+  <li>Bell Labs, Zoology Computer Systems University of Toronto,
+  CS University of Washington, November 18, 1989.</li>
+  <li>A collection of rules for programming in C.  Contains a good
+  section on portability.</li>
+ </ul></dd>
+ <dt>A Guide to Natural Naming</dt>
+ <dd><ul>
+  <li>Daniel Keller</li>
+  <li>ETH, Projekt-Zentrum IDA, CH-8092 Zürich, Switzerland</li>
+  <li>A guide on how to choose good names for functions and variables.
+  Not adapted to object-oriented programming.</li>
+ </ul></dd>
+ <dt>Advanced C++</dt>
+ <dd><ul>
+  <li>Jonathan E. Shopiro</li>
+  <li>Binder with material from course held in Lund (Sweden) from
+  June 4 to June 7, 1991.  Filled with warnings and tips.</li>
+ </ul></dd>
+ <dt>Objektorienterad programmering och biblioteksuppbyggnad i C++</dt>
+ <dd><ul>
+  <li>Martin Carrol</li>
+  <li>Material from course held in Stockholm (Sweden) on April 18, 1991.
+  Presents useful viewpoints on problems which may arise when designing a
+  class library.</li>
+ </ul></dd>
+ <dt>Automatic Detection of C++ Programming Errors: Initial Thoughts on a <code>lint++</code></dt>
+ <dd><ul>
+  <li>Scott Myers/Moises Lejter</li>
+  <li>Usenix C++ Conference Proceedings, Spring 91</li>
+  <li>Article which describes some programming rules for C++.</li>
+ </ul></dd>
+ <dt>Code-Style Prescriptions</dt>
+ <dd><ul>
+  <li>Carl R. Dickler</li>
+  <li>Unix Review, 9(9), 1991, pages 41-45</li>
+  <li>Article which describes a number of programming rules for C and
+  which discusses why programming rules are needed.</li>
+ </ul></dd>
+</dl>
+
+<h1><a name="20" href="#toc20">20</a> Summary of Rules</h1>
+
+<dl>
+ <dt><a href="#rule0">Rule 0</a></dt>
+ <dd>Every time a rule is broken, this must be clearly
+ documented.</dd>
+
+ <dt><a href="#rule1">Rule 1</a></dt>
+ <dd>Include files in C++ always have the file name extension
+ ".hh".</dd>
+
+ <dt><a href="#rule2">Rule 2</a></dt>
+ <dd>Implementation files in C++ always have the file name extension
+ ".cc".</dd>
+
+ <dt><a href="#rule3">Rule 3</a></dt>
+ <dd>Inline definition files always have the file name extension
+ ".icc".</dd>
+
+ <dt><a href="#rule4">Rule 4</a></dt>
+ <dd>Every file that contains source code must be documented with an
+ introductory comment that provides information on the file name and
+ its contents.</dd>
+
+ <dt><a href="#rule5">Rule 5</a></dt>
+ <dd>All files must include copyright information.</dd>
+
+ <dt><a href="#rule6">Rule 6</a></dt>
+ <dd>All comments are to be written in English.</dd>
+
+ <dt><a href="#rule7">Rule 7</a></dt>
+ <dd>Every include file must contain a mechanism that prevents
+ multiple inclusions of the file.</dd>
+
+ <dt><a href="#rule8">Rule 8</a></dt>
+ <dd>When the following kinds of definitions are used (in
+ implementation files or in other include files), they must be
+ included as separate include files:
+ <ul>
+  <li>classes that are used as base classes,</li>
+  <li>classes that are used as member variables,</li>
+  <li>classes that appear as return types or as argument types in
+  function/member function prototypes.</li>
+  <li>function prototypes for functions/member functions used in inline
+  member functions that are defined in the file.</li>
+ </ul></dd>
+
+ <dt><a href="#rule9">Rule 9</a></dt>
+ <dd>Definitions of classes that are only accessed via pointers
+ (<code>*</code>) or references (<code>&amp;</code>) shall not be
+ included as include files.</dd>
+
+ <dt><a href="#rule10">Rule 10</a></dt>
+ <dd>Never specify relative UNIX names in <code>#include</code>
+ directives.</dd>
+
+ <dt><a href="#rule11">Rule 11</a></dt>
+ <dd>Every implementation file is to include the relevant files that
+ contain:
+ <ul>
+  <li>declarations of types and functions used in the functions that
+  are implemented in the file.</li>
+  <li>declarations of variables and member functions used in the
+  functions that are implemented in the file.</li>
+ </ul></dd>
+
+ <dt><a href="#rule12">Rule 12</a></dt>
+ <dd>The identifier of every globally visible class, enumeration type,
+ type definition, function, constant, and variable in a class library
+ is to begin with a prefix that is unique for the library.</dd>
+
+ <dt><a href="#rule13">Rule 13</a></dt>
+ <dd>The names of variables, constants, and functions are to begin
+ with a lowercase letter.</dd>
+
+ <dt><a href="#rule14">Rule 14</a></dt>
+ <dd>The names of abstract data types, structures, typedefs, and
+ enumerated types are to begin with an uppercase letter.</dd>
+
+ <dt><a href="#rule15">Rule 15</a></dt>
+ <dd>In names which consist of more than one word, the words are
+ written together and each word that follows the first is begun with
+ an uppercase letter.</dd>
+
+ <dt><a href="#rule16">Rule 16</a></dt>
+ <dd>Do not use identifiers which begin with one or two underscores
+ (`<code>_</code>' or `<code>__</code>').</dd>
+
+ <dt><a href="#rule17">Rule 17</a></dt>
+ <dd>A name that begins with an uppercase letter is to appear directly
+ after its prefix.</dd>
+
+ <dt><a href="#rule18">Rule 18</a></dt>
+ <dd>A name that begins with a lowercase letter is to be separated
+ from its prefix using an underscore (`<code>_</code>').</dd>
+
+ <dt><a href="#rule19">Rule 19</a></dt>
+ <dd>A name is to be separated from its suffix using an underscore
+ (`<code>_</code>').</dd>
+
+ <dt><a href="#rule20">Rule 20</a></dt>
+ <dd>The <code>public</code>, <code>protected</code>, and
+ <code>private</code> sections of a class are to be declared in that
+ order (the <code>public</code> section is declared before the
+ <code>protected</code> section which is declared before the
+ <code>private</code> section).</dd>
+
+ <dt><a href="#rule21">Rule 21</a></dt>
+ <dd>No member functions are to be defined within the class
+ definition.</dd>
+
+ <dt><a href="#rule22">Rule 22</a></dt>
+ <dd>Never specify <code>public</code> or <code>protected</code>
+ member data in a class.</dd>
+
+ <dt><a href="#rule23">Rule 23</a></dt>
+ <dd>A member function that does not affect the state of an object
+ (its instance variables) is to be declared <code>const</code>.</dd>
+
+ <dt><a href="#rule24">Rule 24</a></dt>
+ <dd>If the behaviour of an object is dependent on data outside the
+ object, this data is not to be modified by <code>const</code> member
+ functions.</dd>
+
+ <dt><a href="#rule25">Rule 25</a></dt>
+ <dd>A class which uses "<code>new</code>" to allocate instances
+ managed by the class, must define a copy constructor.</dd>
+
+ <dt><a href="#rule26">Rule 26</a></dt>
+ <dd>All classes which are used as base classes and which have virtual
+ functions, must define a virtual destructor.</dd>
+
+ <dt><a href="#rule27">Rule 27</a></dt>
+ <dd>A class which uses "<code>new</code>" to allocate instances
+ managed by the class, must define an assignment operator.</dd>
+
+ <dt><a href="#rule28">Rule 28</a></dt>
+ <dd>An assignment operator which performs a destructive action must
+ be protected from performing this action on the object upon which it
+ is operating.</dd>
+
+ <dt><a href="#rule29">Rule 29</a></dt>
+ <dd>A public member function must never return a
+ non-<code>const</code> reference or pointer to member data.</dd>
+
+ <dt><a href="#rule30">Rule 30</a></dt>
+ <dd>A public member function must never return a
+ non-<code>const</code> reference or pointer to data outside an
+ object, unless the object shares the data with other objects.</dd>
+
+ <dt><a href="#rule31">Rule 31</a></dt>
+ <dd>Do not use unspecified function arguments (ellipsis
+ notation).</dd>
+
+ <dt><a href="#rule32">Rule 32</a></dt>
+ <dd>The names of formal arguments to functions are to be specified
+ and are to be the same both in the function declaration and in the
+ function definition.</dd>
+
+ <dt><a href="#rule33">Rule 33</a></dt>
+ <dd>Always specify the return type of a function explicitly.</dd>
+
+ <dt><a href="#rule34">Rule 34</a></dt>
+ <dd>A public function must never return a reference or a pointer to a
+ local variable.</dd>
+
+ <dt><a href="#rule35">Rule 35</a></dt>
+ <dd>Do not use the preprocessor directive <code>#define</code> to
+ obtain more efficient code; instead, use inline functions.</dd>
+
+ <dt><a href="#rule36">Rule 36</a></dt>
+ <dd>Constants are to be defined using <code>const</code> or
+ <code>enum</code>; never using <code>#define</code>.</dd>
+
+ <dt><a href="#rule37">Rule 37</a></dt>
+ <dd>Avoid the use of numeric values in code; use symbolic values
+ instead.</dd>
+
+ <dt><a href="#rule38">Rule 38</a></dt>
+ <dd>Variables are to be declared with the smallest possible
+ scope.</dd>
+
+ <dt><a href="#rule39">Rule 39</a></dt>
+ <dd>Each variable is to be declared in a separate declaration
+ statement.</dd>
+
+ <dt><a href="#rule40">Rule 40</a></dt>
+ <dd>Every variable that is declared is to be given a value before it
+ is used.</dd>
+
+ <dt><a href="#rule41">Rule 41</a></dt>
+ <dd>If possible, always use initialization instead of
+ assignment.</dd>
+
+ <dt><a href="#rule42">Rule 42</a></dt>
+ <dd>Do not compare a pointer to <code>NULL</code> or assign
+ <code>NULL</code> to a pointer; use <code>0</code> instead.</dd>
+
+ <dt><a href="#rule43">Rule 43</a></dt>
+ <dd>Never use explicit type conversions (casts).</dd>
+
+ <dt><a href="#rule44">Rule 44</a></dt>
+ <dd>Do not write code which depends on functions that use implicit
+ type conversions.</dd>
+
+ <dt><a href="#rule45">Rule 45</a></dt>
+ <dd>Never convert pointers to objects of a derived class to pointers
+ to objects of a virtual base class.</dd>
+
+ <dt><a href="#rule46">Rule 46</a></dt>
+ <dd>Never convert a <code>const</code> to a non-<code>const</code>.</dd>
+
+ <dt><a href="#rule47">Rule 47</a></dt>
+ <dd>The code following a <code>case</code> label must always be
+ terminated by a <code>break</code> statement.</dd>
+
+ <dt><a href="#rule48">Rule 48</a></dt>
+ <dd>A <code>switch</code> statement must always contain a
+ <code>default</code> branch which handles unexpected cases.</dd>
+
+ <dt><a href="#rule49">Rule 49</a></dt>
+ <dd>Never use <code>goto</code>.</dd>
+
+ <dt><a href="#rule50">Rule 50</a></dt>
+ <dd>Do not use <code>malloc</code>, <code>realloc</code> or
+ <code>free</code>.</dd>
+
+ <dt><a href="#rule51">Rule 51</a></dt>
+ <dd>Always provide empty brackets ("<code>[]</code>") for
+ <code>delete</code> when deallocating arrays.</dd>
+</dl>
+
+<h1><a name="21" href="#toc21">21</a> Summary of Recommendations</h1>
+
+<dl>
+ <dt><a href="#rec1">Rec. 1</a></dt>
+ <dd>Optimize code only if you know that you have a performance
+ problem.  Think twice before you begin.</dd>
+
+ <dt><a href="#rec2">Rec. 2</a></dt>
+ <dd>If you use a C++ compiler that is based on Cfront, always compile
+ with the <code>+w</code> flag set to eliminate as many warnings as
+ possible.</dd>
+
+ <dt><a href="#rec3">Rec. 3</a></dt>
+ <dd>An include file should not contain more than one class
+ definition.</dd>
+
+ <dt><a href="#rec4">Rec. 4</a></dt>
+ <dd>Divide up the definitions of member functions or functions into
+ as many files as possible.</dd>
+
+ <dt><a href="#rec5">Rec. 5</a></dt>
+ <dd>Place machine-dependent code in a special file so that it may be
+ easily located when porting code from one machine to another.</dd>
+
+ <dt><a href="#rec6">Rec. 6</a></dt>
+ <dd>Always give a file a name that is unique in as large a context as
+ possible.</dd>
+
+ <dt><a href="#rec7">Rec. 7</a></dt>
+ <dd>An include file for a class should have a file name of the form
+ &lt;<var>class name</var>&gt; + extension.  Use uppercase and
+ lowercase letters in the same way as in the source code.</dd>
+
+ <dt><a href="#rec8">Rec. 8</a></dt>
+ <dd>Write some descriptive comments before every function.</dd>
+
+ <dt><a href="#rec9">Rec. 9</a></dt>
+ <dd>Use <code>//</code> for comments.</dd>
+
+ <dt><a href="#rec10">Rec. 10</a></dt>
+ <dd>Use the directive <code>#include "<var>filename.hh</var>"</code>
+ for user-prepared include files.</dd>
+
+ <dt><a href="#rec11">Rec. 11</a></dt>
+ <dd>Use the directive <code>#include
+ &lt;<var>filename.hh</var>&gt;</code> for include files from
+ libraries.</dd>
+
+ <dt><a href="#rec12">Rec. 12</a></dt>
+ <dd>Every implementation file should declare a local constant string
+ that describes the file so the UNIX command <code>what</code> can be
+ used to obtain information on the file revision.</dd>
+
+ <dt><a href="#rec13">Rec. 13</a></dt>
+ <dd>Never include other files in an ".icc" file.</dd>
+
+ <dt><a href="#rec14">Rec. 14</a></dt>
+ <dd>Do not use typenames that differ only by the use of uppercase and
+ lowercase letters.</dd>
+
+ <dt><a href="#rec15">Rec. 15</a></dt>
+ <dd>Names should not include abbreviations that are not generally
+ accepted.</dd>
+
+ <dt><a href="#rec16">Rec. 16</a></dt>
+ <dd>A variable with a large scope should have a long name.</dd>
+
+ <dt><a href="#rec17">Rec. 17</a></dt>
+ <dd>Choose variable names that suggest the usage.</dd>
+
+ <dt><a href="#rec18">Rec. 18</a></dt>
+ <dd>Write code in a way that makes it easy to change the prefix for
+ global identifiers.</dd>
+
+ <dt><a href="#rec19">Rec. 19</a></dt>
+ <dd>Encapsulate global variables and constants, enumerated types, and
+ typedefs in a class.</dd>
+
+ <dt><a href="#rec20">Rec. 20</a></dt>
+ <dd>Always provide the return type of a function explicitly.</dd>
+
+ <dt><a href="#rec21">Rec. 21</a></dt>
+ <dd>When declaring functions, the leading parenthesis and the first
+ argument (if any) are to be written on the same line as the function
+ name.  If space permits, other arguments and the closing parenthesis
+ may also be written on the same line as the function name.
+ Otherwise, each additional argument is to be written on a separate
+ line (with the closing parenthesis directly after the last
+ argument).</dd>
+
+ <dt><a href="#rec22">Rec. 22</a></dt>
+ <dd>In a function definition, the return type of the function should
+ be written on a separate line directly above the function name.</dd>
+
+ <dt><a href="#rec23">Rec. 23</a></dt>
+ <dd>Always write the left parenthesis directly after a function
+ name.</dd>
+
+ <dt><a href="#rec24">Rec. 24</a></dt>
+ <dd>Braces ("<code>{}</code>") which enclose a block are to be placed
+ in the same column, on separate lines directly before and after the
+ block.</dd>
+
+ <dt><a href="#rec25">Rec. 25</a></dt>
+ <dd>The flow control primitives <code>if</code>, <code>else</code>,
+ <code>while</code>, <code>for</code> and <code>do</code> should be
+ followed by a block, even if it is an empty block.</dd>
+
+ <dt><a href="#rec26">Rec. 26</a></dt>
+ <dd>The dereference operator `<code>*</code>' and the address-of
+ operator `<code>&amp;</code>' should be directly connected with the
+ type names in declarations and definitions.</dd>
+
+ <dt><a href="#rec27">Rec. 27</a></dt>
+ <dd>Do not use spaces around `<code>.</code>' or
+ `<code>-&gt;</code>', nor between unary operators and operands.</dd>
+
+ <dt><a href="#rec28">Rec. 28</a></dt>
+ <dd>Use the c++ mode in GNU Emacs to format code.</dd>
+
+ <dt><a href="#rec29">Rec. 29</a></dt>
+ <dd>Access functions are to be <code>inline</code>.</dd>
+
+ <dt><a href="#rec30">Rec. 30</a></dt>
+ <dd>Forwarding functions are to be <code>inline</code>.</dd>
+
+ <dt><a href="#rec31">Rec. 31</a></dt>
+ <dd>Constructors and destructors must not be
+ <code>inline</code>.</dd>
+
+ <dt><a href="#rec32">Rec. 32</a></dt>
+ <dd>Friends of a class should be used to provide additional functions
+ that are best kept outside of the class.</dd>
+
+ <dt><a href="#rec33">Rec. 33</a></dt>
+ <dd>Avoid the use of global objects in constructors and
+ destructors.</dd>
+
+ <dt><a href="#rec34">Rec. 34</a></dt>
+ <dd>An assignment operator ought to return a <code>const</code>
+ reference to the assigning object.</dd>
+
+ <dt><a href="#rec35">Rec. 35</a></dt>
+ <dd>Use operator overloading sparingly and in a uniform manner.</dd>
+
+ <dt><a href="#rec36">Rec. 36</a></dt>
+ <dd>When two operators are opposites (such as <code>==</code> and
+ <code>!=</code>), it is appropriate to define both.</dd>
+
+ <dt><a href="#rec37">Rec. 37</a></dt>
+ <dd>Avoid inheritance for parts-of relations.</dd>
+
+ <dt><a href="#rec38">Rec. 38</a></dt>
+ <dd>Give derived classes access to class type member data by
+ declaring <code>protected</code> access functions.</dd>
+
+ <dt><a href="#rec39">Rec. 39</a></dt>
+ <dd>Do not attempt to create an instance of a class template using a
+ type that does not define the member functions which the class
+ template, according to its documentation, requires.</dd>
+
+ <dt><a href="#rec40">Rec. 40</a></dt>
+ <dd>Take care to avoid multiple definition of overloaded functions in
+ conjunction with the instantiation of a class template.</dd>
+
+ <dt><a href="#rec41">Rec. 41</a></dt>
+ <dd>Avoid functions with many arguments.</dd>
+
+ <dt><a href="#rec42">Rec. 42</a></dt>
+ <dd>If a function stores a pointer to an object which is accessed via
+ an argument, let the argument have the type pointer.  Use reference
+ arguments in other cases.</dd>
+
+ <dt><a href="#rec43">Rec. 43</a></dt>
+ <dd>Use constant references (<code>const &amp;</code>) instead of
+ call-by-value, unless using a pre-defined data type or a
+ pointer.</dd>
+
+ <dt><a href="#rec44">Rec. 44</a></dt>
+ <dd>When overloading functions, all variations should have the same
+ semantics (be used for the same purpose).</dd>
+
+ <dt><a href="#rec45">Rec. 45</a></dt>
+ <dd>Use inline functions when they are really needed.</dd>
+
+ <dt><a href="#rec46">Rec. 46</a></dt>
+ <dd>Minimize the number of temporary objects that are created as
+ return values from functions or as arguments to functions.</dd>
+
+ <dt><a href="#rec47">Rec. 47</a></dt>
+ <dd>Avoid long and complex functions.</dd>
+
+ <dt><a href="#rec48">Rec. 48</a></dt>
+ <dd>Pointers to pointers should whenever possible be avoided.</dd>
+
+ <dt><a href="#rec49">Rec. 49</a></dt>
+ <dd>Use a <code>typedef</code> to simplify program syntax when
+ declaring function pointers.</dd>
+
+ <dt><a href="#rec50">Rec. 50</a></dt>
+ <dd>The choice of loop construct (<code>for</code>,
+ <code>while</code> or <code>do</code>-<code>while</code>) should
+ depend on the specific use of the loop.</dd>
+
+ <dt><a href="#rec51">Rec. 51</a></dt>
+ <dd>Always use <code>unsigned</code> for variables which cannot
+ reasonably have negative values.</dd>
+
+ <dt><a href="#rec52">Rec. 52</a></dt>
+ <dd>Always use inclusive lower limits and exclusive upper
+ limits.</dd>
+
+ <dt><a href="#rec53">Rec. 53</a></dt>
+ <dd>Avoid the use of <code>continue</code>.</dd>
+
+ <dt><a href="#rec54">Rec. 54</a></dt>
+ <dd>Use <code>break</code> to exit a loop if this avoids the use of
+ flags.</dd>
+
+ <dt><a href="#rec55">Rec. 55</a></dt>
+ <dd>Do not write logical expressions of the type
+ <code>if(test)</code> or <code>if(!test)</code> when
+ <code>test</code> is a pointer.</dd>
+
+ <dt><a href="#rec56">Rec. 56</a></dt>
+ <dd>Use parentheses to clarify the order of evaluation for operators
+ in expressions.</dd>
+
+ <dt><a href="#rec57">Rec. 57</a></dt>
+ <dd>Avoid global data if at all possible.</dd>
+
+ <dt><a href="#rec58">Rec. 58</a></dt>
+ <dd>Do not allocate memory and expect that someone else will
+ deallocate it later.</dd>
+
+ <dt><a href="#rec59">Rec. 59</a></dt>
+ <dd>Always assign a new value to a pointer that points to deallocated
+ memory.</dd>
+
+ <dt><a href="#rec60">Rec. 60</a></dt>
+ <dd>Make sure that fault handling is done so that the transfer to
+ exception handling (when this is available in C++) may be easily
+ made.</dd>
+
+ <dt><a href="#rec61">Rec. 61</a></dt>
+ <dd>Check the fault codes which may be received from library
+ functions even if these functions seem foolproof.</dd>
+</dl>
+
+<h1><a name="22" href="#toc22">22</a> Summary of Portability
+Recommendations</h1>
+
+<dl>
+ <dt><a href="#prec1">Port. Rec. 1</a></dt>
+ <dd>Avoid the direct use of pre-defined data types in
+ declarations.</dd>
+
+ <dt><a href="#prec2">Port. Rec. 2</a></dt>
+ <dd>Do not assume that an <code>int</code> and a <code>long</code>
+ have the same size.</dd>
+
+ <dt><a href="#prec3">Port. Rec. 3</a></dt>
+ <dd>Do not assume that an <code>int</code> is 32 bits long (it may be
+ only 16 bits long).</dd>
+
+ <dt><a href="#prec4">Port. Rec. 4</a></dt>
+ <dd>Do not assume that a <code>char</code> is signed or
+ unsigned.</dd>
+
+ <dt><a href="#prec5">Port. Rec. 5</a></dt>
+ <dd>Always set <code>char</code> to unsigned if 8-bit ASCII is
+ used.</dd>
+
+ <dt><a href="#prec6">Port. Rec. 6</a></dt>
+ <dd>Be careful not to make type conversions from a "shorter" type to
+ a "longer" one.</dd>
+
+ <dt><a href="#prec7">Port. Rec. 7</a></dt>
+ <dd>Do not assume that pointers and integers have the same size.</dd>
+
+ <dt><a href="#prec8">Port. Rec. 8</a></dt>
+ <dd>Use explicit type conversions for arithmetic using signed and
+ unsigned values.</dd>
+
+ <dt><a href="#prec9">Port. Rec. 9</a></dt>
+ <dd>Do not assume that you know how an instance of a data type is
+ represented in memory.</dd>
+
+ <dt><a href="#prec10">Port. Rec. 10</a></dt>
+ <dd>Do not assume that <code>long</code>s, <code>float</code>s,
+ <code>double</code>s or <code>long double</code>s may begin at
+ arbitrary addresses.</dd>
+
+ <dt><a href="#prec11">Port. Rec. 11</a></dt>
+ <dd>Do not depend on underflow or overflow functioning in any special
+ way.</dd>
+
+ <dt><a href="#prec12">Port. Rec. 12</a></dt>
+ <dd>Do not assume that the operands in an expression are evaluated in
+ a definite order.</dd>
+
+ <dt><a href="#prec13">Port. Rec. 13</a></dt>
+ <dd>Do not assume that you know how the invocation mechanism for a
+ function is implemented.</dd>
+
+ <dt><a href="#prec14">Port. Rec. 14</a></dt>
+ <dd>Do not assume that an object is initialized in any special order
+ in constructors.</dd>
+
+ <dt><a href="#prec15">Port. Rec. 15</a></dt>
+ <dd>Do not assume that static objects are initialized in any special
+ order.</dd>
+
+ <dt><a href="#prec16">Port. Rec. 16</a></dt>
+ <dd>Do not write code which is dependent on the lifetime of a
+ temporary object.</dd>
+
+ <dt><a href="#prec17">Port. Rec. 17</a></dt>
+ <dd>Avoid using shift operations instead of arithmetic
+ operations.</dd>
+
+ <dt><a href="#prec18">Port. Rec. 18</a></dt>
+ <dd>Avoid pointer arithmetic.</dd>
+</dl>
+
+<hr>
+The first HTML version was created by unknown parties.  
+Archived by Chris Lott after correcting a few HTML glitches in 1997. 
+<P>
+Marko Mäkelä (msmakela "at" tcs dot hut dot fi) overhauled the
+document in 2001 to make it valid HTML and added more hyperlinks.
+</P> 
+<A HREF="index.html">Collection index</A>
+
+</body>
+</html>

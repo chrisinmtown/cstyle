@@ -1,0 +1,1102 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML 96.1-h (September 30, 1996) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Notes On Writing Portable Programs In C</TITLE>
+<META NAME="description" CONTENT="Notes On Writing Portable Programs In C (June 1990, 5th Revision) ">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<BR> <P>
+<P>
+<H1 ALIGN=CENTER>Notes On Writing Portable Programs In C</H1><BR> 
+<H2>(June 1990, 5th Revision)</H2>
+<P ALIGN=CENTER><STRONG>A. Dolenc <BR> 
+        A. Lemmke
+  <A NAME="tex2html1" HREF="#6">[+]</A>
+         <BR> and <BR> 
+         D. Keppel
+  <A NAME="tex2html2" HREF="#7">[+]</A>
+   </STRONG></P><P>
+<P>
+<P><H2><A NAME="SECTION00010000000000000000">Contents</A></H2>
+<UL><A NAME="CHILD_LINKS">&#160;</A>
+<LI> <A NAME="tex2html24" HREF="portableC.html#SECTION00020000000000000000">Foreword</A>
+<LI> <A NAME="tex2html25" HREF="portableC.html#SECTION00030000000000000000">Introduction</A>
+<LI> <A NAME="tex2html26" HREF="portableC.html#SECTION00040000000000000000">Standardization Efforts</A>
+<UL>
+<LI> <A NAME="tex2html27" HREF="portableC.html#SECTION00041000000000000000">ANSI C</A>
+<UL>
+<LI> <A NAME="tex2html28" HREF="portableC.html#SECTION00041100000000000000">Translation limits</A>
+<LI> <A NAME="tex2html29" HREF="portableC.html#SECTION00041200000000000000">Unspecified and undefined behaviour</A>
+</UL> 
+<LI> <A NAME="tex2html30" HREF="portableC.html#SECTION00042000000000000000">POSIX</A>
+</UL> 
+<LI> <A NAME="tex2html31" HREF="portableC.html#SECTION00050000000000000000">Preprocessors</A>
+<LI> <A NAME="tex2html32" HREF="portableC.html#SECTION00060000000000000000">The Language</A>
+<UL>
+<LI> <A NAME="tex2html33" HREF="portableC.html#SECTION00061000000000000000">The syntax</A>
+<LI> <A NAME="tex2html34" HREF="portableC.html#SECTION00062000000000000000">The semantics</A>
+</UL> 
+<LI> <A NAME="tex2html35" HREF="portableC.html#SECTION00070000000000000000">Unix flavours: System V and BSD</A>
+<LI> <A NAME="tex2html36" HREF="portableC.html#SECTION00080000000000000000">Header Files</A>
+<UL>
+<LI> <A NAME="tex2html37" HREF="portableC.html#SECTION00081000000000000000"><TT>ctype.h</TT></A>
+<LI> <A NAME="tex2html38" HREF="portableC.html#SECTION00082000000000000000"><TT>fcntl.h</TT> and <TT>sys/file.h</TT></A>
+<LI> <A NAME="tex2html39" HREF="portableC.html#SECTION00083000000000000000"><TT>errno.h</TT></A>
+<LI> <A NAME="tex2html40" HREF="portableC.html#SECTION00084000000000000000"><TT>math.h</TT></A>
+<LI> <A NAME="tex2html41" HREF="portableC.html#SECTION00085000000000000000"><TT>strings.h</TT> vs. <TT>string.h</TT></A>
+<LI> <A NAME="tex2html42" HREF="portableC.html#SECTION00086000000000000000"><TT>time.h</TT> and <TT>types.h</TT></A>
+<LI> <A NAME="tex2html43" HREF="portableC.html#SECTION00087000000000000000"><TT>varargs.h</TT> vs. <TT>stdarg.h</TT></A>
+</UL> 
+<LI> <A NAME="tex2html44" HREF="portableC.html#SECTION00090000000000000000">Run-time Library</A>
+<LI> <A NAME="tex2html45" HREF="portableC.html#SECTION000100000000000000000">Compiler limitations</A>
+<LI> <A NAME="tex2html46" HREF="portableC.html#SECTION000110000000000000000">Using floating-point numbers</A>
+<UL>
+<LI> <A NAME="tex2html47" HREF="portableC.html#SECTION000111000000000000000">Machine constants</A>
+<LI> <A NAME="tex2html48" HREF="portableC.html#SECTION000112000000000000000">Floating-point arguments</A>
+<LI> <A NAME="tex2html49" HREF="portableC.html#SECTION000113000000000000000">Floating-point arithmetic</A>
+<LI> <A NAME="tex2html50" HREF="portableC.html#SECTION000114000000000000000">Exceptions</A>
+</UL> 
+<LI> <A NAME="tex2html51" HREF="portableC.html#SECTION000120000000000000000">VMS</A>
+<UL>
+<LI> <A NAME="tex2html52" HREF="portableC.html#SECTION000121000000000000000">File specifications</A>
+<LI> <A NAME="tex2html53" HREF="portableC.html#SECTION000122000000000000000">Miscellaneous</A>
+</UL> 
+<LI> <A NAME="tex2html54" HREF="portableC.html#SECTION000130000000000000000">General Guidelines</A>
+<UL>
+<LI> <A NAME="tex2html55" HREF="portableC.html#SECTION000131000000000000000">Machine architectures, Type compatibility, Pointers, etc.</A>
+<LI> <A NAME="tex2html56" HREF="portableC.html#SECTION000132000000000000000">Compiler differences</A>
+<LI> <A NAME="tex2html57" HREF="portableC.html#SECTION000133000000000000000">Files</A>
+<LI> <A NAME="tex2html58" HREF="portableC.html#SECTION000134000000000000000">Miscellaneous</A>
+</UL> 
+<LI> <A NAME="tex2html59" HREF="portableC.html#SECTION000140000000000000000">Acknowledgements</A>
+<LI> <A NAME="tex2html60" HREF="portableC.html#SECTION000150000000000000000">Trademarks</A>
+<LI> <A NAME="tex2html61" HREF="portableC.html#SECTION000160000000000000000">References</A>
+<LI> <A NAME="tex2html62" HREF="portableC.html#SECTION000170000000000000000">  About this document ... </A>
+</UL>
+<P>
+<H1><A NAME="SECTION00020000000000000000">Foreword</A></H1>
+<P>
+A few words about the intended audience before we begin. This document
+is mainly for those who have <B>never</B> ported a program to another
+platform -- a specific hardware and software environment --
+and, evidently, for those who plan to write large systems which
+must be used across different vendor machines.
+<P>
+If you have done some porting before you may not find the information herein
+very useful.
+<P>
+We suggest that [<A HREF="portableC.html#kn:style">Can89</A>] be read in conjunction with this
+ document<A NAME="tex2html3" HREF="#326">[+]</A>.
+Submitters to the News group <B>comp.lang.c</B> have repeatedly recommended
+[<A HREF="portableC.html#kn:MH">Hor90</A>, <A HREF="portableC.html#kn:AK">Koe89</A>]<A NAME="tex2html4" HREF="#19">[+]</A>.
+<P>
+<B>Disclaimer:</B> The code fragments presented herein
+ are intended to make applications
+``more'' portable, meaning that they may fail with some compilers
+and/or environments.
+<P>
+This file can be obtained via anonymous ftp from <EM>sauna.hut.fi
+[130.233.251.253]</EM> in ~ftp/pub/CompSciLab/doc</EM>. The files
+<EM>portableC.tex</EM>, <EM>portableC.bib</EM> and <EM>portableC.ps.Z</EM>
+are the LaTeX, BibTeX and the compressed PostScript, respectively.
+<P>
+<H1><A NAME="SECTION00030000000000000000">Introduction</A></H1>
+<P>
+The aim of this document is to collect the experience of several people
+who have had to write and/or port programs in C to more than one platform.
+<P>
+In order to keep this document within reasonable bounds we must
+restrict ourselves to programs which must execute under
+Unix-like
+operating systems and those which implement a reasonable Unix-like
+environment. The only exception we will consider is
+VMS.
+<P>
+A wealth of information can be obtained from programs which have been
+written to run on several platforms. This is the case of
+publicly available software such as
+developed by the Free Software
+Foundation and the MIT X Consortium.
+<P>
+When discussing portability one focuses on two issues:
+<DL ><DT><DD><B>The language,</B> which includes the preprocessor and the syntax and the
+ semantics of the language.
+<P>
+<DT><DD><B>The environment,</B> which includes the location and contents of header
+  files and the run-time library.
+<P>
+</DL>
+<P>
+We include in our discussions the standardization efforts of
+the language and the environment. Special attention will be given
+to floating-point representations and arithmetic, to limitations
+of specific compilers,  and to VMS.
+<P>
+Our main focus will be <EM>boiler-plate</EM> problems.
+System programming<A NAME="tex2html5" HREF="#32">[+]</A>
+and twisted code associated with bizarre interpretations of [<A HREF="portableC.html#kn:ansi">X3J88</A>]
+- henceforth refered to as the Standard -
+will not be extensively covered in this document<A NAME="tex2html6" HREF="#34">[+]</A>.
+<P>
+<H1><A NAME="SECTION00040000000000000000">Standardization Efforts</A></H1>
+<P>
+All standards have a good and an evil side. Due to the nature of this
+ document we are forced to focus our attention on the later.
+<P>
+The American National Standards Institute (ANSI) has recently approved
+of a standard for the C programming language [<A HREF="portableC.html#kn:ansi">X3J88</A>]. The Standard
+concentrates on the syntax and semantics of the language and specifies
+a minimum environment (the name and contents of some header files and
+the specification of some run-time library functions).
+<P>
+Copies of the ANSI&nbsp;C Standard can be obtained from the following address:
+
+American National Standards Institute<BR> 
+Sales Department<BR> 
+1430 Broadway<BR> 
+New York, NY 10018<BR> 
+(Voice) (212) 642-4900<BR> 
+(Fax) (212) 302-1286<BR> 
+
+
+
+<P>
+<H2><A NAME="SECTION00041000000000000000">ANSI C</A></H2>
+<P>
+<H3><A NAME="SECTION00041100000000000000">Translation limits</A></H3>
+<P>
+We first bring to attention the fact that the Standard states some
+environmental limits. These limits are <EM>lower bounds</EM>, meaning that
+a correct (compliant) compiler may refuse to compile an otherwise correct
+ program which exceeds one of those limits<A NAME="tex2html7" HREF="#328">[+]</A>.
+<P>
+Below are the limits which we judge to be the most important. The ones
+related to the preprocessor are listed first.
+<P>
+<UL>
+<LI> <EM>8 nesting levels of conditional inclusion.</EM>
+<LI> <EM>8 nesting levels for <TT>#included</TT> files.</EM>
+<LI> <EM>32 nesting levels of parenthesized expressions within
+ a full expression.</EM> This will probably occur when using macros.
+<LI> <EM>1024 macro identifiers simultaneously.</EM> Can happen if
+ one includes too many header files.
+<LI> <EM>509 characters in a logical source line.</EM>
+ This is a serious restriction if it applies <EM>after</EM> preprocessing.
+ Since a macro
+ expansion always results in one line this affects the maximum
+ size of a macro. It is unclear what the Standard means by a logical
+ source line in this context and in most implementations this limit
+ will probably apply em before macro expansion.
+<LI> <EM>6 significant initial characters in an external identifier.</EM>
+ Usually this constraint is imposed by the environment, e.g. the linker,
+ and not by the compiler.
+<LI> <EM>127 members in a single structure or union.</EM>
+<LI> <EM>31 parameters in one function call.</EM> This may cause trouble
+ with functions which accept a variable number of arguments. Therefore,
+ it is advisable that when designing such functions that either the
+ number of parameters be kept within reasonable bounds or that alternative
+ interfaces be supplied, e.g. using arrays.
+<P>
+</UL>
+<P>
+It is really unfortunate that some of these limits may force a programmer
+to code in a less elegant way. We are of the opinion that
+the remaining limits stated in the Standard can usually be obeyed
+if one follows ``good'' programming practices.
+<P>
+However, these limits may break programs which <EM>generate</EM> C code
+such as compiler-compilers and many C++ compilers.
+<P>
+<H3><A NAME="SECTION00041200000000000000">Unspecified and undefined behaviour</A></H3>
+<P>
+The following are examples of unspecified and undefined behaviour:
+<P>
+<OL>
+<LI> The order in which the function designator and the arguments
+ in a function call are evaluated.
+<LI> The order in which the preprocessor concatenation operators
+ <TT>#</TT> and <TT>##</TT> are evaluated during macro substitution.
+<LI> The representation of floating types.
+<LI> An identifier is used that is not visible in the current scope.
+<LI> A pointer is converted to other than an integral or pointer type.
+<P>
+</OL>
+<P>
+The list is long. One of the main reasons for explicitly defining what
+is <EM>not</EM> covered by the Standard is to allow the implementor of the
+C environment to make use the most efficient alternative.
+<P>
+<H2><A NAME="SECTION00042000000000000000">POSIX</A></H2>
+<P>
+The objective of the POSIX working group P1003.1 is to define a common
+interface for UNIX. Granted, the ANSI C standard does specify the
+contents of some header files and the behaviour of some library functions
+but it falls short of defining a usefull environment. This is the
+task of P1003.1.
+<P>
+We do not know how far P1003.1 addresses the problems presented in this
+document as at the moment we lack proper documentation.
+Hopefully, this will be corrected in a future release of this document.
+<P>
+<H1><A NAME="SECTION00050000000000000000">Preprocessors</A></H1>
+<P>
+Preprocessors may present different behaviour in the following:
+<P>
+<OL>
+<LI> The interpretation of the <B>-I</B> command option can differ from
+ one system to another. Besides, it is not covered by the Standard. For
+ example, the directive <TT>#include ``dir/file.h''</TT> in conjunction with
+ <B>-I..</B> would cause most preprocessors in a Unix-like environment
+ to search for <TT>file.h</TT> in <TT>../dir</TT> but under VMS <TT>file.h</TT>
+ is only searched for in the subdirectory <TT>dir</TT> in the current
+ working directory.
+<LI> We would <B>not</B> trust the following to work on <B>all</B>
+ preprocessors:
+<P>
+<PRE>#define  D  define
+#D this that</PRE>
+<P>
+The Standard does not allow such a syntax (see section 3.8.3 &#167;20
+ in [<A HREF="portableC.html#kn:ansi">X3J88</A>]).
+<LI> Directives are very much the same in all preprocessors, except that
+ some preprocessors may not know about the <TT>defined</TT> operator in a
+ <TT>#if</TT> directive nor about the <TT>#pragma</TT> directive.
+<P>
+ The <TT>#pragma</TT> directive should pose no problems even to old
+ preprocessors <EM>if it comes indented</EM><A NAME="tex2html8" HREF="#330">[+]</A>.
+ Furthermore, it is advisable to
+ enclose them with <TT>#ifdef</TT>'s in order to document under which
+ platform they make sense:
+<PRE>#ifdef &lt;platform-specific-symbol&gt;
+   #pragma ...
+#endif</PRE>
+<LI> Concatenation of symbols has two variants. One is the old K&amp;R style
+ which simply relied on the fact that the preprocessor substituted
+ comments such as <TT>/**/</TT> for nothing. Obviously, that does not result
+ in concatenation
+ if the preprocessor includes a space in the output.
+ The ANSI C Standard defines the operators <TT>##</TT> and 
+ (implicit) concatenation of adjacent strings. Since both
+ styles are a fact of life it is useful to include the following in one's
+ header files<A NAME="tex2html9" HREF="#331">[+]</A>:
+<P>
+<PRE>#ifdef  __STDC__
+# define  GLUE(a,b)  a##b
+#else
+# define  GLUE(a,b)  a/**/b
+#endif</PRE>
+<P>
+ If needed, one could define similar macros to <TT>GLUE</TT> several arguments
+<A NAME="tex2html10" HREF="#332">[+]</A>.
+<LI> Some preprocessors perform token substitution within quotes while others
+ do not. Therefore, this is intrinsicly non-portable. The Standard
+ disallows it but provides mechanism to obtain the same results. The
+ following should work with ANSI-compliant preprocessors or with the
+ ones that which perform token substitution within quotes:
+<P>
+<PRE>#ifdef  __STDC__
+# define  MAKESTRING(s)  # s
+#else
+# define  MAKESTRING(s)  "s"
+#endif</PRE>
+<P>
+</OL>
+<P>
+There are good publicly available preprocessors which are ANSI C compliant.
+One such preprocessor is the one distributed with the X
+Window System developed by the MIT X Consortium.
+<P>
+Take note of <TT>#pragma</TT> directives which
+alter the semantics of the program and consider the case when they
+are not recognized by a particular compiler. Evidently,
+if the behaviour of the program relies on their correct interpretation
+then, in order for the program to be portable, all target platforms
+must recognize them properly.
+<P>
+Finally, we must add that the Standard has fortunately included
+a <TT>#error</TT> directive with obvious semantics. Indent the <TT>#error</TT>
+since old preprocessors do not recognize it.
+<P>
+<H1><A NAME="SECTION00060000000000000000">The Language</A></H1>
+<P>
+<H2><A NAME="SECTION00061000000000000000">The syntax</A></H2>
+<P>
+The syntax defined in the Standard is a <EM>superset</EM> of the one defined in K&amp;R.
+It follows that if one restricts oneself to the former there should be no problems
+with an ANSI&nbsp;C compliant compiler. The Standard extends the syntax with the
+following:
+<P>
+<OL>
+<LI> The inclusion of the keywords <B>const</B> and
+   <B>volatile</B>.
+<LI> The ellipsis (``...'') notation to indicate a variable number
+ of arguments.
+<LI> Function prototypes.
+<LI> Trigraph notation for specifying ``wide'' character strings.
+<P>
+</OL>
+<P>
+We encourage the use of the reserved words <B>const</B> and <B>volatile</B>
+since they aid in documenting the code.
+It is useful to add the following to one's header files if the code must
+be compiled by an non-conforming compiler as well:
+<PRE>#ifndef __STDC__
+# define const
+# define volatile
+#endif</PRE>
+<P>
+However, one must then make sure that the behaviour of the application does not
+depend on the presence of such keywords.
+<P>
+<H2><A NAME="SECTION00062000000000000000">The semantics</A></H2>
+<P>
+The syntax does not pose any problem with regard to interpretation because
+it can be defined precisely. However, programming languages are always
+described using a natural language, e.g. English, and this can lead to
+different interpretations of the same text.
+<P>
+Evidently, [<A HREF="portableC.html#kn:KR">KR78</A>] does not provide an unambiguous definition
+of the C language otherwise there would have been no need for a standard.
+Although the Standard is much more precise,
+there is still room for different interpretations in situations
+such as <TT>f(p=&amp;a, p=&amp;b, p=&amp;c)</TT>. Does this mean <TT>f(&amp;a,&amp;b,&amp;c)</TT> or
+<TT>f(&amp;c,&amp;c,&amp;c)</TT>? Even ``simple'' cases such as <TT>a[i] = b[i++]</TT>
+are compiler-dependent [<A HREF="portableC.html#kn:style">Can89</A>].
+<P>
+As stated in the Introduction we would like to exclude such topics.
+The reader is instead directed to the USENET news group <B>comp.std.c</B>
+or <B>comp.lang.c</B>
+where such discussions take place and from where the above example
+was taken. <EM>The Journal of C Language Translation</EM><A NAME="tex2html11" HREF="#115">[+]</A> could, perhaps,
+be a good reference. Another possibility is to obtain a clarification
+from the Standards Committee and the address is:
+
+X3 Secretariat, CBEMA<BR> 
+311 1st St NW Ste 500<BR> 
+Washington DC, USA<BR> 
+
+
+
+<H1><A NAME="SECTION00070000000000000000">Unix flavours: System V and BSD</A></H1>
+<P>
+A long time ago (1969),
+ Unix said ``<TT>papa</TT>'' for the first time at AT&amp;T
+(then called Bell Laboratories, or Ma Bell for the
+intimate) on a PDP-11. Everyone liked Unix very much and its widespread
+use we see today is probably due to the relative simplicity 
+of its design and of its implementation (it is written, of course, mostly
+in C).
+<P>
+However, these facts also contributed for each one to develop their own
+dialect. In particular, the University of Berkeley at California distribute
+the so-called BSD<A NAME="tex2html12" HREF="#122">[+]</A> Unix whereas
+AT&amp;T distribute (sell) System V Unix. All other vendors are descendants of
+one of these major dialects.
+<P>
+The differences between these two major flavours should not upset most
+application programs. In fact, we would even say that most differences are
+just annoying.
+<P>
+BSD Unix has an enhanced signal handling capability and implements sockets.
+However, <B>all</B> Unix flavours differ significantly in their raw i/o
+interface (that is, <B>ioctl</B> system call) which should
+be avoided if possible.
+<P>
+The reader interested in knowing more about the past and future of
+Unix can consult [<A HREF="portableC.html#kn:unix1">Man89</A>, <A HREF="portableC.html#kn:unix2">Int90</A>].
+<P>
+<H1><A NAME="SECTION00080000000000000000">Header Files</A></H1>
+<P>
+Many useful system header files are in different places in different systems
+or they define different symbols. We will assume henceforth that the
+application has been developed on a BSD-like Unix and must be ported
+to a System V-like Unix or VMS or an Unix-like system with header files
+which comply to the Standard.
+<P>
+In the following sections, we show how to handle the most simple cases which
+arise in practice. Some of the code which appears below was derived from
+the header file <TT>Xos.h</TT> which is part of the X Window System distributed
+by MIT. We have added changes, e.g. to support VMS.
+<P>
+Many header files are unprotected in many systems, notably those derived
+from BSD version 4.2 and earlier. By unprotected we mean that an attempt
+to include a header file more than once will either cause compilation
+errors (e.g. due to recursive includes) or,
+in some implementations, warnings from the preprocessor stating
+that symbols are being redefined. It is good practice to protect header
+files.
+<P>
+<H2><A NAME="SECTION00081000000000000000"><TT>ctype.h</TT></A></H2>
+<P>
+They provide the same functionality in all systems except that some
+symbols must be renamed.
+<P>
+<PRE>#ifdef SYSV
+# define  _ctype_  _ctype
+# define  toupper  _toupper
+# define  tolower  _tolower
+#endif</PRE>
+<P>
+Note however that the definitions in <TT>&lt;ctype.h&gt;</TT> are not portable across
+character sets.
+<P>
+<H2><A NAME="SECTION00082000000000000000"><TT>fcntl.h</TT> and <TT>sys/file.h</TT></A></H2>
+<P>
+Many files which a BSD systems expects to find in the <TT>sys</TT>
+directory are placed in <TT>/usr/include</TT> in System V. Other systems,
+like VMS, do not even have a <TT>sys</TT> directory<A NAME="tex2html13" HREF="#335">[+]</A>.
+<P>
+The symbols used in the <TT>open</TT> function call are defined in different
+header files in both types of systems:
+<PRE>#ifdef  SYSV
+# include &lt;fcntl.h&gt;
+#else
+# include &lt;sys/file.h&gt;
+#endif</PRE>
+<P>
+<H2><A NAME="SECTION00083000000000000000"><TT>errno.h</TT></A></H2>
+<P>
+The semantics of the error number may differ from one system to another
+and the list may differ as well (e.g. BSD systems have more error numbers
+than System V). Some systems, e.g. SunOS, define the global symbol
+<B>errno</B> which will hold the last error detected by the run-time
+library. This symbol is not available in most systems, although the
+Standard requires that such a symbol be defined (see
+section 4.1.3 of [<A HREF="portableC.html#kn:ansi">X3J88</A>]).
+<P>
+The most portable way to print error messages is to use <B>perror</B>.
+<P>
+<H2><A NAME="SECTION00084000000000000000"><TT>math.h</TT></A></H2>
+<P>
+System V has more definitions in this header file than BSD-like
+systems. The corresponding library has more functions as well. This header
+file is unprotected under VMS and Cray, and that case we must do-it-ourselves:
+<PRE>#if defined(CRAY) || defined(VMS)
+# ifndef  __MATH__
+#  define  __MATH__
+#  include &lt;math.h&gt;
+# endif
+#endif</PRE>
+<P>
+<H2><A NAME="SECTION00085000000000000000"><TT>strings.h</TT> vs. <TT>string.h</TT></A></H2>
+<P>
+Some systems cannot be treated as System V or BSD but are really a special
+case, as one can see in the following:
+<P>
+<PRE>#ifdef  SYSV
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  _STDH_  /* ANSI C Standard header files */
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  macII
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  vms
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  SYSV_STRINGS
+# include &lt;string.h&gt;
+# define  index   strchr
+# define  rindex  strrchr
+#else
+# include &lt;strings.h&gt;
+#endif</PRE>
+<P>
+As one can easily observe, System V-like Unix systems use different names
+for <TT>index</TT> and <TT>rindex</TT> and place them in different header files.
+Although VMS supports better System V features
+it must be treated as a special case.
+<P>
+<H2><A NAME="SECTION00086000000000000000"><TT>time.h</TT> and <TT>types.h</TT></A></H2>
+<P>
+When using <TT>time.h</TT> one must also include <TT>types.h</TT>. The following
+code does the trick:
+<P>
+<PRE>#ifdef macII
+# include &lt;time.h&gt;   /* on a Mac II we need this one as well */
+#endif
+
+#ifdef  SYSV
+# include &lt;time.h&gt;
+#else
+# ifdef vms
+#  include &lt;time.h&gt;
+# else
+#  ifdef CRAY
+#   ifndef __TYPES__   /* it is not protected under CRAY */
+#   define __TYPES__
+#   include &lt;sys/types.h&gt;
+#   endif
+#  else
+#   include &lt;sys/types.h&gt;
+#  endif /* of ifdef CRAY */
+# include &lt;sys/time.h&gt;
+# endif  /* of ifdef vms  */
+#endif</PRE>
+<P>
+The above is not sufficient in order for the code to be portable since
+the structure which defines time values is not the same in all systems.
+Different systems have vary in the way <TT>time_t</TT> values are represented.
+The Standard, for instance, only requires that it be an arithmetic type.
+Recognizing this difficulty, the Standard defines a function called
+<TT>difftime</TT> to compute the difference between two time values of
+type <TT>time_t</TT>, and <TT>mktime</TT> which takes a string and produces
+a value of type <TT>time_t</TT>.
+<P>
+<H2><A NAME="SECTION00087000000000000000"><TT>varargs.h</TT> vs. <TT>stdarg.h</TT></A></H2>
+<P>
+In some systems the definitions in both header files
+are contradictory. For instance, the following will produce compilation
+errors under VMS<A NAME="tex2html14" HREF="#160">[+]</A>:
+<PRE>#include &lt;varargs.h&gt;
+#include &lt;stdio.h&gt;</PRE>
+<P>
+This is because <TT>&lt;stdio.h&gt;</TT> includes <TT>&lt;stdarg.h&gt;</TT> which in turn
+redefines all the symbols (<TT>va_start</TT>, <TT>va_end</TT>, etc.)
+in <TT>&lt;varargs.h&gt;</TT>. The solution we adopt is to always include
+<TT>&lt;varargs.h&gt;</TT> last and not define in the same module functions
+which use <TT>&lt;varargs.h&gt;</TT> and functions which use the ellipsis notation.
+<P>
+<H1><A NAME="SECTION00090000000000000000">Run-time Library</A></H1>
+<P>
+<DL ><DT><STRONG>getlogin:</STRONG>
+<DD> This one is not defined, e.g. under VMS.
+ In that case, one can always use <TT>getenv(``HOME'')</TT>.
+<P>
+<DT><STRONG>scanf:</STRONG>
+<DD> Scanf can behave differently in different platforms because
+ it's descriptions, including the one in the Standard, allows for different
+ interpretations under some circumstances. The most portable input parser
+ is the one you write yourself.
+<P>
+<DT><STRONG>setjmp and longjmp:</STRONG>
+<DD> Quoting anonymously
+ from <B>comp.std.c</B>, ``pre-X3.159 implementations of
+setjmp and longjmp often did not meet the requirements of the Standard. Often
+they didn't even meet their own documented specs. And the specs varied
+from system to system. Thus it is wise not to depend too heavily on the
+exact standard semantics for this facility...''.
+<P>
+In other words, it is not that you should <EM>not</EM> use them but
+be careful if you do. Furthermore, the behaviour of a <B>longjmp</B>
+invoked from a nested signal handler<A NAME="tex2html15" HREF="#340">[+]</A>
+is undefined.
+<P>
+Finally, the symbols <TT>_setjmp</TT> and <TT>_longjmp</TT> are only defined
+under SunOS, BSD, and HP-UX.
+<P>
+</DL><H1><A NAME="SECTION000100000000000000000">Compiler limitations</A></H1>
+<P>
+In practice, much too frequently one runs into several, unstated
+ compiler limitations:
+<P>
+<UL>
+<LI> Some of these <EM>limitations</EM> are <EM>bugs</EM>. Many of these bugs
+ are in the optimizer and therefore when dealing with a new environment it is
+ best to explicitly disable optimization until one gets the application ``going''.
+<LI> Some compilers cannot handle large modules or ``large''
+   statements<A NAME="tex2html16" HREF="#341">[+]</A>. Therefore,
+   it is advisable to keep the size of modules within reasonable bounds.
+   Besides, large modules are more cumbersome to edit and understand.
+<P>
+</UL><H1><A NAME="SECTION000110000000000000000">Using floating-point numbers</A></H1>
+<P>
+To say that the implementation of numerical algorithms
+ which exhibit the same behaviour across a wide variety of platforms is
+difficult is an understatement. This section provides very little
+help but we hope it is worth reading. Any additional suggestions
+and information is <EM>very much</EM> appreciated as we would like
+to expand this section.
+<P>
+<H2><A NAME="SECTION000111000000000000000">Machine constants</A></H2>
+<P>
+One problem when writing numerical algorithms is obtaining machine
+constants. Typical values one needs are:
+<P>
+<UL>
+<LI> The radix of the floating-point representation.
+<LI> The number of digits in the floating-point significand expressed
+   in terms of the radix of the representation.
+<LI> The number of bits reserved for the representation of the exponent.
+<LI> The smallest positive floating-point number <I>eps</I> such that
+(image not reproduced).
+<LI> The smallest non-vanishing normalized floating-point power of the radix.
+<LI> The largest finite<A NAME="tex2html17" HREF="#188">[+]</A> floating-point number.
+<P>
+</UL>
+<P>
+On Sun's they can be obtained in <TT>&lt;values.h&gt;</TT>.
+The ANSI C Standard recommends that such constants be defined in the
+header file <TT>&lt;float.h&gt;</TT>.
+<P>
+Sun's and standards apart, these values are not always readily available,
+e.g. in
+Tektronix workstations running UTek. One solution is to
+use a modified version of a program which can be obtained from the network
+called
+<EM><B>machar</EM></B>. <B>Machar</B> is described in [<A HREF="portableC.html#kn:machar">Cod88</A>] and can
+obtained by anonymous <EM>ftp</EM> from the
+<EM>netlib</EM><A NAME="tex2html18" HREF="#342">[+]</A>.
+<P>
+It is straightforward to modify the C version of
+ <B>machar</B> to generate a C preprocessor
+file which can be included directly by C programs.
+<P>
+There is also a publicly available
+program called <EM>config.c</EM> which attempts to
+determine many properties of the C compiler and machine that it is run on. This
+program was submitted to <B>comp.sources.misc</B><A NAME="tex2html19" HREF="#343">[+]</A>.
+<P>
+<H2><A NAME="SECTION000112000000000000000">Floating-point arguments</A></H2>
+<P>
+In the days of K&amp;R[<A HREF="portableC.html#kn:KR">KR78</A>] one was ``encouraged'' to use
+<EM>float</EM> and <EM>double</EM> <BR>
+ interchangeably<A NAME="tex2html20" HREF="#207">[+]</A> since all expressions with
+such data types where always evaluated using the <EM>double</EM> representation
+- a real nightmare for those implementing efficient numerical algorithms
+in C. This rule applied, in particular, to floating-point arguments and
+for most compiler around it does not matter whether one defines the argument
+as <EM>float</EM> or <EM>double</EM>.
+<P>
+According to the ANSI C Standard such programs will continue to exhibit the same
+behaviour <EM>as long as one does not prototype the function</EM>. Therefore, when
+prototyping functions make sure the prototype is included when the function
+definition is compiled so the compiler can check if the arguments match.
+<P>
+<H2><A NAME="SECTION000113000000000000000">Floating-point arithmetic</A></H2>
+<P>
+Be careful when using the <TT>==</TT> and <TT>!=</TT> operators when comparing
+floating types. Expressions such as
+<TT>if (<EM>float_expr1</EM> == <EM>float_expr2</EM>)</TT>
+
+will seldom be satisfied due to <EM>rounding errors</EM>.
+To get a feeling about rounding errors, try evaluating the following
+expression using your favourite C compiler[<A HREF="portableC.html#kn:fparith">KM86</A>]:
+<BR>
+(image not reproduced)
+<BR>
+<P>
+Most computers will produce zero regardless if one uses <EM>float</EM> or
+<EM>double</EM>. Although the <EM>absolute error</EM> is large, the <EM>relative
+error</EM> is quite small and probably acceptable for many applications.
+<P>
+It is rather better to use expressions such as
+(image not reproduced)
+or
+(image not reproduced)
+ (if 
+(image not reproduced)), where 0 &lt; <I>K</I> &lt; 1 is
+a function of:
+<OL>
+<LI> The floating type, e.g. <EM>float</EM> or <EM>double</EM>,
+<LI> the machine architecture (the machine constants defined in the
+ previous section), and
+<LI> the precision of the input values and the rounding errors introduced
+ by the numerical method used.
+</OL>
+<P>
+Other possibilities exist and the choice depends on the application.
+<P>
+The development of reliable and robust numerical algorithm is a very
+difficult undertaking. Methods for certifying that the results are
+correct within reasonable bounds must usually be implemented.
+A reference such as [<A HREF="portableC.html#kn:NRC">PFTV88</A>] is always useful.
+<P>
+<UL>
+<LI> Keep in mind that the <EM>double</EM> representation does not
+ necessarily increase the <EM>precision</EM>. Actually, in most implementations
+ the precision decreases but the <EM>range</EM> increases.
+<LI> Do not use <EM>double</EM> unnecessarily since in most cases there is
+ a large performance penalty. Furthermore, there is no point in using higher
+ precision if the additional bits which will be computed are garbage anyway.
+ The precision one needs depends mostly on the precision of the input data
+ and the numerical method used.
+<P>
+</UL><H2><A NAME="SECTION000114000000000000000">Exceptions</A></H2>
+<P>
+Floating-point exceptions (overlow, underflow, division by zero, etc)
+are not signaled automatically in some systems. In that case, they
+must be explicitly enabled.
+<P>
+<EM>Always</EM> enable floating-point exceptions since they may be an
+indication that the method is unstable. Otherwise, one must be sure
+that such events do not affect the output.
+<P>
+<H1><A NAME="SECTION000120000000000000000">VMS</A></H1>
+<P>
+In this section we will report some common problems encountered when
+porting a C program to a VMS environment and which we have not mentioned
+in the previously.
+<P>
+<H2><A NAME="SECTION000121000000000000000">File specifications</A></H2>
+<P>
+Under VMS one can use two flavours of command interpreters: DCL and
+DEC/Shell. The syntax of file specifications under DCL differs significantly
+from the Unix syntax.
+<P>
+Some C run-time library functions in VMS which take file specifications
+as arguments or return file specifications to the caller will accept
+an additional argument indicating which syntax is preferred. It is
+useful to use these run-time library functions via macros as follows:
+<P>
+<PRE>#ifdef  VMS
+#ifndef VMS_CI     /* Which Command Interpreter flavour to use */
+# define VMS_CI  0 /* 0 for DEC/Shell, 1 for DCL */
+#endif
+
+# define  Getcwd(buff,siz)   getcwd((buff),(siz),VMS_CI)
+# define  Getname(fd,buff)   getname((fd),(buff),VMS_CI)
+# define  Fgetname(fp,buff)  fgetname((fp),(buff),VMS_CI)
+#else
+# define  Getcwd(buff,siz)   getcwd((buff),(siz))
+# define  Getname(fd,buff)   getname((fd),(buff))
+# define  Fgetname(fp,buff)  fgetname((fp),(buff))
+
+#endif /* of ifdef VMS */</PRE>
+<P>
+More pitfalls await the unaware who accept file specifications from the
+user or take them from environment values (e.g. using the <B>getenv</B>
+function).
+<P>
+<H2><A NAME="SECTION000122000000000000000">Miscellaneous</A></H2>
+<P>
+<DL ><DT><STRONG>end, etext, edata:</STRONG>
+<DD> these global symbols are not available under
+ VMS.
+<P>
+<DT><STRONG><TT>Struct</TT> assignments:</STRONG>
+<DD> VAX C allows assignment of structs if
+ the types of both sides have the same size. <EM>This is not a portable
+feature.</EM>
+<P>
+<DT><STRONG>The system function:</STRONG>
+<DD>
+the <B>system</B> function under VMS has the same <EM>functionality</EM> as
+the Unix version, except that one must take care that the command
+interpreter provide also the same functionality. If the user is using
+DCL then the application must send a DCL-like command.
+<P>
+<DT><STRONG>The linker:</STRONG>
+<DD>
+what follows applies only to modules stored in
+ libraries<A NAME="tex2html21" HREF="#253">[+]</A>.
+If none of the global <EM>functions</EM> are explicitly used (referenced
+by another module) then the
+module is not linked <EM>at all</EM>. It does not matter whether one of the
+global <EM>variables</EM> is used. As a side effect, the initialization
+of variables is not done.
+<P>
+The easiest solution is to force the linker to add  the
+module using the /INCLUDE command modifier. Of course, there is the
+possibility that the command line may exceed 256 characters...(*sigh*).
+<P>
+</DL><H1><A NAME="SECTION000130000000000000000">General Guidelines</A></H1>
+<P>
+<H2><A NAME="SECTION000131000000000000000">Machine architectures, Type compatibility, Pointers, etc.</A></H2>
+<P>
+<OL>
+<LI> <B>Never</B> make any assumptions about the size of a given type,
+ especially pointers. [<A HREF="portableC.html#kn:style">Can89</A>] Statements such as
+ <TT>x &amp;= 0177770</TT> make
+ implicit use of the size of <TT>x</TT>. If the intention is to clear the
+ lower three bits then it is best to use <TT>x &amp;=
+(image not reproduced)
+07</TT>. The first
+ alternative will also clear the high order 16 bits if <TT>x</TT> is
+ 32 bits wide.
+<LI> In some architectures the byte order is inverted; these are called
+ <EM>little-endian</EM> versus <EM>big-endian</EM> architectures. This problem
+ is illustrated by the code below<A NAME="tex2html22" HREF="#347">[+]</A>:
+<PRE>long int str[2] = {0x41424344, 0x0}; /* ASCII ``ABCD'' */
+printf (``%s\n'', (char *)&amp;str);</PRE>
+<P>
+A little-endian (e.g. VAX) will print ``<TT>DCBA</TT>''
+ whereas a big-endian (e.g. MC68000 microprocessors) will print ``<TT>ABCD</TT>''.
+<LI> Beware of alignment constraints when allocating memory and using
+ pointers. Some
+ architectures restrict the addresses that certain operands
+ may be assigned to (that is, addresses of the form
+(image not reproduced)
+).
+<LI> [<A HREF="portableC.html#kn:style">Can89</A>] Pointers to objects may have the same size but
+ different formats. This is illustrated by the code below:
+<PRE>int *p = (int *) malloc(...); ... free(p);</PRE>
+<P>
+This code may malfunction in architectures where <TT>int*</TT> and <TT>char*</TT>
+have different representations because <TT>free</TT> expects a pointer of
+the latter type.
+<LI> [<A HREF="portableC.html#kn:style">Can89</A>] Only the operators <TT>==</TT> and <TT>!=</TT> are
+ defined for all pointers of a given type. The remaining comparison
+ operators (<TT>&lt;</TT>, <TT>&lt;=</TT>, <TT>&gt;</TT>, and <TT>&gt;=</TT>) can only be used when
+ both operands point into the same array or to the first element after
+ the array. The same applies to arithmetic operators on
+ pointers<A NAME="tex2html23" HREF="#283">[+]</A>.
+<LI> <B>Never</B> redefine the <TT>NULL</TT> symbol. The NULL symbol should
+ always be the <EM>constant</EM> zero. A null pointer of a given type will
+ always compare equal to the <EM>constant</EM> zero, whereas comparison
+ with a variable with value zero or to some non-zero constant has
+ implementation defined behaviour.
+<P>
+ A null pointer of a given type will always convert to a null
+ pointer of another type if implicit or explicit conversion is performed.
+ (See item 4 above.)
+<P>
+ The contents of a null pointer may be anything the
+ implementor wishes and dereferencing it may cause strange things to
+ happen...
+<P>
+</OL><H2><A NAME="SECTION000132000000000000000">Compiler differences</A></H2>
+<P>
+<OL>
+<LI> When <TT>char</TT> types are used in expressions most implementations
+ will treat them as <TT>unsigned</TT> <EM>but there are others which treat
+ them as</EM> <TT>signed</TT> (e.g. VAX C and HP-UX).
+ It is advisable to always cast them when used in arithmetic expressions.
+<LI> Do not rely on the initialization of <TT>auto</TT> variables and
+ of memory returned by <TT>malloc</TT>.
+<LI> Some compilers, e.g. VAX C, require that bit fields within <TT>struct</TT>s
+ be of type <TT>int</TT> or <TT>unsigned</TT>. Futhermore, the upper bound on
+ the length of the bit field may differ among different implementations.
+<LI> The result of <TT>sizeof</TT> may be <TT>unsigned</TT>.
+<P>
+</OL><H2><A NAME="SECTION000133000000000000000">Files</A></H2>
+<P>
+<OL>
+<LI> Keep files reasonably small in order not to upset some compilers.
+<LI> File names should not exceed 14 characters (many System V derived
+ system impose this limit, whereas in BSD derived systems a limit
+ of 15 is usually the case).
+ In some implementations
+ this limit can be as low as 8 characters.
+These limits are often <EM>not</EM>
+ imposed by the operating system but by system utilities such as <EM>ar</EM>.
+<LI> Do not use special characters especially multiple dots (dots have
+ a very special meaning under VMS).
+<P>
+</OL><H2><A NAME="SECTION000134000000000000000">Miscellaneous</A></H2>
+<P>
+<DL ><DT><STRONG>Functions as arguments:</STRONG>
+<DD> when calling functions passed as arguments
+ always dereference the pointer. In other words, if <TT>F</TT> is a pointer
+ to a function, use <TT>(*F)</TT> instead of simply <TT>(F)</TT> because some
+ compilers may not recognize the latter.
+<P>
+<DT><STRONG>System dependencies:</STRONG>
+<DD> Isolate system dependent code in separate modules
+ and use conditional compilation.
+<P>
+<DT><STRONG>Utilities:</STRONG>
+<DD> Utilities for compiling and linking such
+ as <B>Make</B> simplify considerably the task of moving an application from
+ one environment to another.
+<P>
+<DT><STRONG>Name space pollution:</STRONG>
+<DD> Minimize the number of global symbols in the
+ application. One of the benefits is the lower probability that any
+ conflicts will arise with system-defined functions.
+<P>
+<DT><STRONG>String constants:</STRONG>
+<DD> Do not modify string constants since many
+ implementations place them in read-only memory. Furthermore, that
+ is what the Standard requires -- and that is how a <EM>constant</EM>
+ should behave!
+<P>
+</DL><H1><A NAME="SECTION000140000000000000000">Acknowledgements</A></H1>
+<P>
+We are grateful for the help of Antti Louko (HTKK/Lsk) and Jari Helminen (HTKK)
+in commenting and
+correcting a previous draft of this document. We thank all the
+contributors of USENET News groups <B>comp.std.c</B> and <B>comp.lang.c</B> from
+where we have taken
+a lot of information. Some information within was obtained from
+[<A HREF="portableC.html#kn:HP">Hew88</A>].
+<P>
+<H1><A NAME="SECTION000150000000000000000">Trademarks</A></H1>
+<P>
+
+<P>
+DEC, PDP-11, VMS and VAX are trademarks of Digital Equipment Corporation. <BR> 
+HP is a trademark of Hewlett-Packard, Inc.<BR> 
+MC68000 is a trademark of Motorola.<BR> 
+PostScript is a registred trademark of Adobe Systems, Inc.<BR> 
+Sun is a trademark of Sun Microsystems, Inc. <BR> 
+UNIX is a registred trademark of AT&amp;T. <BR> 
+X Window System is a trademark of MIT.<BR> 
+
+<P>
+<P><A NAME="SECTIONREF"><H2>References</H2></A><P>
+<DL COMPACT>
+<DT><A NAME="kn:style"><STRONG>Can89</STRONG></A><DD>
+L.W. Cannon.
+Recommended C Style and Coding Standards.
+Technical report, November 1989.
+<P>
+<DT><A NAME="kn:machar"><STRONG>Cod88</STRONG></A><DD>
+W.&nbsp;J. Cody.
+Algorithm 665, MACHAR: A Subroutine to Dynamically Determine Machine
+  Parameters.
+<EM>ACM Transactions on Mathematical Software</EM>, 14(4):303-311,
+  December 1988.
+<P>
+<DT><A NAME="kn:HP"><STRONG>Hew88</STRONG></A><DD>
+Hewlett-Packard Company.
+<EM>HP-UX Portability Guide</EM>, 1988.
+<P>
+<DT><A NAME="kn:MH"><STRONG>Hor90</STRONG></A><DD>
+Mark Horton.
+<EM>Portable C Software</EM>.
+Prentice-Hall, 1990.
+<P>
+<DT><A NAME="kn:unix2"><STRONG>Int90</STRONG></A><DD>
+Interviews.
+Interview With Five Technologists.
+<EM>UNIX Review</EM>, 8(1):41-89, January 1990.
+<P>
+<DT><A NAME="kn:fparith"><STRONG>KM86</STRONG></A><DD>
+U.&nbsp;W. Kulish and W.&nbsp;L. Miranker.
+The Arithmetic of the Digital Computer: A New Approach.
+<EM>SIAM Review</EM>, 28(1):1-40, March 1986.
+<P>
+<DT><A NAME="kn:AK"><STRONG>Koe89</STRONG></A><DD>
+Andrew Koenig.
+<EM>C Traps and Pitfalls</EM>.
+Addison-Wesley Publishing Co., Reading, Massachusetts, 1989.
+<P>
+<DT><A NAME="kn:KR"><STRONG>KR78</STRONG></A><DD>
+Brian&nbsp;W. Kernighan and Dennis&nbsp;M. Ritchie.
+<EM>The C Programming Language</EM>.
+Prentice-Hall, Inc., 1978.
+<P>
+<DT><A NAME="kn:unix1"><STRONG>Man89</STRONG></A><DD>
+Tom Manuel.
+A Single Standard Emerges from the UNIX Tug-Of-War.
+<EM>Electronics</EM>, pages 141-143, January 1989.
+<P>
+<DT><A NAME="kn:NRC"><STRONG>PFTV88</STRONG></A><DD>
+William&nbsp;H. Press, Brian&nbsp;P. Flannery, Saul&nbsp;A. Teukolsky, and William&nbsp;T.
+  Vetterling.
+<EM>NUMERICAL RECIPES in C: The Art of Scientific Computing</EM>.
+Cambridge University Press, 1988.
+<P>
+<DT><A NAME="kn:ansi"><STRONG>X3J88</STRONG></A><DD>
+X3J11.
+Draft Proposed American National Standard for Information Systems
+  -- Programming Language C.
+Technical Report X3J11/88-158, ANSI Accredited Standards
+  Committee, X3 Information Processing Systems, December 1988.
+</DL>
+<P>
+<H1><A NAME="SECTION000170000000000000000">  About this document ... </A></H1>
+<P>
+ <STRONG>Notes On Writing Portable Programs In C<BR> 
+       (June 1990, 5th Revision)
+      </STRONG><P>
+This document was generated using the <A HREF="http://www-dsed.llnl.gov/files/programs/unix/latex2html/manual/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 96.1-h (September 30, 1996) Copyright &#169; 1993, 1994, 1995, 1996,  <A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, Computer Based Learning Unit, University of Leeds. <P> The command line arguments were: <BR>
+<STRONG>latex2html</STRONG> <tt>portableC.tex</tt>. <P>The translation was initiated by Christopher Lott on Thu Mar 13 13:33:05 EST 1997<DL> <DT><A NAME="6">...Lemmke</A><DD>Helsinki University of Technology,
+  Laboratory of Information Processing Sciences, SF-02150 Espoo, Finland.
+  This document is in the public domain.
+  Email address (Internet) are ado@sauna.hut.fi (preferred contact)
+  and arl@sauna.hut.fi, respectively.
+<PRE>
+</PRE><DT><A NAME="7">...Keppel</A><DD>CS&amp;E, University of Washington. Email address (Internet) is
+   pardo@cs.washington.edu.
+<PRE>
+</PRE><DT><A NAME="326">...document</A><DD>It can be obtained via anonymous <EM>ftp</EM> from
+ <EM>cs.washington.edu</EM> in <EM>1#1ftp/pub/cstyle.tar.Z</EM>.
+<PRE>
+</PRE><DT><A NAME="19">...#kn:AK##1#]</A><DD>We note here that none of the information herein
+as been taken from those two references.
+<PRE>
+</PRE><DT><A NAME="32">...programming</A><DD>We include raw I/O, e.g. from terminals in
+this category.
+<PRE>
+</PRE><DT><A NAME="34">...document</A><DD>We regard
+this document
+as a living entity growing as needed and as information is gathered.
+Future versions of this document may contain a lot of such information.
+<PRE>
+</PRE><DT><A NAME="328">...limits</A><DD>Maybe
+ there <B>are</B> people out there
+who still write compilers in FORTRAN after all...
+<PRE>
+</PRE><DT><A NAME="330">...indented</EM></A><DD>Old preprocessors
+ only take directives which begin with <TT>#</TT> in the first column.
+<PRE>
+</PRE><DT><A NAME="331">...files</A><DD>Some have suggeested using <TT>#if __STDC__ ==
+ 1</TT>
+ instead of simply <TT>#ifdef __STDC__</TT> to test if the compiler
+is ANSI-compliant.
+<PRE>
+</PRE><DT><A NAME="332">...arguments</A><DD><TT>GLUE(a,GLUE(b,c))</TT> would not result in the concatenation
+ of <TT>a, b,</TT> and <TT>c</TT>.
+<PRE>
+</PRE><DT><A NAME="115">...Translation</EM></A><DD>Address
+is 2051, Swans Neck Way, Reston, Virginia 22091, USA.
+<PRE>
+</PRE><DT><A NAME="122">...BSD</A><DD>Berkeley Software Distribution.
+<PRE>
+</PRE><DT><A NAME="335">...directory</A><DD>Under VMS,
+since a path such as <TT>&lt;sys/file.h&gt;</TT> will evaluate to <TT>sys:file.h</TT>
+it is sufficient to equate the logical name <TT>sys</TT> to <TT>sys$library</TT>.
+<PRE>
+</PRE><DT><A NAME="160">...VMS</A><DD>We are not sure this behaviour occurs only
+under VMS.
+<PRE>
+</PRE><DT><A NAME="340">...handler</A><DD>That is, a function invoked
+as a result of a signal raised during the handling of another signal.
+See section 4.6.2.1 &#167;15 in [<A HREF="portableC.html#kn:ansi">X3J88</A>].
+<PRE>
+</PRE><DT><A NAME="341">...statements</A><DD>Programs which generate other programs, e.g. YACC, can
+   generate, for instance, very large <B>switch</B> statements.
+<PRE>
+</PRE><DT><A NAME="188">...finite</A><DD>Some representations have reserved values
+    for +<I>inf</I> and -<I>inf</I>.
+<PRE>
+</PRE><DT><A NAME="342">...<EM>netlib</EM></A><DD>Email (Internet) address is netlib@ornl.gov.
+For more information, send a message containing the line <EM>send index</EM>
+to that address.
+<PRE>
+</PRE><DT><A NAME="343">...<B>comp.sources.misc</B></A><DD>The arquive site
+of <B>comp.sources.misc</B> is <EM>uunet.uu.net</EM>.
+<PRE>
+</PRE><DT><A NAME="207">...</A><DD>In fact one wonders
+why they even bothered to define two representations for floating-point numbers
+considering the rules applied to them.
+<PRE>
+</PRE><DT><A NAME="253">...libraries</A><DD>This
+ does not really belong in this document but whenever one
+ is porting a program to a VMS environment one is bound to come across
+ this strange behaviour which can result in  a lot of wasted time.
+<PRE>
+</PRE><DT><A NAME="347">...below</A><DD>The code will only
+ function correctly if <TT>sizeof(long int)</TT> is 32 bits. Although not
+ portable it serves well as an example for the given problem.
+<PRE>
+</PRE><DT><A NAME="283">...pointers</A><DD>One of the reasons for these rules is that in some
+ architectures pointers are represented as a pair of values and only
+ under those circumstances are two pairs comparable.
+</DL>
+<HR>
+<P>
+<ADDRESS>
+Document processed by Christopher Lott,
+Thu Mar 13 13:33:05 EST 1997.
+<BR>
+<A HREF="index.html">Collection index</A>
+</ADDRESS>
+</BODY>
+</HTML>

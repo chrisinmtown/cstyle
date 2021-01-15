@@ -1,0 +1,3990 @@
+<HTML>
+<HEAD>
+<TITLE>Wildfire C++ Programming Style</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<CENTER>
+<H1>Wildfire C++ Programming Style</h1>
+<H2>With Rationale</H2>
+<P>
+<H3>by Keith Gabryelski</H3>
+Wildfire Communications, Inc.<BR>
+Wildfire: 617-674-1724<BR>
+Fax: 617-674-1501<BR>
+Email: ag@wildfire.com<BR>
+<P>
+Copyright &copy; 1997 by Keith Gabryelski
+<P>
+This mirror was established with the express permission of the
+author.<BR>  Here is the 
+<A HREF="http://www.wildfire.com/~ag/Engineering/Development/C++Style/">
+original home page</A> for this document.
+<P>
+</CENTER>
+<P>
+<HR>
+<P>
+<UL>
+<UL>
+<UL>
+<A HREF="#HDR3">  1  Introduction</A>
+<UL>
+<A HREF="#HDR4">  1.1  Background</A>
+</UL>
+<A HREF="#REF10320">  2  Fundamental MetaRule</A>
+<UL>
+<A HREF="#HDR5">  2.1  C++ is different from C</A>
+</UL>
+<A HREF="#HDR6">  3  Files</A><UL>
+<A HREF="#REF24104">  3.1  File Naming Conventions</A><BR>
+<A HREF="#REF46440">  3.2  File Organization</A><BR>
+<A HREF="#REF20919">  3.3  Header File Content</A><BR>
+<A HREF="#REF10510">  3.4  Source File Content</A>
+</UL>
+<A HREF="#HDR7">  4  Preprocessor</A>
+<UL>
+<A HREF="#REF52683">  4.1  Macros (<CODE>#define</CODE>)</A><BR>
+<A HREF="#HDR8">  4.2  Conditional Compilation (<CODE>#if</CODE> and its ilk)</A>
+</UL>
+<A HREF="#HDR9">  5  Identifier Naming Conventions</A>
+<UL>
+<A HREF="#HDR10">  5.1  General Rules</A><BR>
+<A HREF="#HDR11">  5.2  Identifier Style</A><BR>
+<A HREF="#REF69088">  5.3  Namespace Clashes</A><BR>
+<A HREF="#REF31908">  5.4  Reserved Namespaces</A>
+</UL>
+<A HREF="#HDR12">  6  Using White Space</A>
+<UL>
+<A HREF="#HDR13">  6.1  Indentation</A><BR>
+<A HREF="#REF55216">  6.2  Long Lines</A><BR>
+<A HREF="#HDR14">  6.3  Comments</A><BR>
+<A HREF="#HDR15">  6.4  Block Comments</A><BR>
+<A HREF="#HDR16">  6.5  Single-Line Comments</A><BR>
+<A HREF="#HDR17">  6.6  Trailing Comments</A>
+</UL>
+<A HREF="#HDR18">  7  Types</A>
+<UL>
+<A HREF="#REF26953">  7.1  Constants</A><BR>
+<A HREF="#REF18325">  7.2  Use of <CODE>const</CODE></A><BR>
+<A HREF="#REF48800">  7.3  <CODE>struct</CODE> and <CODE>union </CODE>Declarations</A><BR>
+<A HREF="#REF66715">  7.4  enum Declarations</A><BR>
+<A HREF="#REF93014">  7.5  Classes</A><BR>
+<A HREF="#REF47889">  7.6  <CODE>class </CODE>Declarations</A><BR>
+<A HREF="#HDR19">  7.7  Class Constructors and Destructors</A><BR>
+<A HREF="#HDR20">  7.8  Automatically-Provided Member Functions</A><BR>
+<A HREF="#HDR21">  7.9  Function Overloading</A><BR>
+<A HREF="#HDR22">  7.10  Operator Overloading</A><BR>
+<A HREF="#HDR23">  7.11  Protected items</A><BR>
+<A HREF="#HDR24">  7.12  friends</A>
+<UL>
+<A HREF="#REF51660">  7.12.1  <CODE>friend</CODE> Classes</A><BR>
+<A HREF="#REF27400">  7.12.2  friend Methods</A>
+</UL>
+<A HREF="#REF52403">  7.13  Templates</A>
+</UL>
+<A HREF="#HDR25">  8  Variables</A>
+<UL>
+<A HREF="#HDR26">  8.1  Placement of Declarations</A><BR>
+<A HREF="#HDR27">  8.2  <CODE>extern</CODE> Declarations</A><BR>
+<A HREF="#REF16097">  8.3  Indentation of Variables</A><BR>
+<A HREF="#HDR28">  8.4  Number of Variables per Line</A><BR>
+<A HREF="#HDR29">  8.5  Definitions Hiding Other Definitions</A><BR>
+<A HREF="#HDR30">  8.6  Initialized Variables</A>
+</UL>
+<A HREF="#HDR31">  9  Functions</A>
+<UL>
+<A HREF="#REF12703">  9.1  Function Declarations</A><BR>
+<A HREF="#REF16509">  9.2  Function Definitions</A>
+</UL>
+<A HREF="#REF23897">  10  Statements</A>
+<UL>
+<A HREF="#HDR32">  10.1  Compound Statements</A><BR>
+<A HREF="#REF36666">  10.2  <CODE>if</CODE><CODE>/</CODE>else Statements</A><BR>
+<A HREF="#HDR33">  10.3  for Statements</A><BR>
+<A HREF="#HDR34">  10.4  <CODE>do </CODE>Statements</A><BR>
+<A HREF="#HDR35">  10.5  while Statements</A><BR>
+<A HREF="#HDR36">  10.6  Infinite Loops</A><BR>
+<A HREF="#HDR37">  10.7  Empty Loops</A><BR>
+<A HREF="#REF21716">  10.8  switch Statements</A><BR>
+<A HREF="#HDR38">  10.9  <CODE>goto </CODE>Statements</A><BR>
+<A HREF="#HDR39">  10.10  <CODE>return</CODE> Statements</A><BR>
+<A HREF="#HDR40">  10.11  <CODE>try</CODE>/<CODE>catch </CODE>Statements</A>
+</UL>
+<A HREF="#REF86372">  11  Miscellaneous</A>
+<UL>
+<A HREF="#HDR41">  11.1  General Comments &amp; Rules</A><BR>
+<A HREF="#HDR42">  11.2  Limits on numeric precision</A><BR>
+<A HREF="#REF96004">  11.3  Comparing against Zero</A>
+<UL>
+<A HREF="#HDR43">  11.3.1  Boolean</A><BR>
+<A HREF="#HDR44">  11.3.2  Character</A><BR>
+<A HREF="#HDR45">  11.3.3  Integral</A><BR>
+<A HREF="#HDR46">  11.3.4  Floating Point</A><BR>
+<A HREF="#HDR47">  11.3.5  Pointer</A>
+</UL>
+<A HREF="#REF80253">  11.4  Use and Misuse of <CODE>inline</CODE></A><BR>
+<A HREF="#REF98917">  11.5  References vs. Pointers</A><BR>
+<A HREF="#HDR48">  11.6  Portability</A>
+</UL>
+<A HREF="#REF16183">  12  Interaction with C</A>
+<UL>
+<A HREF="#REF77061">  12.1  ANSI-C/C++ include files:</A><BR>
+<A HREF="#REF28244">  12.2  Including C++ Header Files in C programs</A><BR>
+<A HREF="#HDR49">  12.3  Including C Header Files in C++</A><BR>
+<A HREF="#HDR50">  12.4  C Code calling C++ Libraries</A>
+</UL>
+</UL>
+</UL>
+</UL>
+
+<HR>
+<!-- This file was created with the fm2html filter.
+The filter is copyright Norwegian Telecom Research and
+was programmed by Jon Stephenson von Tetzchner. -->
+
+
+<H4><A NAME="HDR3">  1  Introduction</A></H4>
+<H5><A NAME="HDR4">  1.1  Background</A></H5>
+
+<P> This document defines the C++ coding style for Wildfire, Inc. It
+also tries to provide guidelines on how to use the various features
+found in the C++ language. The establishment of a common style will
+facilitate understanding and maintaining code developed by more than
+one programmer as well as making it easier for several people to
+cooperate in the development of the same program. In addition,
+following a common programming style will enable the construction of
+tools that incorporate knowledge of these standards to help in the
+programming task.
+<P>
+Using a consistent coding style throughout a particular module,
+package, or project is important because it allows people other than
+the author to easily understand and (hopefully) maintain the
+code. Most programming styles are somewhat arbitrary, and this one is
+no exception.  In the places where there were choices to be made, we
+attempted to include the rationale for our decisions.
+<P>
+<EM>This document contains rationale for many of the choices
+made. Rationale will be presented with this paragraph style.</EM>
+<P>
+One more thing to keep in mind is that when modifying an existing
+source file, the modifications should be coded in the same style as
+the file being modified. A consistent style is important, even if it
+isn't the one you usually use.
+<P>
+However, there are many variations in style that do not interfere
+with achieving these goals. This style guide is intended to be the
+minimum reasonable set of rules that accomplish these ends. It does
+not attempt to answer all questions about where ever character should
+go. We rely upon the good judgement of the programmer as much as
+possible.
+<P>
+This guide presents things in "programming order", that is, notes,
+rules, and guidelines about a particular programming construct are
+grouped together. In addition, the sections are in an order that
+approximates that used to write programs.
+<P>
+The section <A HREF="#REF86372">Miscellaneous on page 32</A>
+contains many useful tidbits of information that didn't fit well into
+any of the other sections.
+<P>
+Finally, there is a Bibliography and Reading List at the end of this
+document that contains quite a few titles. Many of the books there
+should be considered mandatory reading --- if nothing else, buy and
+read a copy of both the <I>ARM</I>
+<A HREF="Wildfire-C++Style-endmatter.html#REF23424">[10]</A> by Ellis &amp; Stroustrup and
+<I> Effective C++</I>
+ <A HREF="Wildfire-C++Style-endmatter.html#REF94325">[12]</A>
+ by Scott Meyers. Coplien's
+ <I>Advanced C++ Programming Styles and Idioms</I>
+ <A HREF="Wildfire-C++Style-endmatter.html#REF79763">[13]</A>
+ is also highly recommended.
+<H4><A NAME="REF10320">  2  Fundamental MetaRule</A></H4>
+
+<P>
+A good style guide can enhance the quality of the code that we
+write. This style guide tries to present a standard set of methods for
+achieving that end.
+<P>
+It is, however, the end itself that is important. Deviations from this
+standard style are acceptable if they enhance readability and code
+maintainability. Major deviations require a explanatory comment at
+each point of departure so that later readers will know that you
+didn't make a mistake, but purposefully are doing a local variation
+for a good cause.
+<P>
+
+A good rule of thumb is that 10% of the cost of a project goes into
+writing code, while more than 50% is spent on maintaining it. Think
+about the trade-offs between ease-of-programming now
+vs. ease-of-maintenance for the next 5 to 10 years when you consider
+the rules presented here.
+<H5><A NAME="HDR5">  2.1  C++ is different from C</A></H5>
+<P>
+The C++ programming language differs substantially from the C
+programming language. In terms of usage, C is more like Pascal than it
+is like C++. This style guide differs from traditional C style guides
+in places where the "C mindset" is detrimental to the object-oriented
+outlook desired for C++ development.  <H4><A NAME="HDR6"> 3
+Files</A></H4>
+<P>
+
+Code should compile without errors or warnings<I>. "</I>Compile" in
+this sense applies to <CODE>lint</CODE>-like code analyzers, a
+standard-validating compilers (ANSI-C++, POSIX, Style Guide
+Verification, etc.), and C++ compilers on all supported
+hardware/software platforms.  <H5><A NAME="REF24104"> 3.1 File Naming
+Conventions</A></H5>
+<P>
+
+Try to pick filenames that are meaningful and understandable. File
+names are not limited to 14 characters. The following table shows the
+file naming conventions we will use:
+<P>
+<PRE>
+-------------------------------------------
+<B>File Contents             Name               </B>
+-------------------------------------------
+C++ Source Code           <I>filename</I>.cc        
+C++ Header File           <I>filename</I>.hh        
+C Source Code             <I>filename</I>.c         
+C Header File             <I>filename</I>.h         
+Object Code               <I>filename</I>.o         
+Archive Libraries         <I>filename</I>.a         
+Dynamic Shared Libraries  <I>filename</I>.so.&lt;ver&gt;  
+Shell Scripts             <I>filename</I>.sh        
+Yacc/C Source Code        <I>filename</I>.y         
+Yacc/C++ Source Code      <I>filename</I>.yy        
+Lex/C Source Code         <I>filename</I>.l         
+Lex/C++ Source Code       <I>filename</I>.ll        
+Directory Contents        README             
+Build rules for <CODE>make</CODE>      Makefile           
+-------------------------------------------
+</PRE>
+
+<P>
+<EM>POSIX specifies a maximum of 14 characters for filenames, but in
+practice this limit is too restrictive: source control systems like
+RCS and SCCS use 2 characters; the IDL compiler generates names with
+suffixes appended, etc.</EM>
+<P>
+
+<H5><A NAME="REF46440">  3.2  File Organization          </A></H5>
+
+<UL>
+<P>
+<LI>Although there is no maximum length requirement for source files,
+files with more than about 1000 lines are cumbersome to deal with.
+<BR>
+
+<P>
+<LI>Lines longer than 80 columns should be avoided. Use C++'s string
+concatenation to avoid unwieldy string literals and break long
+statements onto multiple lines.
+<A HREF="#REF55216">(See Long Lines on page 10)</A>:
+<BR>
+</UL>
+
+<PRE>
+char *s1 = "hello\n"
+           "world\n";                    // s1 is exactly the same as s2,
+char *s2 = "hello\nworld\n";
+</PRE>
+
+<P>
+<EM>The line length limit is related to the fact that many printers
+and terminals are limited to an 80 character line length. Source code
+that has longer lines will cause either line wrapping or truncation on
+these devices. Both of these behaviors result in code that is hard to
+read.</EM>
+<P>
+<UL>
+<P>
+<LI>No <CODE>#pragma</CODE> directive should be used.
+<BR>
+</UL>
+<P>
+<EM><CODE>#pragma</CODE> directives are, by definition, non-standard,
+and can cause unexpected behavior when compiled on other systems. On
+another system, a <CODE>#pragma</CODE> might even have the opposite
+meaning of the intended one.</EM>
+<P>
+<EM>In some cases <CODE>#pragma</CODE> is a necessary evil.
+Some compilers use <CODE>#pragma</CODE> directives to control template
+instantiations. In these rare cases the <CODE>#pragma</CODE> usage should
+be documented and, if possible, <CODE>#ifdef</CODE> directives should be
+to ensure other copilers don't trip over the usage.
+<A HREF="#HDR8"> (See <CODE>#error directive</CODE> and 4.2 
+ Conditional Compilation (<CODE>#if</CODE> and its ilk)</A>
+</EM>
+<P>
+<H5><A NAME="REF20919">  3.3  Header File Content</A></H5>
+<P>
+
+Header files should be functionally organized, with declarations of
+separate subsystems placed in separate header files. For class
+definitions, header files should be treated as interface definition
+files.
+<UL>
+<P>
+<LI>Declare related class and types that are likely to be used
+together in a single header file.
+<BR>
+<P>
+<LI>If a set of declarations is likely to change when code is ported
+from one machine to another, put them into a separate header file.
+<BR>
+<P>
+<LI>Never <I>declare</I> static variables or non-member static
+function prototypes in a header file.
+
+<BR>
+
+<P>
+<LI>Never <I>define</I> variables in a header file.
+<BR>
+
+<P>
+
+<LI>Private header files which are used only by a specific
+implementation should live with that implementation's source code (for
+example, in the same directory), and be included using the<CODE>
+#include</CODE> <CODE>"name"</CODE> construct.
+
+<BR>
+
+<P>
+
+<LI>Header files that are designed to be includable by both C and C++
+code have different rules.
+See <A HREF="#REF16183">Interaction with C, § 12</A>.
+<BR>
+</UL>
+
+<P>
+The required ordering in header files is as follows:
+<OL>
+<P>
+<LI>A "stand-alone" copyright notice such as that shown below<CODE>
+<A HREF="#FN1">(1)</A></CODE>:
+
+<BR></OL><PRE>
+    // Copyright 1992 by Wildfire Communications, Inc.
+    // <I>remainder of Wildfire copyright notice</I>
+</PRE>
+Don't place anything other than the copyright text in this comment
+--- the whole comment will be replaced programmatically to update the
+copyright text.
+<BR>
+
+<OL>
+<P>
+<LI>An <CODE>#ifndef</CODE> that checks whether the header file has
+been previously included, and if it has, ignores the rest of the
+file. The name of the variable tested looks like
+<CODE>_WF_</CODE><I>FILE_HH</I>, where "<I><CODE>FILE_HH</CODE></I>"
+is replaced by the header file name, using underscore for any
+character not legal in an identifier. Immediately after the test, the
+variable is defined.
+</OL>
+
+<PRE>
+    #ifndef _WF_FILENAME_HH
+    #define _WF_FILENAME_HH
+</PRE>
+
+<OL>
+<P>
+<LI>A block comment describing the contents of the file. A description
+of the purpose of the entities in the files is more useful than just a
+list of class names. Keep the description short and to the point.
+<P>
+<LI>The RCS <CODE>$Header: /usr/home/lott/public_html/maultech.com/chrislott/resources/cstyle/RCS/Wildfire-C++Style.html,v 1.1 2011/01/18 13:28:41 lott Exp $</CODE> variable should be placed as the end
+of the block comment, or in a comment immediately following it:
+</OL>
+<P>
+<PRE>
+// $Header: /usr/home/lott/public_html/maultech.com/chrislott/resources/cstyle/RCS/Wildfire-C++Style.html,v 1.1 2011/01/18 13:28:41 lott Exp $
+</PRE>
+
+<P>
+<OL>
+<LI>#include directives. Every header file should be self-sufficient,
+including all other header files it needs.
+</OL>
+
+<P>
+<EM>Since implementations will change, code that places
+"implementation-required #includes" in clients could cause them to
+become tied to a particular implementation.</EM>
+<P>
+The following items are a suggested order. There will be many times
+where this ordering is inappropriate, and should be changed.
+<OL>
+<P>
+<LI><CODE>const </CODE>declarations.
+<BR>
+<P>
+<LI>Forward <CODE>class</CODE>, <CODE>struct</CODE>, and
+<CODE>union</CODE> declarations.
+<BR>
+<P>
+<LI><CODE>struct</CODE> or <CODE>union</CODE> declarations.
+<BR>
+<P>
+<LI><CODE>typedef</CODE> declarations.
+<BR>
+<A NAME="REF11548">
+<P>
+<LI><CODE>class</CODE> declarations.</A>
+<BR></OL>
+<P>
+The rest of these items should be in found this order at the end of the header file.
+<OL>
+
+<P>
+<LI>Global variable declarations (not definitions). Of course, global
+variables should be avoided, and should never be used in interfaces. A
+class scoped <CODE>enum</CODE> or <CODE>const</CODE> can be used to
+reduce the need for globals; if they are still required they should be
+either file-scope <CODE>static</CODE> or declared <CODE>extern</CODE>
+in a header file.
+
+<BR>
+
+<P>
+<LI>External declarations of functions implemented in this module.
+<BR>
+
+<P>
+
+<LI>The header guard's <CODE>#endif</CODE> need be followed 
+by a comment describing the <CODE>#ifdef</CODE> head guard.
+<BR>
+<EM>After all, it is the last directive in the file and should obvious.</EM>
+</OL>
+
+<H5><A NAME="REF10510">  3.4  Source File Content</A></H5>
+<UL>
+<P>
+
+<LI>Do not place the implementation of more than one interface in a
+single source file. (Classes private to an implementation may be
+declared and defined within the same source file.)  <BR>
+
+<P>
+
+<LI>The ordering of sections for implementation files is as the same
+as for header files through step <A HREF="#REF11548">[10]</A>,
+but without the <CODE>#ifndef/#endif</CODE> multiple inclusion guard
+(see <A HREF="Wildfire-C++Style-endmatter.html#REF53116">Template for C++ Implementation
+files on page 45</A>). After that the order should be:
+<BR>
+</UL>
+
+<OL>
+
+<P>
+
+<LI>Global scope variable definitions. Global variables (both external
+and file-static) are problematic in a multi-threaded and/or in a
+reentrant server context. They should be avoided. (This is also a
+problem for non-<CODE>const</CODE> class static member variables.)
+
+<BR>
+
+<P>
+<LI>File scope (<CODE>static</CODE>) variable definitions.
+<BR>
+
+<P>
+<LI>Function definitions. A comment should generally precede each
+function definition.
+<BR>
+</OL>
+
+<H4><A NAME="HDR7">  4  Preprocessor</A></H4>
+
+<UL>
+
+<P>
+
+<LI>Preprocessor directives must always have the <CODE>#</CODE> in
+column 1.  No indentation allowed for preprocessor directives.
+<BR>
+
+<P> <LI>Don't use absolute path names when including header files. Use
+the form <BR>
+</UL>
+
+<PRE>
+    #include &lt;module/name&gt;
+</PRE>
+
+to get public header files from a standard place. The <CODE>-I</CODE>
+option of the compiler is the best way to handle the pseudo-public
+"package private" header files used when constructing libraries--- it
+permits reorganizing the directory structure without altering source
+files.
+
+<BR><H5><A NAME="REF52683">  4.1  Macros (<CODE>#define</CODE>)</A></H5>
+
+<P>
+Macros are almost never necessary in C++.
+<UL>
+<P>
+<LI>The construct <CODE>#define</CODE> <CODE>NAME</CODE>
+<CODE>value</CODE> should never be used. Use a <CODE>const</CODE> or
+<CODE>enum</CODE> instead.
+</UL>
+<P>
+<EM>The debugger can deal with them symbolically, while it can't with
+a <CODE>#define</CODE>, and their scope is controlled and they only
+occupy a particular namespace, while <CODE>#define</CODE> symbols
+apply everywhere except inside strings.</EM>
+<P>
+<UL>
+<P> <LI>Macros in C are frequently used to define "maximum" sizes for
+things. This results in data structures that impose arbitrary size
+restrictions on their usage, a particularly insidious source of
+bugs. Try not to carry forward this limitation into C++.  <BR>
+<P>
+<LI>Consider using inline functions instead of parametrized macros
+(but see <A HREF="#REF80253">Use and Misuse of inline, §
+11.4</A> first!).  <BR></UL>
+<P>
+Macros should be used to hide the <CODE>##</CODE> or
+<CODE>#param</CODE> features of the preprocessor and encapsulate
+debugging aids such as <CODE>assert()</CODE>. (Code that uses these
+features should be rare.) If you find that you must use macros, they
+must be defined so that they can be used anywhere a statement
+can. That is, they can not end in a semicolon. To accomplish this,
+multi-statement macros that cannot use the comma operator should use a
+<CODE>do</CODE>/<CODE>while</CODE> construct:
+
+<PRE>
+#define      ADD(sys,val)        do { \
+                if (!known_##sys(val)) \
+                  add_##sys(val);\
+              } while(0)
+</PRE>
+
+<P>
+
+This allows <CODE>ADD()</CODE> to be used anywhere a statement can,
+even inside an <CODE>if</CODE>/<CODE>else</CODE> construct:
+
+<PRE>
+  if (doAdd)
+    ADD(name, "Corwin");
+  else
+    somethingElse();
+</PRE>
+
+<P>
+
+It is also robust in the face of a missing semicolon between the
+<CODE>ADD()</CODE> and the <CODE>else</CODE>.
+
+<P>This technique should <I>not</I> be used for paired begin/end
+macros. In other words, if you have macros that bracket an operation,
+do not put a <CODE>do</CODE> in the begin macro and its closing
+<CODE>while</CODE> in the end macro.
+
+<P>
+
+<EM>This makes any <CODE>break</CODE> or <CODE>continue</CODE> between
+the begin and end macro invocations relative to the hidden
+<CODE>do</CODE>/<CODE>while</CODE> loop, not any outer containing
+loop.</EM>
+<P>
+
+<H5><A NAME="HDR8">  4.2  Conditional Compilation (<CODE>#if</CODE> and its ilk)</A></H5>
+
+<P>
+
+In general, avoid using <CODE>#ifdef</CODE>. Modularize your code so
+that machine dependencies are isolated to different files and beware
+of hard coding assumptions into your implementation.
+
+<UL>
+
+<P>
+<LI>The <CODE>#</CODE> of all preprocessor commands must always be in column 1.
+<P>
+<LI>Never use indentation for preprocessor directives.
+<P>
+
+<LI>If you use <CODE>#ifdef</CODE> to select among a set of
+configuration options, you need to add a final <CODE>#else</CODE>
+clause containing a <CODE>#error</CODE> directive so that the compiler
+will generate an error message if none of the options has been
+defined: <BR></UL>
+
+<PRE>
+
+#ifdef sun
+
+#define USE_MOTIF
+#define RPC_ONC
+
+#elif hpux
+
+#define USE_OPENLOOK
+#define RPC_OSF
+
+#else
+
+#error unknown machine type
+
+#endif
+</PRE>
+
+<UL>
+
+<P>
+<LI>Test for features, not for systems, since features sometimes get
+added to systems. For example, if you are writing code that deals with
+networking, you should define and test for macros like
+<CODE>USE_STREAMS</CODE> or <CODE>USE_SOCKETS</CODE>, not for
+predefined system names like <CODE>sun</CODE>, <CODE>hpux</CODE>,
+<CODE>SYSV</CODE>, etc., that you happen to "know" support one or the
+other form.
+<BR>
+
+<P>
+
+<LI>Never change the language's syntax via macro substitution. For
+example, do not do the following:
+
+<BR></UL>
+
+<PRE>
+#define      BEGIN    {        // EXTREMELY BAD STYLE!!!
+#define      when    break;case        // EXTREMELY BAD STYLE!!!
+</PRE>
+
+<P>
+
+<EM>This makes the program unintelligible to all but the
+perpetrator. C++ is hard enough to read as it is.</EM>
+
+<P>
+
+<UL>
+
+<P>
+<LI><CODE>#else</CODE>, <CODE>#elif</CODE>, and <CODE>#endif</CODE>
+should have commented tags identifying the <CODE>#if</CODE> construct to
+which it is attached if there are several levels of ifdefs or more than
+a page worth of code is placed between the <CODE>#ifdef</CODE> and
+<CODE>#endif</CODE>.
+
+<BR></UL><PRE>
+
+#ifdef RPC_ONC
+    doONCStuff();
+#endif
+</PRE>
+
+<BR>
+<UL>
+
+<P>
+
+<LI>It is considered extremely distasteful, and therefore to be
+avoided wherever possible, to have a preprocessor conditional that
+changes the blocking. When you do, the curly-brace rules may be
+broken:
+
+<BR></UL><PRE>
+
+#ifdef DEBUG
+    if (!debug)        // #ifdef breaks standard braces rule
+#endif
+    {
+      doSomeStuff();
+      doMoreStuff();
+    }
+</PRE>
+<H4><A NAME="HDR9">  5  Identifier Naming Conventions</A></H4>
+
+<P>
+
+Identifier naming conventions make programs more understandable by
+making them easier to read. They also give information about the
+purpose of the identifier. Each subsystem should use the same
+conventions consistently. For example, if the variable
+<CODE>offset</CODE> holds an offset in <I>bytes</I> from the beginning
+of a file cache, the same name should not be used in the same
+subsystem to denote an offset in <I>blocks</I> from the beginning of
+the file.
+
+<P>
+<EM>We have made an explicit decision to not use Hungarian Notation.<A
+HREF="#FN2">(2)</A></EM>
+<P>
+
+<H5><A NAME="HDR10">  5.1  General Rules</A></H5>
+
+<UL>
+
+<P>
+<LI>Identifiers should be meaningful. That is, they should be easy to
+understand and provide good documentation about themselves. Avoid
+abbreviations, especially ad hoc ones.
+<BR></UL>
+
+<P>
+<EM>Well chosen names go a long way toward making a program
+self-documenting. What is an obvious abbreviation to you may be
+baffling to others, especially in other parts of the
+world. Abbreviations make it hard for others to remember the spelling
+of your functions and variables. They also obscure the meaning of the
+code that uses them.</EM>
+<P>
+<UL>
+
+<P>
+<LI>Single character variable names should be avoided because of the
+difficulty of maintaining code that uses them. However, single
+character names may be appropriate for variables that are essentially
+meaningless, such as dummy loop counters with short loop bodies or
+temporary pointer variables with short lifetimes.
+<BR>
+
+<P>
+
+<LI>Avoid variables that contain mixtures of the numbers 0 &amp; l and
+the letters O and 1, because they are hard to tell apart.
+
+<BR>
+
+<P>
+
+<LI>Avoid identifiers that differ only in case, like <CODE>foo</CODE>
+and <CODE>FOO</CODE>. Having a type name and a variable differing in
+only in case (such as <CODE>String string;</CODE>) is permitted, but
+discouraged.  <BR>
+</UL>
+
+<H5><A NAME="HDR11">  5.2  Identifier Style</A></H5>
+
+<P>
+
+Identifiers are either upper caps, mixed case, or lower case. If an
+identifier is upper caps, word separation in multi-word identifiers is
+done with an underscore (for example, <CODE>RUN_QUICK</CODE>). If an
+identifier is mixed case, it starts with a capital, and word
+separation is done with caps (for example, <CODE>RunQuick</CODE>). If
+an identifier is lower case, words are separated by underscore (for
+example, <CODE>run_quick</CODE>). Preprocessor identifiers and
+template parameters are upper case. The mixed case identifiers are
+global variables, function names, types (including class names), class
+data members, enum members. Local variables and class member functions
+are lower case.
+
+<P>
+
+<EM>Template parameter names act much like <CODE>#define</CODE>
+identifiers over the scope of the template. Making them upper case
+calls them out so they are readily identifiable in the body of the
+template.</EM>
+
+<P>
+
+An initial or trailing underscore should never be used in any
+user-program identifiers.<A HREF="#FN3">(3)</A>
+
+
+<P>
+Prefixes are given for identifiers with global scope (some packages may extend the prefixes for their identifiers):
+
+<P>
+<PRE>
+----------------------------------------------------------------------
+<B>Prefix  Used for                                                        </B>
+----------------------------------------------------------------------
+WF_     <CODE>preprocessor</CODE>                                                    
+<CODE>_WF_</CODE>    hidden preprocessor (e.g., protecting symbols for header file)  
+Wf      Global scope (global variables, functions, type names).         
+wf      File-static scope                                               
+----------------------------------------------------------------------
+</PRE>
+
+<P>
+
+File-static identifiers, are the only exception: they are mixed case,
+but start with a lower-case prefix. (for example,
+<CODE>wfFileStaticVar</CODE>).  <H5><A NAME="REF69088"> 5.3 Namespace
+Clashes</A></H5>
+
+<P>
+
+The goal of this section is to provide guidance to minimize potential
+name clashes in C++ programs and libraries.
+
+<P>
+
+There are two solution strategies: (1) minimize the number of
+clashable names, or (2) choose clashable names that minimize the
+probability of a clash. Strategy (1) is preferable, but clashable
+names cannot be totally eliminated.
+
+<P> Clashable names include: external variable names, external
+function names, top-level class names, type names in public header
+files, class member names in public header files, etc. (Class member
+names are scoped by the class, but can clash in the scope of a derived
+class. Explicit scoping can be used to resolve these clashes.)
+
+<P>
+There are two kinds of name clash problem:
+
+<OL>
+
+<P>
+
+<LI>Clashes that prevent two code modules from being linked
+together. This problem affects external variable names, external
+function names, and top-level class names.  <BR>
+
+<P>
+
+<LI>Clashes that cause client code to fail to compile. This problem
+affects type names in public header files, and class member names in
+public header files. It is most egregious in the case of names that
+are intended to be private, such as the names of private class
+members, as a new version of the header file with new private names
+could cause old client code to break.  <BR></OL>
+
+<P>
+Solutions:
+
+<UL>
+
+<P>
+<LI>Minimize the number of clashable names by:
+<BR>
+</UL>
+
+<OL>
+
+<P>
+
+<LI>Avoiding the use of external variables and functions, in favor of
+class data members and function members.
+
+<BR>
+
+<P>
+<LI>Minimizing the number of top-level classes, by using nested classes.
+<BR>
+
+<P>
+
+<LI>Minimizing the number of private class members declared in
+public header files. Private class members should be defined in public
+header files only where clients need to perform implementation
+inheritance. To minimize the number of dependencies on the data
+representation, define a single private data member of an opaque
+pointer type that points to the real data representation whose
+structure is not published.
+<BR>
+</OL>
+
+<UL>
+
+<P>
+<LI>Minimize the likelihood of clashes by use distinctive prefixes
+in clashable identifiers.
+<BR>
+</UL>
+
+
+
+<P>
+Exception: A top-level class name used only as a naming scope can
+consist entirely of a distinctive prefix.
+
+<PRE>
+WfRenderingContext                 (a type name)
+WfPrint()                 (a function name)
+WfSetTopView()                 (a function name)
+WfMasterIndex                 (a variable name)
+Wf::String                 (a type name --- the class name serves as prefix)
+</PRE>
+
+<P>
+For components of the Wildfire program, prefixes begin with <CODE>Wf</CODE>. 
+<H5><A NAME="REF31908">  5.4  Reserved Namespaces</A></H5>
+
+<P>
+
+Listed below are explicitly reserved names which should not be used in
+human-written code (it may be permissible for program generators to
+use some of these).
+
+<UL>
+
+<P>
+
+<LI>From the ANSI C Specification (9899:1990(E)) 7.1.3: "All
+identifiers that begin with an underscore and either an uppercase
+letter or another underscore are always reserved".  <BR></UL>
+
+<PRE>
+_[A-Z_][0-9A-Za-z_]*
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>"All identifiers that begin with an underscore are always reserved
+for use as identifiers with file scope."
+
+<BR></UL>
+<PRE>
+_[a-z][0-9A-Za-z_]*
+</PRE>
+
+<UL>
+
+<P>
+<LI>The following names are also reserved by ANSI for its future expansion:
+<BR></UL><PRE>
+
+E[0-9A-Z][0-9A-Za-z]*                  errno values
+is[a-z][0-9A-Za-z]*                  Character classification
+to[a-z][0-9A-Za-z]*                  Character manipulation
+LC_[0-9A-Za-z_]*                  Locale
+SIG[_A-Z][0-9A-Za-z_]*                  Signals
+str[a-z][0-9A-Za-z_]*                  String manipulation
+mem[a-z][0-9A-Za-z_]*                  Memory manipulation
+wcs[a-z][0-9A-Za-z_]*                  Wide character manipulation
+</PRE>
+
+<P>
+
+<EM>Note that the first three namespaces are hard to avoid. In
+particular, many accessor methods naturally fall into the
+<CODE>is*</CODE> namespace, and error conditions map onto the
+<CODE>E*</CODE> namespace. Be aware of these conflicts and make sure
+that you are not redefining existing identifiers.</EM> <P>
+
+<H4><A NAME="HDR12">  6  Using White Space</A></H4>
+
+<P>
+
+Blank lines and blank spaces improve readability by offsetting
+sections of code that are logically related. A blank line should
+always be used in the following circumstances:
+
+<UL>
+
+<P>
+<LI>After the <CODE>#include</CODE> section.
+<BR>
+
+<P>
+<LI>When switching from preprocessor directives to code or vice versa.
+<BR>
+
+<P>
+
+<LI>Around <CODE>class,</CODE> <CODE>struct</CODE>, and
+<CODE>union</CODE> declarations.
+
+<BR>
+
+<P>
+<LI>Around function definitions.
+<BR>
+
+<P>
+
+<LI>Before groups of switch statement case labels that are logically
+grouped together.
+
+<BR></UL>
+
+
+
+<P>
+The guidelines for using spaces are:
+
+<UL>
+
+<P>
+
+<LI>A space must follow a keyword whenever anything besides a
+<CODE>;</CODE> follows the keyword.  <BR>
+
+
+<P>
+<LI>Spaces may not be used between procedure names and their argument list.
+<BR></UL>
+
+<PRE>
+  // no space between 'strcmp' and '(',
+
+  // but space between 'if' and '('
+
+  if (strcmp(input_value, "done") == 0)
+    return 0;
+
+</PRE>
+
+<P>
+<EM>This helps to distinguish keywords from procedure calls.</EM>
+<P>
+
+<UL>
+
+<P>
+<LI>Spaces must appear after the commas in argument lists.
+<BR>
+
+<P>
+<LI>There should be no spaces on either side of  <CODE>[</CODE> <CODE>]</CODE> <CODE>(</CODE> <CODE>)</CODE> <CODE>.</CODE> <CODE>-&gt;
+<BR>
+
+<P>
+
+<LI>All other binary operators must be separated from their operands
+by spaces. In other words, spaces should appear around assignment,
+arithmetic, relational, and logical operators, and they should not
+appear around </CODE>. and <CODE>-&gt;</CODE>.
+
+<BR>
+
+<P>
+<LI>Spaces must never separate unary operators such as unary
+minus, address of, indirection, increment, and decrement from their
+operands. Some judgment is called for in the case of complex
+expressions, which may be clearer if the "inner" operators are not
+surrounded by spaces and the "outer" ones are. Remember that temporary
+variables are "cheap", and that several simpler expressions may be
+more understandable than one long complicated one.  <BR>
+
+<P>
+
+<LI>Spaces precede an open brace that shares a line, and follow a
+closing brace that shares a line.
+
+<BR>
+
+<P>
+
+<LI>The expressions in a <CODE>for</CODE> statement must be separated
+by spaces:
+
+<BR></UL>
+<PRE>
+  for (expr1; expr2; expr3) {
+    ...;
+  }
+</PRE>
+<UL>
+
+<P>
+<LI>If you know you are <I>constructing</I> an object with a cast, you
+should use the function form (for example, <CODE>String(sp)</CODE>) as
+a clue to the reader.
+<BR>
+
+<P>
+<LI>Form-feeds must never be used.
+<BR>
+
+<P>
+<LI>Using extra white space to line up related things in a set of
+lines can be worthwhile; such "violations" of the standard do not
+require the otherwise-mandatory expiatory comment
+(see <A HREF="#REF10320">Fundamental MetaRule, § 2</A>).
+<BR></UL>
+<PRE>
+  start= (a &lt; b ? a : b);
+  end= (a &gt; b ? a : b);
+</PRE>
+<H5><A NAME="HDR13">  6.1  Indentation</A></H5>
+<P>
+Only four-space line indentation should be used. The exact
+construction of the indentation (spaces only or tabs and spaces) is
+left unspecified. However, you may not change the settings for hard
+tabs in order to accomplish this. Hard tabs must be set every 8
+spaces.
+
+<P>
+
+<EM>If this rule was not followed tabs could not be used since they
+would lack a well-defined meaning. </EM>
+
+<P>
+
+The rules for how to indent particular language constructs are
+described in <A HREF="#REF23897">Statements, § 10</A>.
+
+<H5><A NAME="REF55216">  6.2  Long Lines</A></H5>
+
+<P>
+
+Occasionally an expression will not fit in the available space in a
+line; for example, a procedure call with many arguments, or a logical
+expression with many conditions. Such occurrences are especially
+likely when blocks are nested deeply or long identifiers are used.
+
+<UL>
+
+<P>
+
+<LI>If a long line needs to be broken up, you need to take care that
+the continuation is clearly shown. For example, the expression could
+be broken after the last comma of a function call (never in the middle
+of a parameter expression), or after the last operator that fits on
+the line. If they are needed, subsequent continuation lines could be
+broken in the same manner, and aligned with each other.
+
+<BR></UL>
+<PRE>
+  if (LongLogicalTest1 || LongLogicalTest2 ||
+   LongLogicalTest3) {
+    ...;
+  }
+
+  a = (long_identifier_term1 --- long_identifier_term2) *
+     long_identifier_term3;
+</PRE>
+
+If there were some correlation among the terms of the expression, it
+might also be written as:
+
+<BR><PRE>
+  if (ThisLongExpression &lt; 0 ||
+     ThisLongExpression &gt; max_size ||
+     ThisLongExpression == SomeOtherLongExpression) {
+    ...;
+  }
+</PRE>
+<P>
+
+<EM>Placing the line break after an operator alerts the reader that
+the expression is continued on the next line. If the break were to be
+done before the operator, the continuation is less obvious.</EM>
+
+<P>
+
+Note also that, since temporary variables are cheap (an optimizing
+compiler will generate similar code whether or not you use them), they
+can be an alternative to a complicated expression:
+
+<BR><PRE>
+temp1  = LongLogicalTest1;
+temp2  = LongLogicalTest2;
+temp3  = LongLogicalTest3;
+
+if (temp1 || temp2 || temp3) {
+    ...;
+}
+</PRE>
+<H5><A NAME="HDR14">  6.3  Comments</A></H5>
+
+<P>
+
+Comments should be used to give an overview of the code and provide
+additional information that is not readily understandable from the
+code itself. Comments should only contain information that is germane
+to reading and understanding the program.
+
+<UL>
+
+<P>
+<LI>In general, avoid including in comments information that is likely
+to become out-of-date. For example, information about how the
+corresponding package is built or in what directory it resides should
+not be included as a comment in a source file. Discussion of
+nontrivial design decisions is appropriate, but avoid duplicating
+information that is present in (and clear from) the code. It is too
+easy for such redundant information to get out-of-date.
+
+<BR>
+
+<P>
+
+<LI>C++ style comments (<CODE>//</CODE>) are preferred over C style
+(<CODE>/*...*/</CODE>), though both are permitted.
+
+<BR>
+
+<P>
+
+<LI>Comments should never include special characters, such as
+form-feed and backspace.
+
+<BR>
+
+
+<P>
+
+<LI>Frequently there is a need to leave reminders in the code about
+uncompleted work or special cases that are not handled
+correctly. These comments should be of the form:
+
+<BR></UL>
+
+<PRE>
+//!! When we can, replace this code with a wombat -<I>author</I>
+</PRE>
+
+<P>
+
+<EM>This gives maintainers some idea of whom to contact. It also
+allows one to easily <CODE>grep</CODE> the source looking for
+unfinished areas.</EM>
+
+<P>
+
+<H5><A NAME="HDR15">  6.4  Block Comments</A></H5>
+
+<P>
+
+Block comments are used to describe a file's contents, a function's
+behavior, data structures, and algorithms.
+
+<UL>
+
+<P>
+
+<LI>Block comments should be used at the beginning of each file and
+before each function.
+
+<BR>
+
+<P>
+
+<LI>The comment at the beginning of the file containing
+<CODE>main()</CODE> should include a description of what the program
+does. The comments at the beginning of other files should just
+describe that file.  <BR>
+
+<P>
+
+<LI>The block comment that precedes each function should document its
+behavior, input parameters, algorithm, global variables used, and
+returned value.
+
+<BR>
+
+<P>
+
+<LI>Comments may not have a right-hand line (such as the right edge of
+a box) drawn with asterisks or other characters.
+
+<BR></UL>
+
+
+
+<P>
+
+<EM>This would require anyone changing the text in the box to
+continually deal with keeping the right-hand line straight.</EM>
+
+<P>
+
+
+<UL>
+
+<P>
+
+<LI>In many cases, block comments inside a function are appropriate
+and should be indented at least to the same indentation level as the
+code that they describe. A block comment should be preceded by a blank
+line, empty comment lines, or otherwise visually separated from the
+rest of the code. A separation after the block comment is optional,
+but be consistent.  <BR></UL>
+
+<PRE>
+
+statements;
+
+// another block comment
+
+// made up of C++ style comments
+
+statements;
+/*
+ * Here is a C-style block comment
+ * that takes up multiple lines.
+ */
+
+statements;
+</PRE>
+<H5><A NAME="HDR16">  6.5  Single-Line Comments</A></H5>
+
+<P>
+
+Short comments may appear on a single line indented at least to the
+indentation level of the code that follows.
+
+<PRE>
+  if (argc &gt; 1) {
+    // Get option from the command line.
+    ...;
+  }
+</PRE>
+<H5><A NAME="HDR17">  6.6  Trailing Comments</A></H5>
+
+<P>
+
+Very short comments may appear on the same line as the code they
+describe, but should be tabbed over far enough to separate them from
+the statements. Trailing comments are useful for documenting
+declarations.
+
+<UL>
+
+<P>
+
+<LI>If multiple trailing comments are used in a block of code, they
+all should be tabbed to the same level.  <BR></UL>
+
+<PRE>
+  if (a == 2)
+    return WfTrue;            // special case
+  else
+    return is_prime(a);            // works only for odd a
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>Avoid the assembly language style of commenting every line of
+executable code with a trailing comment.
+
+<BR></UL>
+
+<H4><A NAME="HDR18">  7  Types</A></H4>
+<H5><A NAME="REF26953">  7.1  Constants</A></H5>
+
+<UL>
+
+<P>
+
+<LI>Numerical constants must be coded so that they can be changed in
+exactly one place. The usual method to define constants is to use
+<CODE>cons</CODE><CODE>t</CODE> or <CODE>enum</CODE>. (See <A
+HREF="#REF52683">Macros (#define) on page 5</A>.) The
+<CODE>enum</CODE> data type is the preferred way to handle situations
+where a variable takes on only a discrete set of values because of the
+added type checking done by the compiler: <BR></UL>
+
+<PRE>
+class Foo
+{
+ public:
+    enum {
+      Success = 0, Failure = -1
+    };
+    ...;
+}
+
+if (foothing.foo_method("Argument") == Foo::Success) ...
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>Unlike in ANSI C, integral typed objects in C++ that are declared
+<CODE>const</CODE> and initialized with compile-time expressions are
+themselves compile-time constants. Thus, they can be used as case
+labels and such.
+
+<BR>
+
+<P>
+
+<LI>Well recognized constants, such as <CODE>0</CODE>, <CODE>1</CODE>,
+and <CODE>-1</CODE>, can often be used directly. For example if a
+<CODE>for</CODE> loop iterates over an array, then it is reasonable to
+code: <BR></UL>
+
+<PRE>
+  for (i = 0; i &lt; size; i++) {
+    // statements using array[i];
+  }
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>Note that <CODE>&lt;wfbase.hh&gt;</CODE> defines the constants
+<CODE>WfTrue</CODE> and <CODE>WfFalse</CODE>, as well as the type
+<CODE>WfBoolean</CODE>, as ensures the constant <CODE>NULL</CODE> is
+available.
+<BR>
+
+<P>
+
+<LI>Wherever possible, sizes should be expressed in terms of the
+<CODE>sizeof</CODE> operator. For example, if an array's size is
+determined by its initializers, the proper construct for determining
+the number of elements it has is:
+
+<BR>
+</UL>
+<PRE>
+double        factors[] = {
+          0.1345,
+          123.23451,
+          0.0
+        };
+
+const int        num_factors = sizeof factors / sizeof factors[0];
+</PRE>
+
+<UL>
+
+<P>
+<LI>Wherever possible, <CODE>sizeof</CODE> operations should be
+applied to objects, not types. Parentheses are not allowed around the
+object specifier in a <CODE>sizeof</CODE> expression.
+<BR></UL>
+
+<P>
+
+<EM>This means that if the type of an object changes, all the
+associated <CODE>sizeof</CODE> operations will continue to be
+correct. The parentheses are forbidden for data objects so that
+<CODE>sizeof</CODE> on types (where the compiler requires them) will
+be easy to see.</EM>
+
+<P>
+
+<H5><A NAME="REF18325">  7.2  Use of <CODE>const</CODE></A></H5>
+
+<P>
+
+Both ANSI C and C++ add a new modifier to declarations,
+<CODE>const</CODE>. This modifier declares that the specified object
+cannot be changed. The compiler can then optimize code, and also warn
+you if you do something that doesn't match the declaration.
+
+<P>
+
+The first example is a<I><B> modifiable pointer to constant
+integers</B></I>: <CODE>foo</CODE> can be changed, but what it points
+to cannot be. Use this form for function parameter lists when you
+accept a pointer to something that you do not intend to change (for
+example, <CODE>strlen(const char *string)</CODE>)
+
+<PRE>
+const int *foo;
+
+foo = &amp;some_constant_integer_variable
+</PRE>
+
+<P>
+
+Next is a <I><B>constant pointer to a modifiable integer</B></I>: the
+pointer cannot be changed (once initialized), but the integer it
+points to can be changed at will:
+
+<PRE>
+int *const foo = &amp;some_integer_variable;
+</PRE>
+
+<P>
+
+Finally, we have a <I><B>constant pointer to a constant
+integer</B></I>. Neither the pointer nor the integer it points to can
+be changed:
+
+<PRE>
+const int *const foo = &amp;some_const_integer_variable;
+</PRE>
+
+<P>
+
+Note that <CODE>const</CODE> objects can be assigned to
+non-<CODE>const</CODE> objects (thereby making a copy), and the
+modifiable copy can of course be changed. However, pointers to
+<CODE>const</CODE> objects cannot be assigned to pointers to
+non-<CODE>const</CODE> objects, although the converse is allowed. Both
+of these forms of assignments are legal:
+
+<PRE>
+(const int *)          = (int *);
+
+(int *)          = (int *const);
+</PRE>
+
+<P>
+But both of these forms are illegal:
+<PRE>
+(int *)          = (const int *);          // illegal
+
+(int *const)          = (int *);          // illegal
+</PRE>
+
+<P>
+
+When <CODE>const</CODE> is used in an argument list, it means that the
+argument will not be modified. This is especially useful when you want
+to pass an argument by reference, but you don't want the argument to
+be modified.
+
+<PRE>
+void
+block_move(const void *source, void *destination, size_t length);
+</PRE>
+
+<P>
+
+Here we are explicitly stating that the source data will not be
+modified, but that the destination data will be modified. (Of course,
+if the length is 0, then the destination won't actually be modified.)
+
+<P>
+All of these rules apply to <CODE>class</CODE> objects as well:
+<PRE>
+class Foo
+{
+  public:
+    void bar1() const;
+    void bar2();
+};
+
+const Foo *foo_pointer;
+foo_pointer-&gt;bar1();                    // legal
+
+foo_pointer-&gt;bar2();                    // illegal
+</PRE>
+
+<P>
+
+Inside a <CODE>const</CODE> member function like <CODE>bar1()</CODE>,
+the <CODE>this</CODE> pointer is type <CODE>(const Foo *const)</CODE>,
+so you really can't change the object.
+
+<P>
+
+However, there is a distinction between <I><B>bit-wise const</B></I>
+and <I><B>logical const</B></I>. A bit-wise const function truly does
+not modify any bits of data in the object. This is what the compiler
+enforces for a <CODE>const</CODE> member function. A logical const
+function modifies the bits, but not the externally visible state; for
+example, it may cache a value. To users of a class, it is logical, not
+bit-wise, const is important. However, the compiler cannot know if a
+modification is logically const or not.
+
+<P>
+
+You get around this by casting away const, for example, by casting the
+pointer to be a <CODE>(Foo *</CODE>). This should only be done if you
+are absolutely sure that the function remains logically const after
+your operation, and must always be accompanied by an explanatory
+comment.  <H5><A NAME="REF48800"> 7.3 <CODE>struct</CODE> and
+<CODE>union </CODE>Declarations</A></H5>
+
+<P>
+
+A <CODE>struct</CODE> should only be used for grouping data; there
+should be no member functions. If you want member functions, you
+should be using a <CODE>class</CODE>. Hence, <CODE>struct</CODE>s
+should be pretty rare.
+
+<UL>
+
+<P> <LI>The opening brace should be on the same line as the
+<CODE>struct</CODE> or <CODE>union</CODE> name.
+<P>
+
+<LI>The closing brace should be on a separate line followed by a
+semicolon, lining up with the start of the <CODE>struct</CODE> or
+<CODE>union</CODE> keyword.
+
+<BR>
+
+<P>
+
+<LI>Declarations in a <CODE>struct</CODE> or <CODE>union</CODE> should
+be indented one level.
+
+<BR></UL>
+<PRE>
+struct Foo {
+    int    size;        // Measured in inches
+    char    *name;        // Label on icon
+    ...;
+};
+</PRE>
+
+<P>
+
+<EM>Note that <CODE>struct</CODE> and <CODE>enum</CODE> tag names are
+valid types in C++, so the following common C idiom is obsoleted
+because <CODE>foo</CODE> can be used wherever you used to use
+<CODE>Foo</CODE>:</EM> <P>
+
+<PRE>
+      typedef struct foo {                    /* Obsolete C idiom */
+          ...;
+      } Foo;
+</PRE>
+<H5><A NAME="REF66715">  7.4  enum Declarations</A></H5>
+
+<UL>
+
+<P>
+
+<LI>The <CODE>enum</CODE> tag and the opening brace should be on the
+same line as the <CODE>enum</CODE> keyword.
+
+<BR>
+
+<P>
+
+<LI>The layout for an <CODE>enum</CODE> is the same as for a
+<CODE>struct</CODE> if it takes up multiple lines, or it contains
+explicit initializers. It also can be contained on one line as shown
+below.
+
+<BR>
+
+
+<P>
+<LI>The last item in an enum's element list should not be followed by a comma (`<CODE>,</CODE>').
+<BR>
+
+<P> <LI>Where possible, the type declaration should occur within the
+scope of a class instead of polluting the global-scope
+namespace. (See <A HREF="#REF69088">Namespace Clashes on page
+8</A>.) When doing this, references to the constants outside of the
+class's member functions must be qualified: <BR></UL>
+
+<PRE>
+class Color
+{
+  public:
+    enum Component {
+      Red, Green, Blue
+    };
+};
+Color::Component foo = Color::Red;
+</PRE>
+
+<UL>
+
+<P>
+<LI>If your constants define a related set, make them an enumerated type.
+<BR></UL>
+<PRE>
+const int        Red    = 0;              // Bad Form
+const int        Blue    = 1;
+const ink        Green    = 2;
+enum ColorComponent {                          // Much Better
+      Red,
+      Blue,
+      Green
+};  
+enum ColorComponent {                          // Explicit values can be given
+      Red    = 0x10,                // to each item as well...
+      Blue    = 0x20,
+      Green    = 0x40
+};
+</PRE>
+
+This causes <CODE>ColorComponent</CODE> to become a distinct type that
+is type-checked by the compiler. Values of type
+<CODE>ColorComponent</CODE> will be automatically converted to
+<CODE>int</CODE> as needed, but an <CODE>int</CODE> cannot be changed
+to a <CODE>ColorComponent</CODE> without a cast.  <BR> <UL>
+
+<P>
+
+<LI>Some compilers can generate a useful warning when confronted with
+a <CODE>switch</CODE> statement on an <CODE>enum</CODE> variable that
+does not have all elements of the enum expressed as <CODE>case</CODE>
+labels. This situation usually indicates a logic error in the code.
+<BR>
+
+<P>
+
+<LI>If you need a constant for the number of elements in an
+<CODE>enum</CODE>, make the last element of the <CODE>enum</CODE> be a
+<CODE><I>last</I></CODE> field.
+
+<BR></UL>
+
+<PRE>
+
+enum Color {
+      Red,
+      Blue,
+      Green,
+      LastColor = green
+};
+</PRE>
+
+This trick should only be used when you <I>need</I> the number of
+elements, and will only work if none of the enumeration literals are
+explicitly assigned values.
+
+<BR><H5><A NAME="REF93014">  7.5  Classes</A></H5>
+
+<UL>
+
+<P>
+
+<LI>Only functions should be <CODE>public</CODE> or
+<CODE>protected</CODE>. Member data must always be
+<CODE>private</CODE>.
+
+<BR>
+
+<P>
+
+<LI>All inheritance must be <CODE>public</CODE>. <CODE>private</CODE>
+and <CODE>protected</CODE> inheritance is not allowed.
+
+<BR>
+
+
+<P>
+
+<LI>It is very important to make sure that your class acts like a
+black box. The interface you export to clients and subclasses should
+reflect precisely what they need to know and nothing more. You should
+ask yourself, for every member function you export (remember, you're
+not exporting any <CODE>public</CODE> or <CODE>protected</CODE> data
+members, right?), "Does my client (or subclass) really need to know
+this, or could I recast the interface to reveal less?"  <BR>
+
+<P>
+
+<LI>Member functions should be declared <CODE>const</CODE> whenever
+possible (see <A HREF="#REF18325">Use of const on page
+14</A>).
+
+<BR></UL>
+
+<H5><A NAME="REF47889">  7.6  <CODE>class </CODE>Declarations</A></H5>
+
+<UL>
+
+<P>
+
+<LI>The opening brace for a <CODE>class</CODE> should be on a separate
+line in the same column as the <CODE>class</CODE> keyword.
+
+<BR></UL>
+
+
+
+<P>
+
+<EM>This is to help users of <CODE>vi</CODE>, which has a simple "go
+to beginning of paragraph" command, and which recognizes such a line
+as a paragraph beginning. Thus, you can, in the middle of a long class
+declaration, go to the beginning of the class with a simple
+command. The usefulness of this feature was deemed to outweigh its
+inconsistency (also see. <A HREF="#REF16509">section
+9.2</A>).</EM>
+
+<P>
+
+<UL>
+
+<P>
+
+<LI>The closing brace should be on a separate line followed by a
+semicolon, lining up with the start of the <CODE>class</CODE> keyword.
+
+<BR>
+
+<P>
+
+<LI>The members of a <CODE>class</CODE> are indented similarly to
+those of a <CODE>struct</CODE> (see <A HREF="#REF48800">struct
+and union Declarations on page 15</A>).
+
+<BR>
+
+<P>
+
+<LI>The <CODE>public</CODE>, <CODE>protected</CODE>, and
+<CODE>private</CODE> sections of a <CODE>class</CODE> should be
+present (if at all) <I>in that order</I>, indented 1/2 an indent level
+past that of the opening brace.
+
+<BR></UL>
+
+
+
+<P>
+
+<EM>The ordering is "most public first" so people who only wish to use
+the class can stop reading when they reach
+<CODE>protected</CODE>/<CODE>private</CODE>.</EM> <P>
+
+<UL>
+
+<P>
+
+<LI>Do not have <CODE>public</CODE> or <CODE>protected</CODE> data
+members --- use <CODE>private</CODE> data with <CODE>public</CODE> or
+<CODE>protected</CODE> access methods instead.  <BR></UL>
+<PRE>
+class Foo: public Blah, private Bar
+{
+  public:
+             Foo();              // be sure to use better
+            ~Foo();
+    int         get_size(int    phase_of_moon) const;              // comments than these.
+    int         set_size(int    new_size);
+    virtual int         override_me() = 0;
+
+  protected:
+
+    static int         hidden_get_size();
+
+  private:
+    int         Size;              // meaningful comment
+    void         utility_method();
+};
+</PRE>
+
+<P>
+
+<EM>Public and <CODE>protected</CODE> data members affect all derived
+classes and violate the basic object oriented philosophy of data
+hiding.</EM>
+
+<P>
+
+<H5><A NAME="HDR19">  7.7  Class Constructors and Destructors</A></H5>
+
+<P>
+
+Constructors and destructors are used for initializing and destroying
+objects and for converting an object of one type to another
+type. There are lots of rules and exceptions to the use of
+constructors and destructors in C++, and programs that rely heavily on
+constructors being called implicitly are hard to understand and
+maintain. Be careful when using this feature of C++!
+
+<P> Be particularly careful when writing constructors that accept only
+one argument (or use default arguments that may allow a multi-argument
+constructor to be used as if it did) since such constructors specify a
+conversion from their argument type to the type of its class. Such
+constructors need not be called explicitly and can lead to unintended
+implicit uses of conversions. There are also other difficulties with
+constructors and destructors being called implicitly by the compiler
+when initializing references and when copying objects.
+
+<P>
+Things to do to avoid problems with constructors and destructors:
+
+<UL>
+
+<P> <LI>When passing objects as parameters to functions you will want
+to consider passing them by pointer or by reference. If you pass an
+object by value, a constructor will be called to initialize the formal
+parameter, which may not be what you want. Similarly, when returning
+from a function you may wish to return a pointer to the object instead
+of the object itself. Just be aware of memory "leaks" and object
+"hygiene" when doing this. (For an in depth exploration of this area,
+see Items 22 and 23 in <I>Effective C++</I>
+<A HREF="Wildfire-C++Style-endmatter.html#REF94325">[12]</A>.)  <BR>
+
+<P>
+
+<LI>Be careful when copying objects --- unless you redefine the
+assignment <CODE>operator=</CODE>, the compiler will perform a
+member-wise copy, which may not be the behavior expected. Note that
+initialization and assignment are generally very different operations.
+<BR>
+
+<P> <LI>If you want to make sure that for a given class no member-wise
+copying is allowed, define a private assignment operator for the
+class.  <BR></UL>
+
+
+
+<P>
+<EM>This will cause the compiler to generate a compile-time error if a
+<BR>member-wise copy is attempted.</EM>
+<P>
+
+
+<UL>
+
+<P>
+
+<LI>Study this area carefully. Chapter 12 of the <I>ARM</I>
+<A HREF="Wildfire-C++Style-endmatter.html#REF23424">[10]</A> is the authoritative reference
+on the subject, and <I>Effective C++</I>
+<A HREF="Wildfire-C++Style-endmatter.html#REF94325">[12]</A> tells you many useful things.
+<P>
+
+<LI>The constructor and destructor declarations line up with the
+member function names.
+
+<BR></UL><PRE>
+
+class Foo
+{
+  public:
+           Foo();  
+          ~Foo();
+
+    int       get_size(int phase_of_moon) const;      
+
+  private:
+
+    ...
+
+};
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>Constructors invoked by your constructor must be one indentation
+level in from the constructor declaration. For constructors declared
+on a single line, the <CODE>:</CODE> is on the same line as the
+closing parenthesis. Constructors that take multiple lines to declare
+have their <CODE>:</CODE> on the line following the last paramter,
+indented to the same level as the beginning of the constructor name.
+
+<BR>
+</UL>
+<PRE>
+
+BusStop::BusStop() :
+    PeopleQueue(30),
+    Port("Default")
+{
+    ...;
+}
+BusStop::BusStop(char *some_argument) :
+    PeopleQueue(30),
+    Port(some_argument)
+{
+    ...;
+}
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>Be careful about <CODE>static</CODE> initialization. If you design
+a class that depends on some other facility in its constructor, be
+careful about order dependencies in <CODE>static</CODE>
+initialization. The order in which <CODE>static</CODE> constructors
+(that is, the constructors of objects with <CODE>static</CODE> storage
+class) get called is <I>undefined</I>. You cannot count on one object
+being initialized before another. Therefore, if you have such a
+dependency, you must either document that your class cannot be used
+for <CODE>static</CODE> objects, or you must use "lazy evaluation" to
+defer the dependency until later (see Item 47 in <I>Effective C++</I>
+<A HREF="Wildfire-C++Style-endmatter.html#REF94325">[12]</A> for more details).
+<BR></UL>
+
+<H5><A NAME="HDR20">  7.8  Automatically-Provided Member Functions</A></H5>
+
+<P>
+
+C++ automatically provides the following methods for your classes
+(unless you provide your own):
+
+<UL>
+
+<P>
+<LI>a constructor,
+<BR>
+
+<P>
+<LI>a copy constructor,
+<BR>
+
+<P>
+<LI>an assignment operator,
+<BR>
+
+<P>
+
+<LI>two address-of operators (<CODE>const</CODE> and
+non-<CODE>const</CODE>), and <BR>
+
+<P>
+<LI>a destructor.
+<BR></UL><PRE>
+
+class Empty { };              // You write this ...
+class Empty              // You really get this ...
+{
+   public:
+                 Empty() { }                 // constructor
+            ~Empty() { }                 // destructor
+                 Empty(const Empty &amp;rhs);                 // copy constructor
+        Empty         &amp;operator=(const Empty &amp;rhs);  // assignment operator
+        Empty         *operator&amp;();                 // address-of
+    const Empty            *operator&amp;() const;                 //      operators
+};
+</PRE>
+
+<P>
+
+Every class writer must consider whether the default functions are
+correct for that class. If they are, a comment must be provided where
+the function would be declared so that a reader of the class knows
+that the issue was considered, not forgotten.
+
+<P>
+
+If a class has no valid meaning for these functions, you should
+declare an implementation in the <CODE>private</CODE> section of the
+class. Such a function should probably call <CODE>abort()</CODE>,
+throw an exception, or otherwise generate a visible runtime error.
+
+<P>
+
+<EM>This ensures that the compiler will not use the default
+implementations, that it will not allow users to invoke that function,
+and that if a member function uses it by accident, it may at least be
+caught at runtime.</EM>
+<P>
+It is a good idea to always define a constructor, copy constructor,
+and a destructor for every class you write, even if they don't do
+anything.
+
+<H5><A NAME="HDR21">  7.9  Function Overloading</A></H5>
+
+<P> Overloading function names must only be done if the functions do
+essentially the same thing. If they do not, they must not share a
+name. Declarations of overloaded functions should be grouped together.
+
+<H5><A NAME="HDR22">  7.10  Operator Overloading</A></H5>
+
+<P>
+
+Deciding when to overload operators requires careful thought. Operator
+overloading does not simply create a short-hand for an operation ---
+it creates a set of expectations in the mind of the reader, and
+inherits precedence from the language.
+
+<UL>
+
+<P>
+
+<LI>You should only use an operator shorthand if the logical meaning
+of applying the operator on the type(s) involved is intuitive, either
+because of common usage (for example, <CODE>+</CODE> on strings
+concatenates, <CODE>&lt;&lt;</CODE> adds to a stream) or real algebra
+on the types (for example, a position class plus an offset gets a
+different position).  <BR>
+
+<P>
+
+<LI>If you overload one operator of a logically connected set, you
+<I>must</I> overload the rest of the set, if for no other reason than
+to generate an error if the others are called when they are not
+meaningful. Overloading <CODE>&lt;</CODE> without overloading
+<CODE>&gt;</CODE> or <CODE>&gt;=</CODE> will astonish the user in
+unhappy ways, as will overloading <CODE>+</CODE> and <CODE>=</CODE>
+but not <CODE>+=</CODE> .  In particular, <CODE>-&gt;</CODE>
+<CODE>.</CODE> and <CODE>[]</CODE> should always be considered a set:
+<BR></UL>
+
+<PRE>
+foo-&gt;member()            // should be identical to
+(*foo).member()            // which should also be identical to
+foo[0].member()
+</PRE>
+
+Overloading <CODE>==</CODE> <I>requires</I> overloading
+<CODE>!=</CODE>, and vice versa.
+
+<BR>
+<P>
+<EM>If the expression <CODE>(a != b)</CODE> is not equivalent to
+ <CODE>!(a == b)</CODE> we have
+unacceptably astonished the user.</EM>
+<P>
+
+<UL>
+
+<P>
+
+<LI>Note that while you can overload operators, you <I>cannot</I>
+change the language's precedence rules.
+
+<BR>
+
+<P>
+
+<LI>If an operator in a set does not make sense, you must override it
+in the <CODE>private</CODE> section so that the compiler will report
+the error to anyone who assumes that the set is complete. However,
+this should be a flag for you to consider whether the operator
+overloading really is natural --- the strong presumption is that you
+are not going to override <I>all</I> members in the set then
+<I>none</I> of the members of the set should be overridden.
+
+<BR>
+
+<P>
+
+<LI>Use type-cast operators selectively. Like so many C++ features,
+type casting can either clarify or obscure your code. If a type cast
+seems "natural", like the conversion between floating point and
+integers, then providing a cast function seems like a good idea. If
+the conversion is unusual or nonsensical, then the existence of a cast
+function can make it very hard to figure out what's going on. In the
+latter case, you should define a conversion function that must be
+called explicitly.
+
+<BR>If you provide a type-cast operator, you must provide an
+equivalent conversion function as well.  <BR></UL>
+
+<P>
+
+<EM>This allows the user of the class to determine if a cast is more
+readable than a member function invocation, for example, to avoid
+casts that look like they should be automatically done by the
+compiler, but are explicit to invoke the cast.</EM> <P>
+
+
+<H5><A NAME="HDR23">  7.11  Protected items</A></H5>
+
+<P>
+
+When a member of a class is declared <CODE>protected</CODE>, to
+clients of the class it is as if the member were private. Subclasses,
+however, can access the member as if it were declared private to
+them. This means that a subclass can access the member, but only as
+one of its own private fields. Specifically, it cannot access a
+protected field of its parent class via a pointer to the parent class,
+only via a pointer to itself (or a descendant). 
+
+<H5><A NAME="HDR24"> 7.12 friends</A></H5>
+
+<P>
+
+When using friends remember that private member access rights do not
+extend to subclasses of the <CODE>friend</CODE> class. Any method that
+depends on <CODE>friend</CODE> access to another class cannot be
+rewritten in a subclass.
+
+<UL>
+
+<P>
+
+<LI>When applied to a class (<A HREF="#REF51660">friend
+Classes, § 7.12.1</A>, <CODE>class Base</CODE>, below), the friend
+keyword denotes a class-global behavior change that is being applied
+to the <CODE>friend</CODE> class. As such, it is not governed by the
+class part designation (<CODE>public</CODE>, <CODE>protected</CODE>,
+or <CODE>private</CODE>) currently in force. Thus, the
+<CODE>friend</CODE> keyword should be indented to the same level as
+these class part names.  <BR>
+
+<P>
+
+<LI>In all other cases where the friend keyword is used, (see
+<CODE>friend int operator==</CODE>,
+<A HREF="#REF27400">section 7.12.2</A>) it should be treated as a
+type modifier in the same sense that <CODE>static</CODE>,
+<CODE>extern</CODE>, and <CODE>virtual</CODE> are. That is, the word
+<CODE>friend</CODE> is lined up along with the other type specifiers
+one indent level from the level of the class itself.  <BR>
+
+<P>
+
+<LI>If <CODE>friend</CODE> is needed between classes,
+<CODE>friend</CODE> member functions are preferred to making the
+entire class a friend.
+
+<BR></UL>
+
+
+
+<P>
+
+The use of <CODE>friend</CODE> class or method declarations is
+discouraged, since the use of <CODE>friend</CODE> breaks the
+separation between the interface and the implementation. The only
+non-discouraged uses are for binary operators and for cooperating
+classes that need private communication, such as container/iterator
+sets.
+
+<H6><A NAME="REF51660">  7.12.1  <CODE>friend</CODE> Classes</A></H6>
+
+<UL>
+
+<P>
+
+<LI>All <CODE>friend</CODE> class declarations must come at the end of
+the class declaration.
+
+<BR>
+
+<P>
+
+<LI>If a <CODE>friend</CODE> class declaration is necessary and the
+<CODE>friend</CODE> class is intended to be subclassable, the
+<CODE>friend</CODE> class must be written so that its subclasses have
+the same access rights as the base class. To do this, any access
+depending on the <CODE>friend</CODE> declaration is encapsulated in a
+protected function:
+
+<BR></UL><PRE>
+
+class Secret
+{
+  private:   
+    int    Data;
+
+    int    method();
+
+  friend        Base;
+};
+
+class Base
+{
+  protected:
+    int    secret_data(Secret *income_info);
+    int    secret_method(Secret *income_info);
+};
+
+int
+Base::secret_data(Secret *income_info)
+{
+    return income_info-&gt;Data;
+}
+
+int
+Base::seccet_method(Secret *income_info)
+{
+    return income_info-&gt;method();
+}
+</PRE>
+
+Methods of the <CODE>Secret</CODE> class should not be accessed
+directly by methods of the <CODE>friend</CODE> class<CODE>
+Base</CODE>. Direct access makes it hard to cut-and-paste code from
+the base to a derived class:
+
+<BR><PRE>
+void
+Base::an_example(Secret *income_info)
+{
+    int  a = income_info-&gt;Data;                  // BAD:  Direct access is wrong
+    int  b = secret_data(income_info);                  // GOOD: Use accessor functions!
+}
+</PRE>
+<H6><A NAME="REF27400">  7.12.2  friend Methods</A></H6>
+
+<P>
+
+Binary operators, except assignment operators, must almost always be
+<CODE>friend</CODE> member functions.
+
+<PRE>
+class String
+{
+  public:
+            String(const char *);
+
+  friend int operator==(const String &amp;,const String &amp;);
+  friend int operator!=(const String &amp;,const String &amp;)
+            { return !(string1 == string2); }
+};
+</PRE>
+
+<P>
+
+<EM>If the <CODE>operator=</CODE>= were a member function, the
+conversion operator would only allow <CODE>(String == char *)</CODE>
+but not <CODE>(char * == String)</CODE> This would be quite surprising
+to the user of the class. Making <CODE>operator==</CODE> a
+<CODE>friend</CODE> member function allows the conversion implied by
+the constructor to work on both sides of the operator.</EM>
+
+<P>
+
+<H5><A NAME="REF52403">  7.13  Templates</A></H5>
+
+<UL>
+
+<P>
+
+<LI>The template specifier for a template class should be placed alone
+on the line preceding the "class" keyword or the return type for a
+function. The following header for the template definition should be
+indented 1/2 indent level:
+
+<BR>As an example:
+<BR>
+</UL>
+<PRE>
+
+  template&lt;class TYPE&gt;
+  class List
+  {
+    public:
+
+    TYPE     front();
+    ...
+  };
+  
+template&lt;class TYPE&gt;
+TYPE
+List&lt;TYPE&gt;::front()
+{
+    ...;
+}
+</PRE>
+
+<UL>
+
+<P>
+<LI>The names of general template parameters should be simple and all-purpose, since their types are normally not known. On the other hand, specific template parameters should be given meaningful names to show their purpose. For example:
+<BR></UL><PRE>
+
+
+  template&lt;class TYPE, unsigned int SIZE&gt;
+  class Vector
+  {
+    private:
+
+    Type     Data[SIZE];
+  }
+</PRE>
+
+Here, the type stored by the <CODE>Vector</CODE> template class is
+named <CODE>TYPE</CODE> because it is a general purpose parameter. The
+<CODE>SIZE</CODE> parameter, however, is specific since it ultimately
+determines the size of a <CODE>Vector&lt;TYPE&gt;</CODE> object; its
+name reflects this specific purpose.
+
+<BR><H4><A NAME="HDR25">  8  Variables</A></H4>
+<H5><A NAME="HDR26">  8.1  Placement of Declarations</A></H5>
+
+<P>
+
+Since C++ gives the programmer the freedom to place a variable
+definition wherever a statement can appear, they should be placed near
+their use. For efficiency, it may be desirable to invoke constructors
+only when necessary. Thus function code may define some local
+variables, do some parameter checking, and once the sanity checks have
+passed then define the class instances and invoke their constructors.
+
+<P>
+Where possible, you should initialize variables when they are defined.
+<PRE>
+char      *Foo[]             = { "Hello", ", ", "World\n" };
+
+int      max_string_length            = BUFSIZE;
+
+String      path("/usr/tmp/gogin");
+</PRE>
+
+<P>
+<EM>This minimizes "used before initialization" bugs.</EM>
+<P>
+
+<H5><A NAME="HDR27">  8.2  <CODE>extern</CODE> Declarations</A></H5>
+
+<UL>
+
+<P>
+
+<LI>Do not explicitly declare variables, types, or functions that you
+are not implementing. Include the appropriate public header files
+instead.
+
+<BR>
+
+<P>
+
+<LI>If you are using a class, but all you need is the type name (for
+pointers or references), you should use the simple forward declaration
+instead of including the header file (if you can):
+
+<BR></UL>
+<PRE>
+
+class ClassName;
+
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>External declarations should only be placed in header files and
+should begin in column 1. A comment describing the role of the
+identifier being declared should be included.
+
+<BR></UL>
+
+<P>
+
+<EM>Place them in header files to prevent inconsistent declarations in
+each source file that uses it.</EM>
+
+<P>
+
+<H5><A NAME="REF16097">  8.3  Indentation of Variables</A></H5>
+
+<UL>
+
+<P>
+<LI>The type names should be at the current indentation level.
+<BR>
+
+<P>
+
+<LI>Type modifiers such as <CODE>*</CODE> and <CODE>&amp;</CODE>
+should be with the identifier, not the type. The following style is
+forbidden:
+
+<BR></UL><PRE>
+
+int*      ip;
+String&amp;      str;
+</PRE>
+
+<P>
+<EM>This style, though currently popular, lies about syntax, since
+
+<CODE>int* p1, p2;</CODE> implies <CODE>p1</CODE> and <CODE>p2</CODE>
+are both pointers, but one is not. Since we do not accept that only
+one variable should be declared on a line as a fixed rule, we cannot
+allow a style that lies about the meaning of multiple declarations on
+a line.</EM>
+ <P>
+
+<UL>
+
+<P>
+
+<LI>Variable definitions should be indented to align the variables
+being declared, with identifiers lining up with each other exclusive
+of preceding modifiers (<CODE>*</CODE>, <CODE>&amp;</CODE>, etc.).
+<A HREF="#FN4">(4)</A>
+
+<BR></UL>
+<PRE>
+
+int       count             = 0;
+
+char      **pointer_to_string            = &amp;foo;
+</PRE>
+<H5><A NAME="HDR28">  8.4  Number of Variables per Line</A></H5>
+
+<UL>
+
+<P>
+
+<LI>One variable per line is recommended since it encourages
+commenting. In other words,
+
+<BR></UL>
+<PRE>
+int      level    = 0;          // indentation level
+int      size    = 0;          // size of symbol table
+int      lines    = 0;          // lines read from input
+</PRE>
+is preferred over:
+<BR><PRE>
+int      level, size, lines;              // Not Recommended
+</PRE>
+
+The latter style is frequently used for declaring several temporary
+variables of primitive types such as <CODE>int</CODE> or
+<CODE>char</CODE>, or strongly matched variables, such as x, y pairs,
+where changing the type of one requires changing the type of all.
+
+<BR>
+<UL>
+
+<P>
+<LI>Variables and functions must not be declared on the same line:
+<BR></UL>
+<PRE>
+
+long        db, OpenDb();            // Bad
+long        db;            // Better
+long        OpenDb();            // but still not recommended
+#include &lt;admintools/database.hh&gt;                    // Best
+
+Databae        db;
+</PRE>
+
+<P>
+
+<EM>You should use a header file that contains an external function
+declaration of <CODE>OpenDb()</CODE> instead of hard-coding its
+definition in your source file.</EM>
+
+<P>
+
+<H5><A NAME="HDR29">  8.5  Definitions Hiding Other Definitions</A></H5>
+
+<UL>
+
+<P>
+
+<LI>Avoid local variable definitions that override (hide) variables
+defined at higher levels.
+
+<BR> </UL>
+<PRE>
+
+void
+WfFunction()
+{
+    static int      boggle_count;          // Count of boggles in formyls
+
+    if (condition) {
+      int    boggle_count;          // Bad --- this hides the above instance
+    }
+}
+</PRE>
+<H5><A NAME="HDR30">  8.6  Initialized Variables</A></H5>
+
+<UL>
+
+<P>
+
+<LI>Opening braces on initializers must follow the <CODE>=</CODE> on
+the same line.
+
+<BR>
+
+<P>
+
+<LI>If the initializers fit on one line, the closing brace should also
+be on that line.
+
+<BR>
+
+<P>
+
+<LI>If the initializers don't fit comfortably on one line, they should
+be placed on separate lines, indented one level from the variable
+name. In this case, the closing brace should be outdented one level
+from the initializer list.
+
+<BR></UL>
+
+<P>
+
+<EM>This style is purposefully analogous to the function declaration
+style. It may look strange to some at first, but in the context of a
+complete program, it lends itself to an overall pleasing appearance of
+the code.</EM>
+
+<P>
+
+
+<UL>
+
+<P>
+<LI>Initializer lists must always have the optional trailing comma.
+<BR></UL>
+
+<PRE>
+
+Cat      cats[] = {
+        "Shamus",
+        "Macka",
+        "Tigger",
+        "Xenephon",
+      };
+</PRE>
+
+<UL>
+
+<P>
+<LI>Initialized objects that require only one initializer should not use braces.
+<BR></UL><PRE>
+
+char     *name = "Framus";
+</PRE>
+<H4><A NAME="HDR31">  9  Functions</A></H4>
+<H5><A NAME="REF12703">  9.1  Function Declarations</A></H5>
+
+<UL>
+
+<P>
+<LI>Function declarations should be lined up in accordance with <A HREF="#REF16097">Indentation of Variables, § 8.3</A> above.
+<BR>
+
+<P>
+
+<LI>Function parameters should be listed as many per line as reasonable.
+Indention for new lines should occur at the open <CODE>(</CODE>.
+
+<BR></UL>
+<PRE>
+SomeType        *WfLibraryFunctionName(void *current_pointer,
+				       size_t desired_new_size);
+</PRE>
+
+However, if a function takes only a few parameters, the declaration
+can be strung onto one line (if it fits):
+<BR>
+<PRE>
+int    strcmp(const char *s1, const char *s2);
+</PRE>
+
+
+<P>
+<EM>We usually use a one-line-per-declaration form for several reasons.
+<BR>  (1) It is easy to comment the individual parameters,
+<BR>(2)   It makes it easier to read when there many parameters.
+<BR>  (3) It is easy to reorder the parameters, or to add one. The closing <CODE>);</CODE> is on a line by itself to make it easier to add a new parameter at the end of the parameter list.
+<BR>  (4) It is designed to be visually similar to the other declaration statements.
+<BR>(5) It works well with long identifier names.
+<BR>However, with simple declarations the weight seems too great for the benefit.</EM>
+<P>
+
+
+<UL>
+
+<P> <LI>If the function takes no parameters, both the opening and
+closing parenthesis must be on the same line.  <BR>
+</UL>
+
+<PRE>
+int      getchar();
+</PRE>
+
+The ANSI C-compatible construct of <CODE>(void)</CODE> for a function
+with no parameters must only be used in header files designed to be
+included by both C and C++ (See
+<A HREF="#REF16183">Interaction with C on page 39</A>.)
+
+<BR>
+<UL>
+
+<P>
+
+<LI>Function parameter names must be included in the function
+declaration, not just the parameter types. This applies as well for
+usages where a function prototype is being used as a type (in other
+words, a <CODE>typedef</CODE> type). The only exception is for
+operators and single-argument constructors where the meaning of the
+parameter is clear from that context.
+
+<BR></UL>
+
+
+
+<P>
+<EM>This provides internal documentation that can help people remember what a parameter is supposed to represent. It also allows comments in the file to refer to the parameter by name.</EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>Input-only function parameters must either be passed by value or as a <CODE>const</CODE> <CODE>&amp;</CODE>. 
+<BR>
+<P>
+
+<LI>Values that may be modified by a function (input/output or
+output-only parameters) should be passed as references to the thing
+that will be modified. (This closely resembles the Pascal
+<CODE>var</CODE> parameter) The alternative of passing pointers is not
+encouraged, but is not prohibited. See
+<A HREF="#REF98917">References vs. Pointers, § 11.5</A> for
+more details.
+
+<BR></UL>
+
+
+<H5><A NAME="REF16509">  9.2  Function Definitions</A></H5>
+
+<UL>
+
+<P>
+<LI>Function bodies should be small.
+<BR></UL>
+
+
+
+<P>
+<EM>Small functions promote clarity and correctness.</EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>Each function definition should be preceded by a block comment that gives its name and a short description of what the function does.
+<BR>
+
+<P>
+<LI>The full type of the value returned should be alone on a line in column 1 (<CODE>int</CODE> must be specified explicitly). If the function does not return a value then it should be given the return type <CODE>void</CODE>. If the value returned requires a long explanation, it should be given in the block comment above. The function name should be alone on a line beginning in column 1 (the class name is included on the same line as the function name if the function is a method of a class).
+<BR></UL>
+<PRE>
+
+char *
+WfString::cstr()
+{
+    // ...
+}
+</PRE>
+
+<UL>
+
+<P>
+
+<LI>Parameter declarations are analogous to those in
+<A HREF="#REF12703">Function Declarations, § 9.1</A>The
+opening brace of the function body will be alone on a line beginning
+in column 1.
+
+<BR>
+
+<P>
+
+<LI>In the case of a function that has unused parameters, it may be
+useful to comment out the name of the unused parameter in order to
+suppress compiler warnings. Except for callback routines, this usually
+is a questionable situation.
+
+<BR>
+</UL>
+<PRE>
+
+void    
+WfFoo(int param1, int /* optional_param2 */)
+{
+    // ...;
+}
+</PRE>
+
+<UL>
+
+<P>
+<LI>All local declarations and code within the function body are indented by one indentation level.
+<BR></UL>
+<PRE>
+
+int
+SystemInformationObject::get_number_of_users(Name host_name, Time idle_time)
+{
+    int    some_variable;
+
+    statements;
+    ...;
+}
+</PRE>
+
+<UL>
+
+<P>
+<LI>Never use the <CODE>this</CODE> variable in member functions to access members. In other words, you should never write <CODE>this-&gt;Anything</CODE>.
+<BR></UL>
+
+
+<H4><A NAME="REF23897">  10  Statements</A></H4>
+
+<UL>
+
+<P>
+<LI>Each line must contain at most one statement. In particular, do not use the comma operator to group multiple statements on one line, or to avoid using braces. For example:
+<BR></UL><PRE>
+
+
+  argv++; argc--;                        // Multiple statements are bad
+
+  if (err) 
+
+    fprintf(stderr, "error\n"), exit(1);                      // Using `,' is worse
+
+
+
+argv++;                          // The right way
+
+argc--;
+
+if (err) {
+
+    fprintf(stderr, "error\n");
+
+    exit(1);
+
+}
+</PRE>
+<H5><A NAME="HDR32">  10.1  Compound Statements</A></H5>
+
+<P>
+Compound statements are statements that contain lists of statements enclosed in braces.
+
+<UL>
+
+<P>
+<LI>The enclosed list must be indented one more level than the compound statement itself. The opening left brace must be at the end of the line beginning the compound statement and the closing right brace must be alone on a line, positioned under the beginning of the compound statement (see example below).
+<BR>
+
+<P>
+<LI>The left brace that begins a function body, a <CODE>class</CODE> definition, or a new scope are the only occurrences of a left brace that should be alone on a line.
+<BR></UL><PRE>
+
+
+{
+
+    // New Block Scope
+
+    int some_variable;
+
+
+
+    statements;
+
+}
+
+</PRE>
+
+<UL>
+
+<P>
+<LI>Braces are always used around any multi-line statement when it is part of a control structure, such as an <CODE>if</CODE>/<CODE>else</CODE> or <CODE>for</CODE> statement, as in:
+<BR></UL><PRE>
+
+
+if (condition) {                // braces required; following "if" is two lines
+
+    if (other_condition)            // braces not required -- only one line follows
+
+      statement;
+
+}
+</PRE>
+Braces are not required for control structures with single-line bodies, except for <CODE>do</CODE>/<CODE>while</CODE> loops, whose always require enclosing braces. This single-line rule includes a full <CODE>if</CODE>/<CODE>else</CODE>/<CODE>else</CODE>/... statement:
+<BR><PRE>
+if (condition)
+
+    single_thing();
+
+else if (other_condition)
+
+    other_thing();
+
+else
+
+    final_thing();
+</PRE>
+Note that this is a "single-line rule", not a "single statement rule". It applies to things that fit on a single line.
+<BR>
+<P>
+<EM>Single-statement bodies are too simple to be worth the weight of the extra curlies.</EM>
+<P>
+
+<H5><A NAME="REF36666">  10.2  <CODE>if</CODE><CODE>/</CODE>else Statements</A></H5>
+
+<P>
+  An <CODE>else</CODE> clause is joined to any preceding close curly brace that is part of its <CODE>if</CODE>. See also <A HREF="#REF96004">Comparing against Zero on page 34</A>.
+<PRE>
+if (condition) {
+
+    ...;
+
+}
+if (condition) {
+
+    ...;
+
+} else {
+
+    ...;
+
+}
+if (condition) {
+
+    ...;
+
+} else if (condition) {
+
+    ...;
+
+} else {
+
+    ...;
+
+}
+</PRE>
+<H5><A NAME="HDR33">  10.3  for Statements</A></H5>
+<PRE>
+  for (initialization; condition; update) {
+
+    ...;
+
+  }
+</PRE>
+
+<P>
+If the three parts of the control structure of a for statement do not fit on one line, they each should be placed on separate lines or broken out of the loop:
+<PRE>
+
+for   (longinitialization;
+
+      longcondition;
+
+      longupdate
+
+) {
+
+    ...;
+
+}
+longinitialization;                  // Alternate form...
+
+for (; condition; update) {
+
+    ...;
+
+}
+</PRE>
+
+<P>
+When using the comma operator in the initialization or update clauses of a <CODE>for</CODE> statement, no more than two variables should be updated. If there are more, it is better to use separate statements outside the <CODE>for</CODE> loop (for the initialization clause), or at the end of the loop (for the update clause).
+<H5><A NAME="HDR34">  10.4  <CODE>do </CODE>Statements</A></H5>
+<PRE>
+  do {
+
+    ...;
+
+  } while (condition);
+</PRE>
+<H5><A NAME="HDR35">  10.5  while Statements</A></H5>
+<PRE>
+  while (condition) {
+
+    ...;
+
+  }
+</PRE>
+<H5><A NAME="HDR36">  10.6  Infinite Loops</A></H5>
+
+<P>
+The infinite loop is written using a <CODE>for</CODE> loop:
+<PRE>
+  for (;;) {
+
+    ...;
+
+  }
+</PRE>
+
+<P>
+<EM>This form is better than the functionally equivalent <CODE>while</CODE> <CODE>(TRUE)</CODE> or <CODE>while</CODE> (<CODE>1)</CODE> since they imply a test against <CODE>TRUE</CODE> (or <CODE>1</CODE>), which is neither necessary nor meaningful (if <CODE>TRUE</CODE> ever is not true, then we are all in <I>real</I> trouble).</EM>
+<P>
+
+<H5><A NAME="HDR37">  10.7  Empty Loops</A></H5>
+
+<P>
+
+Loops that have no body must use the <CODE>continue</CODE> keyword to make
+it obvious that this was intentional.
+
+<PRE>
+while (*string_pointer++ != '\0')
+    continue;
+</PRE>
+<H5><A NAME="REF21716">  10.8  switch Statements</A></H5>
+
+<UL>
+
+<P>
+<LI><CODE>case</CODE> labels should be on lines separate from the statements they control.
+<BR>
+
+<P>
+<LI><CODE>case</CODE> labels are indented to 1/2 an indent level beyond the level of the <CODE>switch</CODE> statement itself.
+<BR></UL>
+
+
+
+<P>
+<EM>We use this indentation since the labels are conceptually part of the <CODE>switch</CODE>, but indenting by a full indent would mean that all code would be indented by two indent levels, which would be too much.</EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>A blank line must appear before the first <CODE>case</CODE> label in a set of <CODE>case</CODE> labels, especially if the body code is large. (But don't put a blank line right after the <CODE>switch</CODE> keyword)
+<BR>
+
+
+<P>
+<LI>The last <CODE>break</CODE> in the <CODE>switch</CODE> is, strictly speaking, redundant, but it is required nonetheless.
+<BR></UL>
+
+
+
+<P>
+<EM>This prevents a fall-through error if another <CODE>case</CODE> is added after the last one. </EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>In general, the fall-through feature of the <CODE>switch</CODE> statement should rarely, if ever, be used (except for multiple case labels as shown in the example). If it is used otherwise, it must be commented with:
+<BR></UL><PRE>
+    // FALLTHROUGH
+</PRE>
+where the <CODE>break</CODE> would normally be expected.
+<BR>
+<P>
+
+<EM>This makes it clear to the reader that it is this fallthrough was
+intentional.</EM>
+
+<P>
+
+
+<UL>
+
+<P>
+<LI>A <CODE>return</CODE> statement should not be followed by a <CODE>break</CODE>.
+<BR>
+
+<P>
+
+<LI><CODE>switch</CODE> statements that use members of an
+<CODE>enum</CODE> should not have a <CODE>default</CODE>
+case. This means that if you have such a <CODE>switch</CODE>, you must
+always have all members of the <CODE>enum</CODE> represented in
+explicit <CODE>case</CODE> labels, even if these only execute a
+<CODE>break</CODE>.
+
+<BR></UL>
+
+
+
+<P>
+<EM>Some C++ compilers will warn you if such a <CODE>switch</CODE> is missing a member. This warning will call out situations where you add a member to an <CODE>enum</CODE> definition but forget to add a <CODE>case</CODE> for it in a given <CODE>switch</CODE>. This is usually an error. </EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI><CODE>switch</CODE> statements keyed on non-<CODE>enum</CODE> values should have a <CODE>default</CODE> label if the code assumes that only certain values will arrive. Such a <CODE>default</CODE> label should make sure that the erroneous situation is called to someone's attention, such as by signalling an error or generating an error message.
+<BR></UL><PRE>
+
+
+  switch (pixel_color) {
+
+    case Color::blue:
+
+    ...;
+
+    break;
+
+
+
+    case Color::red:
+
+    found_red_one = TRUE;
+
+    // FALLTHROUGH
+
+    case Color::purple:
+
+   {
+
+      int    local_variable;
+
+      ...;
+
+      break;
+
+   }
+
+
+
+    default:          // handles green, mauve, and pink colors...
+
+    ...;
+
+    break;
+
+  }
+</PRE>
+
+<P>
+<EM>This is to catch unexpected inputs in more graceful ways than failing unpredictably somewhere else in the code. </EM>
+<P>
+
+<H5><A NAME="HDR38">  10.9  <CODE>goto </CODE>Statements</A></H5>
+
+<P>
+While not completely avoidable, use of <CODE>goto</CODE> is discouraged. In many cases, breaking a procedure into smaller pieces, or using a different language construct will enable elimination of a <CODE>goto</CODE>.
+
+
+<P>
+The main place where a <CODE>goto</CODE> can be usefully employed is to break out of several nested levels of <CODE>switch</CODE>, <CODE>for</CODE>, or <CODE>while</CODE> nesting when an error is detected. In future versions of C++ exceptions should be used.
+<PRE>
+    for (...) {    
+
+      for (...) {    
+
+        ...;
+
+        if (disaster) {
+
+          goto error;
+
+        }
+
+      }
+
+    }
+
+    return true;
+
+error:        // clean up the mess
+</PRE>
+
+<UL>
+
+<P>
+<LI>Never use a <CODE>goto</CODE> to branch to a label within a block:
+<BR></UL><PRE>
+
+
+    if (pool.is_empty()) {
+
+      goto label;        // VERY WRONG
+
+    }
+
+    for (...) {
+
+      Object obj;
+
+label:
+
+    }
+</PRE>
+
+<P>
+<EM>Branching into a block may bypass the constructor invocations and initializations for the automatic variables in the block. Some compilers treat this as an error, others blissfully ignore it.</EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>When a <CODE>goto</CODE> is necessary, the accompanying label must be alone on a line starting in column 1.
+<BR></UL>
+
+
+<H5><A NAME="HDR39">  10.10  <CODE>return</CODE> Statements</A></H5>
+
+<P>
+The expressions associated with <CODE>return</CODE> statements are not required to be enclosed in parentheses.
+<H5><A NAME="HDR40">  10.11  <CODE>try</CODE>/<CODE>catch </CODE>Statements</A></H5>
+
+<P>
+The proposed C++ syntax for exception handling is <I>not</I> to be
+used in shared code<I> at this time</I>
+<A HREF="#FN5">(5)</A>. This section specifies the syntax
+which will eventually be used to support the feature, but should be
+avoided in near term code.
+
+<HR>
+<STRONG><EM>We need a section describing an alternate way of
+handling exceptions so that we can use "boilerplate" code to do the
+right thing now and help ease the transition to exceptions in the
+future.</EM></STRONG>
+
+<HR>
+
+<UL>
+<P>
+
+<LI>The expressions associated with <CODE>throw</CODE> statements are
+not required to be enclosed in parentheses.
+
+<BR>
+
+<P>
+
+<LI>Signaling an exception in a destructor is not a good idea, since
+any destructive behavior that has already taken place probably cannot
+be reversed.
+
+</UL>
+<BR>
+<PRE>
+  try {
+    statements;
+  } catch (type) {
+    statements;
+  } catch (...) {                // This is the literal "..."
+    statements;
+  }
+</PRE>
+<H4><A NAME="REF86372">  11  Miscellaneous</A></H4>
+<H5><A NAME="HDR41">  11.1  General Comments &amp; Rules</A></H5>
+
+<UL>
+
+<P>
+<LI>When incrementally modifying existing code, follow the style of
+the code you are modifying, not your favorite style. Nothing is harder
+to read than code where the personal style changes from line to line.
+<BR>
+
+<P>
+
+<LI>Don't use global data. Consider using file- or class-static data
+members instead.
+<BR>
+
+<P>
+<LI>File static variables are more appropriate than class-static
+variables, since they hide more of the class's implementation from the
+reader of the header file. Of course, if you class implementation does
+not fit within one file, this technique will not be usable.
+<BR>
+
+<P>
+<LI>In library code, don't use global or static objects that require constructors.
+<BR></UL>
+
+
+
+<P>
+<EM>This can used to support C programs being linked to C++ libraries without the use of a C++-aware linker. See <A HREF="#REF16183">Interaction with C on page 39</A>.</EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>Don't use global (nonmember) functions when implementing classes --- use private member functions instead (except binary operators --- see <A HREF="#REF27400">friend Methods, § 7.12.2</A>.)
+<BR>
+
+<P>
+<LI>It's possible to partially circumvent the strong type checking C++ imposes on function arguments by using unspecified (or <CODE>&lt;stdargs.h&gt;</CODE>) parameters. You should avoid doing this if at all possible. The classic example of this usage is:
+<BR></UL><PRE>
+
+
+void printf(const char *, ...);
+</PRE>
+
+<UL>
+
+<P>
+<LI>Do not use a "type field" in a class when a virtual function can do the job. However, if you need to be able to narrow the type of a superclass to its subclass then a type field is appropriate.
+<BR>
+
+<P>
+<LI>In expressions involving mixed operators, use parentheses to ensure desired results and to enhance clarity. Overuse of parentheses tends to result in code that is difficult to read --- too few parentheses can result in expressions that are hard to modify correctly.
+<BR>
+
+<P>
+<LI>Try to make the structure of your program match the intent. For example, replace:
+<BR></UL><PRE>
+
+
+if (BooleanExpression)
+
+    return WfTrue;
+
+else
+
+    return WfFalse;
+</PRE>
+with:
+<BR><PRE>
+return BooleanExpression;
+</PRE>
+Similarly,
+<BR><PRE>
+if (condition)                    // Awkward
+
+    return x;
+
+return y;
+</PRE>
+is usually clearer when written as:
+<BR><PRE>
+
+if (condition)                    // Clear
+
+    return x;
+
+else
+
+    return y;
+</PRE>
+or
+<BR><PRE>
+return (condition ? x : y);
+</PRE>
+
+<UL>
+
+<P>
+<LI>Do not use the assignment operator in a place where it could be easily confused with the equality operator. For instance, in the simple expression
+<BR></UL><PRE>
+
+
+if (x = y) {                    // Confusing
+
+    ...;
+
+}
+</PRE>
+it is hard to tell whether the programmer really meant assignment or the equality test.
+<BR>Instead, use
+<BR><PRE>
+if ((x = y) != 0) {                    // Understandable
+
+    ...;
+
+}
+</PRE>
+or something similar if the assignment is needed within the <CODE>if</CODE> statement. There is a time and a place for embedded assignments. The <CODE>++</CODE> and <CODE>--</CODE> operators count as assignments. So, for many purposes, do functions with side effects.
+<BR>
+<UL>
+
+<P>
+<LI>Do not use embedded assignments in an attempt to improve run-time performance --- this is the job of the compiler. Note also that side effects within expressions can result in code whose semantics are compiler-dependent, since the order of evaluation is explicitly undefined in most places. Compilers do differ.
+<BR></UL>
+
+
+
+<P>
+
+<EM>As an aside, many of today's compilers can produce faster and/or
+smaller code if you don't use embedded assignments. If you are using
+such convoluted code to "help the compiler optimize the program", you
+may be doing more harm than good.</EM>
+
+<P>
+
+
+<UL>
+
+<P>
+<LI>Become familiar with existing library classes. You should not be writing your own string compare routine, or defining your own <CODE>memcpy()</CODE> function. Not only does this waste your time, but it may prevent your program from taking advantage of any hardware specific assists or other means of improving performance of these routines. It also makes your code less readable, because the reader has to figure out whether you are doing something special in the re-implemented routines to justify their existence.
+<BR></UL>
+
+
+<H5><A NAME="HDR42">  11.2  Limits on numeric precision</A></H5>
+
+<UL>
+
+<P>
+<LI>C++ is a superset of ANSI-C in most respects; specifically it shares the ANSI specs on the C's built in types. This is <I>all</I> you can safely assume:
+<BR>
+<P>
+<PRE>
+------------------------------------------------------------------------
+<B>Type            Minimum          Maximum       Comments                   
+                Value            Value                                    </B>
+------------------------------------------------------------------------
+signed char     --128            127           They may hold more         
+unsigned char   0                255           They may hold more         
+char            0                127           Can't assume signed or     
+                                               unsigned                   
+short           --32,768         32,767        Minimum 16 bits            
+signed short                                                              
+unsigned short  0                65,535        Minimum 16 bits            
+long            --2,147,483,648  2,147,483,64  Minimum 32 bits            
+signed long                      7                                        
+unsigned long   0                4,294,967,29  Minimum 32 bits            
+                                 5                                        
+int             --32,768         32,767        Same as a short            
+signed int                                                                
+unsigned int    0                65,535        Same as an unsigned short  
+------------------------------------------------------------------------
+</PRE>
+
+
+
+<P>
+<LI>A <CODE>char</CODE> may be <CODE>unsigned</CODE> or <CODE>signed</CODE>. You can't assume either. Thus, only use (unmodified) <CODE>char</CODE> if you don't care about sign extension and can live with values in the range of 0-127.
+<BR>
+
+<P>
+<LI>An <CODE>int</CODE> cannot be counted on to hold more than a <CODE>short int</CODE>. It is an appropriate type to use if a <CODE>short</CODE> would be big enough but you would like to use the processor's "natural" word size to improve efficiency (on some machines, a 32-bit operation is more efficient than a 16-bit operation because there is no need to do masking). If you need something larger than a <CODE>short</CODE>, you must specify a <CODE>long</CODE> --- an <CODE>int</CODE> won't do.
+<BR>
+
+<P>
+<LI>Always use the right system-defined types for values: know and use <CODE>size_t</CODE>, <CODE>ptrdiff_t</CODE>, <CODE>sigatomic_t</CODE> where appropriate.
+<BR></UL>
+
+
+<H5><A NAME="REF96004">  11.3  Comparing against Zero</A></H5>
+
+<P>
+Comparisons against zero values must be driven by the type of the expression. This section shows the valid ways to compare for given types. Anything not permitted here is forbidden.
+
+<P>
+<EM>When maintaining code it is very useful to be able to tell what "units" a comparison is using. As an example, an equality test against the constant <CODE>0</CODE> implies that the variable being tested is an integral type; testing against an explicit <CODE>NULL</CODE> implies a pointer comparison, while an implied <CODE>NULL</CODE> implies a boolean relationship.</EM>
+
+
+
+<P>
+<A HREF="#REF36666">(See if/else Statements on page 28)</A>
+<H6><A NAME="HDR43">  11.3.1  Boolean</A></H6>
+
+<P>
+Choose variable names that make sense when used as a "condition". For example,
+<PRE>
+if (pool.is_empty())
+</PRE>
+
+<P>
+makes sense, while
+<PRE>
+if (pool.state())
+</PRE>
+
+<P>
+just confuses people. The generic form for Boolean comparisons are
+<PRE>
+if (boolean_variable)
+
+if (!boolean_variable)
+</PRE>
+
+<P>
+Note that this is the only case where an implicit test is allowed; all other comparisons (<CODE>int</CODE>, <CODE>char</CODE>, pointers, etc.) must explicitly compare against a value of their type. A standalone variable should always imply a boolean value.
+
+
+<P>
+Never use the boolean negation operator<CODE>!</CODE> with non-boolean expressions. In particular, never use it to test for a null pointer or to test for success of the <CODE>strcmp()</CODE> function:
+<PRE>
+if (!strcmp(s1, s2))                     // Bad
+
+if (strcmp(s1, s2) == 0)                    // Good
+</PRE>
+<H6><A NAME="HDR44">  11.3.2  Character</A></H6>
+<PRE>
+if (char_variable != '\0')
+
+while (*char_pointer != '\0')
+</PRE>
+<H6><A NAME="HDR45">  11.3.3  Integral</A></H6>
+<PRE>
+if (integer_variable == 0)
+
+if (integer_variable != 0)
+</PRE>
+<H6><A NAME="HDR46">  11.3.4  Floating Point</A></H6>
+<PRE>
+if (floating_point_variable &gt; 0.0)
+</PRE>
+
+<P>
+Always exercise care when comparing floating point values. It is generally not a good idea to use equality or inequality type comparisons. Use relative comparisons, possibly bounded by a "fuzz" factor in cases where an equality-like functionality is required.
+<H6><A NAME="HDR47">  11.3.5  Pointer</A></H6>
+<PRE>
+if (pointer_variable != NULL    )                  // Always use an explicit test vs. NULL
+</PRE>
+
+<P>
+Implicit comparisons are not allowed:
+<PRE>
+if (pointer_variable)                      // WRONG
+</PRE>
+<H5><A NAME="REF80253">  11.4  Use and Misuse of <CODE>inline</CODE></A></H5>
+
+<UL>
+
+<P>
+<LI>inline functions should not be used indiscriminately.
+<BR>
+
+<P>
+<LI>Never use <CODE>inline</CODE> functions in public interface definitions.
+<BR></UL>
+
+
+
+<P>
+<EM>Since a client using your inlined interface actually compiles your code into their executable, you can never change this part of your implementation. And no one else can provide an alternate implementation.</EM>
+<P>
+
+
+<UL>
+
+<P>
+<LI>Some C++ compilers support a <CODE>+w</CODE> option which will warn you of the case where things declared <CODE>inline</CODE> aren't inlined. When an <CODE>inline</CODE> function isn't inlined, it may be defined "file static" in every file that references it!
+<BR></UL>
+
+
+
+<P>
+Within your implementation there may be places where you need to use inlines. Be aware that the use of inlines can easily make your (and other people's) code larger, which can overcome any efficiency gains. Here are some guidelines to help do it right.
+
+<UL>
+
+<P>
+
+<LI>As explained in Chapter 7 of the ARM, inlining is not a panacea
+and in general should be done after the program is written, debugged
+and instrumented.
+
+<BR>
+<P>
+<LI>Small simple functions that only increment or return a value are
+usually good candidates for inlining. For most functions, the time
+spent in a call is dominated by the time it takes to execute the body
+of the function and not by the cost of calling it. Indiscriminate use
+of inlining results in larger programs that can take longer to execute
+due to a larger working set that needs to reside in memory. Unless you
+know for sure that inlining a particular function is a win, do not use
+inlining.
+<BR>
+<P>
+<LI>If your inline function just calls something else that isn't
+inline, that's fine, as long as the other function has identical
+semantics. As an example, you might have a class that defines a
+virtual function <CODE>is_equal()</CODE>, which compares two objects
+for equality. It also has an inline definition for
+<CODE>operator==</CODE>, as a notational convenience. Since
+<CODE>operator==</CODE> just turns around and calls the
+<CODE>is_equal()</CODE> function, it may be OK for it to be inline and
+not virtual.
+
+<BR>
+
+<P>
+
+<LI>Do not use inlines just because your function just happens to have
+a one-line implementation.
+
+<BR>
+
+<P>
+
+<LI>Use an inline function if efficiency is very, very important and
+you'll never change it.
+
+<BR>
+
+<P>
+<LI>If you don't know (and can't prove) that your implementation must
+be inline, don't make it inline. Build it normally and then measure
+the performance. Experience has shown again and again that programmers
+spend lots of time optimizing code that hardly ever gets executed,
+while totally missing the real bottlenecks. The empirical approach is
+much more reliable. Experience has also shown that a better algorithm
+or smarter data structures will buy you a lot more performance than
+code tweaking.
+
+<BR>
+
+<P>
+
+<LI>Long inline functions should be declared simply as
+<CODE>inline</CODE> in the class, with the code presented immediately
+after the class declaration:
+
+<BR></UL>
+<PRE>
+class Dummy
+{
+public:
+    inline int        do_something();
+};
+
+inline int
+Dummy::do_something()
+{
+    // ... several lines of code
+}
+</PRE>
+<H5><A NAME="REF98917">  11.5  References vs. Pointers</A></H5>
+
+<P>
+
+The advantages of using references over pointers include (from
+<A HREF="Wildfire-C++Style-endmatter.html#REF65323">[25]</A>):
+
+<UL>
+
+<P>
+
+<LI>A reference can only refer to an object. Its just another name for
+an existing object. Therefore, people reading the code should be able
+to recognize immediately the intent of the programmer --- namely to
+refer locally to some object via this one local name.
+
+<BR>
+
+<P>
+
+<LI>In some situations using multiple inheritance, a reference may be
+somewhat more efficient.
+
+<BR>
+
+<P>
+
+<LI>A reference is always "const", in the sense that the reference
+cannot be re-assigned to refer to another object within the scope of
+the lifetime of that reference. Thus both the original programmer and
+the subsequent code reader can assume a powerful invariance across the
+scope: this reference refers to some object, and it <I>only</I> refers
+to that object.  <BR></UL>
+
+
+
+<P>
+The advantages of using pointers over references include:
+
+<UL>
+
+<P>
+<LI>Pointers can do and mean many things that references can't --- a pointer can be used to represent such things as:
+<BR>
+
+<P>
+<LI>an array
+<BR>
+
+<P>
+<LI>an element of an array
+<BR>
+
+<P>
+<LI>null (no object passed)
+<BR>
+
+
+<P>
+<LI>one past the end of an array (an end marker)
+<BR>So clearly if you must do one of these things you should be using a pointer. The disadvantage then being that <I>which</I> of <I>N</I> possible uses of the pointer is intended is not immediately apparent from the code. 
+<BR>
+
+<P>
+<LI>Pointers (non-constant) can be re-assigned, making them useful in the infrequent case where it would truly be inefficient or inconvenient to not be able to change the pointers value. The disadvantage then is that the code reader cannot assume invariance within the scope.
+<BR></UL>
+
+
+
+<P>
+Use references where you reasonably can --- that is, when assigning a name to an already existing singular object. Use pointers for any of the other <I>N</I> meanings that pointers have traditionally held. 
+<H5><A NAME="HDR48">  11.6  Portability</A></H5>
+
+<P>
+The advantages of portable code are well known and little appreciated. This section gives some guidelines for writing portable code, where the definition of portable is a source file that can be compiled and executed on different machines with the only source change being the inclusion of (possibly different) header files.
+
+<UL>
+
+<P>
+<LI>Beware of making assumptions about the size of pointers. They are not always the same size as <CODE>int</CODE>. Nor are all pointers always the same size, or freely interchangeable.
+<BR>
+
+<P>
+<LI>Also, beware of potential pointer alignment problems. On machines that have address alignment restrictions (for example, Sparc), the conversion of a pointer-to-<CODE>char</CODE> to a pointer-to-<CODE>int</CODE> may result in an invalid address.
+<BR>
+
+<P>
+<LI>Never assume you can do anything with a <CODE>NULL</CODE> pointer except test its value. In particular, code that assumes that dereferencing a <CODE>NULL</CODE> pointer yields <CODE>'\0'</CODE> (ala VAX/BSD) will generate memory faults on other machines (for example, Sparc). Further, never write a class that assumes that <CODE>this</CODE> may be validly <CODE>NULL</CODE>.
+<BR>
+
+<P>
+<LI>Don't assume that longs, floats, doubles, or long doubles can be at any even address.
+<BR>
+
+<P>
+<LI>Don't assume you know the memory layout of a data type.
+<BR>
+
+<P>
+<LI>Don't assume you know how a <CODE>struct</CODE> or <CODE>class</CODE> is laid out in memory, or that it can be written to a data file as is.
+<BR>
+
+<P>
+<LI><I>Never</I> assume that the rest of the world uses 7-bit US-ASCII.
+<BR>
+
+<P>
+<LI>Watch out for signed characters. On some machines, for example, <CODE>char</CODE> is sign-extended when used in expressions, which is not the case on some other machines. Code that assumes either that <CODE>char</CODE> is <CODE>signed</CODE> or <CODE>unsigned</CODE> is non-portable. It is best to completely avoid using <CODE>char</CODE> to hold numbers. Manipulation of characters as if they were numbers is often non-portable. Explicitly declare character variables as <CODE>signed</CODE> or <CODE>unsigned</CODE> in cases where it matters.
+<BR>
+
+<P>
+<LI>Bitfields are also <CODE>signed</CODE> on some machines and <CODE>unsigned</CODE> on others. If you use bitfields in a way that is sensitive to this difference you must be explicit.
+<BR>
+
+
+<P>
+<LI>On some processors the bits (or bytes) are numbered from right
+to left within a word. Other machines number the bits from left to
+right. Hence any code that depends on the left-right orientation of
+bits in a word deserves special scrutiny. Bit fields within structure
+members will only be portable so long as two separate fields are never
+concatenated and treated as a unit.
+
+<BR>
+
+
+<P>
+<LI>Alignment considerations and loader peculiarities make it very rash to assume that two consecutively declared variables are together in memory, or that a variable of one type is aligned appropriately to be used as another type.
+<BR>
+
+<P>
+<LI>You should not need to know the format of the virtual tables generated by the compiler. These formats may not even be portable between different versions of the same compiler.
+<BR>
+
+<P>
+<LI>If a simple integer, such as a loop counter, is being used where either 16 or 32 bits will do, then use <CODE>int</CODE>, since it will get the most efficient (natural) unit for the current machine. Word size also affects shifts and masks. The statement
+<BR></UL><PRE>
+
+x &amp;= 0177770
+</PRE>
+will clear only the three right most bits of a 16 bit <CODE>int</CODE> on a PDP-11. On a VAX (with 32 bit <CODE>int</CODE>s) it will also clear the entire upper 16 bits. Use
+<BR><PRE>
+x &amp;= ~07
+</PRE>
+instead, which works as expected on all machines. The operator <CODE>|</CODE> does not have these problems, nor do bit-fields.
+<BR>
+<UL>
+
+<P>
+<LI>The directive <CODE>#include "somefile.hh"</CODE> implies different search paths on different systems. On BSD derived systems it means
+<BR>
+</UL>
+
+
+
+<OL>
+
+<P>
+<LI>first look in the directory the build is being done in,
+<BR>
+
+<P>
+<LI>then use the <CODE>-I</CODE> directory list
+<BR>while on System V derived systems it means
+<BR>
+
+<P>
+<LI>first look in the directory the current file is in,
+<BR>
+
+<P>
+<LI>then the directory the build is being done in,
+<BR>
+
+<P>
+<LI>then the <CODE>-I</CODE> directory list 
+<BR>Note that the BSD systems don't implicitly look in the directory that contains the source file if that directory isn't the one where the build is being done. 
+<BR>As an example, assume a directory with the files <CODE>foo.cc</CODE>, <CODE>foo.hh</CODE>, and the subdirectory <CODE>obj</CODE>. Also assume that <CODE>foo.cc</CODE> does an <CODE>#include "foo.hh"</CODE>. The command
+<BR>
+</OL>
+<PRE>
+        CC -c -o obj/foo.o foo.cc
+</PRE>
+will work on both systems, but
+<BR><PRE>
+        cd obj
+
+        CC -c -o foo.o ../foo.cc
+</PRE>
+will fail to find <CODE>foo.hh</CODE> on many BSD based systems.
+<BR>
+<UL>
+
+<P>
+<LI>Some things are inherently non-portable. Examples include code to deal with particular hardware registers such as the program status word, and code that is designed to support a particular piece of hardware such as a device driver. Even in these cases there are many routines and data structures that can be made machine-independent. Source files should be organized so that the machine-independent code and the machine-dependent code are in separate files. Then if the program is to be moved to a new machine, it is a much easier task to determine what needs to be changed.
+<BR>
+</UL>
+
+<H4><A NAME="REF16183">  12  Interaction with C</A></H4>
+<H5><A NAME="REF77061">  12.1  ANSI-C/C++ include files:</A></H5>
+
+<P>
+This is the list of the header files that ANSI-C (and thus C++) requires be provided by the language implementation. Use of any other "system" header file may not be portable.
+
+<P>
+Uses of these C header files are not required to be bracketed with the <CODE>extern "C" { }</CODE> construct.
+<PRE>
+#include &lt;stddef.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdarg.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;locale.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;string.h&gt;
+#include &lt;time.h&gt;
+#include &lt;limits.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;setjmp.h&gt;
+#include &lt;math.h&gt;
+#include &lt;float.h&gt;
+</PRE>
+<H5><A NAME="REF28244">  12.2  Including C++ Header Files in C programs</A></H5>
+
+<P>
+Header files that must be included by both C and C++ source have slightly different rules than do C++-only header files. 
+
+<UL>
+
+<P>
+<LI>The files are named <CODE>headerfile.h </CODE>instead of C++'s <CODE>headerfile.hh
+<BR>
+
+<P>
+<LI>All C++ keywords must be avoided. The C++ keywords that are not
+in C are: </CODE>asm<B>, </B><CODE>catch</CODE><B>,
+</B><CODE>class</CODE><B>, </B><CODE>delete</CODE><B>,
+</B><CODE>friend</CODE><B>, </B><CODE>inline</CODE><B>,
+</B><CODE>new</CODE><B>, </B><CODE>operator</CODE><B>,
+</B><CODE>private</CODE><B>, </B><CODE>protected</CODE><B>,
+</B><CODE>public</CODE><B>, </B><CODE>template</CODE><B>,
+</B><CODE>this</CODE><B>, </B><CODE>throw</CODE><B>,
+</B><CODE>try</CODE><B>, </B><CODE>virtual</CODE>.
+
+<BR>
+
+<P>
+<LI>Comments must use C's <CODE>/* */</CODE>, not C++'s <CODE>//</CODE>.
+<BR>
+
+<P>
+<LI>Functions that take no parameters must use <CODE>(void)</CODE>, not just <CODE>().
+<BR>
+
+<P>
+<LI>Function prototypes must always be provided.
+<BR></UL>
+
+<P>
+
+<EM>This project has no interest in any non-ANSI-C dialects of the C
+language.</EM>
+
+<P>
+
+<UL>
+
+<P>
+
+<LI>The C language mapping for identifiers must be preserved (See
+<A HREF="Wildfire-C++Style-endmatter.html#REF16551">Template for Shared C and C++ Header
+Files on page 44</A>).  <BR></UL>
+
+<H5><A NAME="HDR49">  12.3  Including C Header Files in C++</A></H5>
+
+<P>
+
+The inclusion of every non-C++ header file must be surrounded by the
+</CODE>extern "C" { } construct.
+
+<P>
+
+Note that the header files enumerated above (<A
+HREF="#REF77061">ANSI-C/C++ include files:, § 12.1</A>) are
+considered C++ header files, and not subject to this rule.
+
+<PRE>
+extern "C" {
+#include &lt;somefile.h&gt;
+#include &lt;otherfile.h&gt;
+}
+</PRE>
+<H5><A NAME="HDR50">  12.4  C Code calling C++ Libraries</A></H5>
+
+<P>
+
+Function calls that are intended to be called from C that take
+input-only <CODE>struct</CODE> arguments may wish to use pointers,
+since C does not have references. Such pointers must, of course, be
+declared <CODE>const</CODE>.
+
+<P>
+
+In order to be able to export a C++ library to C users, you'd like to
+let the C users link to the library using the regular C/Unix linker.
+
+<P>
+
+The <I><B>CC linker</B></I> (also called the "C++ pre-linker" or
+"patch" or "munch") is the part of the C++ system that makes static
+constructors and static destructors work. These are the routines that
+get called if you have a global (or a local static) variable whose
+class has a constructor. The C++ pre-linker paws through your object
+files looking for the right pattern of mangled name that indicates
+constructors and/or destructors that need to be called for that file,
+puts them all together into an initialization routine named
+<CODE>_main()</CODE>, and links that synthesized <CODE>_main()</CODE>
+into your program. Cfront has inserted a call to <CODE>_main()</CODE>
+at the start of your main C++ program.
+
+<P>
+
+So, on SunOS 4.x, if your library has any global, file-static or
+local-static variables whose classes have constructors or destructors,
+you must use the <CODE>CC</CODE> command to link any application to
+that library.
+
+<P>
+
+SunOS 5.0 object files allow libraries to have a <CODE>.init</CODE>
+section that gets called to initialize the library. The constructors
+would be put into this section (and not <CODE>_main()</CODE>), thus
+avoiding the linking problems mentioned above.
+</UL>
+<HR><H3>Footnotes</H3>
+
+<DL COMPACT>
+
+<DT><A NAME=FN1>(1)</A>
+<DD>The real, legal copyright text is still being created. It will be
+much longer and wordier than that which is shown here. A tool exists
+that allows us to simply put a comment containing the word "Copyright"
+somewhere in it at the beginning of the file and have the correct
+current copyright notice inserted automatically at a later date.
+<DT><A NAME=FN2>(2)</A>
+<DD>Hungarian notation is that style that has a identifier modifier
+(either suffix or prefix) for every potentially interesting fact about
+that identifier, for example, a "P" suffix for pointer, "l" prefix for
+local, "i" prefix for an int, "a" suffix for arrays, so each
+identifier can look something like liindexaP.
+<DT><A NAME=FN3>(3)</A>
+<DD>This does not apply to names used in libraries or generated by
+utilities.
+<DT><A NAME=FN4>(4)</A>
+<DD>Lining up the initializations, as shown in the examples, is a
+matter of personal preference.
+<DT><A NAME=FN5>(5)</A>
+<DD>As soon as exceptions are available in the compilers we use, this
+restriction will be revisited.
+</DL>
+
+<HR>
+<ADDRESS>
+Archived by Chris Lott.
+<BR>
+<A HREF="index.html">Collection index</A>
+</ADDRESS>
+
+</BODY>
+</HTML>

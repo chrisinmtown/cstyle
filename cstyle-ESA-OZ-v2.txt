@@ -1,0 +1,550 @@
+
+From: Paul Singleton <paul@cs.keele.ac.uk>
+Subject: Re: recommendation concerning c/c++ style
+To: Christopher Lott <lott@informatik.uni-kl.de>
+Date: Fri, 19 Nov 1993 14:53:56 +0000 (GMT)
+
+I tweaked the format of 'cstyle-ESA-OZ.txt' because (with 8-character tabs)
+it had lines longer than 80 chars, and the examples were misaligned.
+
+Here's a version which
+
+	* is free of tabs (uses spaces instead, so it is independent
+	  of terminal settings etc)
+
+	* has no lines longer than 79 chars.
+
+I haven't changed the semantics.
+
+=== cstyle-ESA-OZ.v2.txt ======================================================
+
+ESA Style Guide for 'C' coding
+==============================
+
+1.0 Introduction
+================
+
+1.1 Identification
+
+    This document is Copyright 1991, Expert Solutions Australia Pty.
+    Ltd. Permission is hereby granted for copying of this document (or
+    parts thereof) provided it is not for commercial gain and provided
+    ESA is acknowldedged as its source.
+
+1.2 Introduction
+
+    This document is a guide to what is considered good style for C
+    code. Style covers general rules to be applied when designing and
+    writing code, and actually can be applied to any programming
+    language.
+
+    The document is structured into a number of general headings, and
+    within each heading is a list of recommendations.
+
+1.3 Referenced Documents
+
+    C Coding Standard, ESA Internal Document, 1990.
+
+1.4 Philosophy and Objectives
+
+    The suggestions in this document cover how code should be designed
+    and written, as opposed to how the syntactic elements should be
+    laid out, which is the scope of the C Coding Standard.
+
+    A company standard style has the advantage that the intent and
+    workings of a piece of code are easier to grasp because the way
+    things are done are familiar.  The recommendations in this
+    document are a distillation of the experience of ESA staff,
+    summarized to provide a suggested style with reasons why it is
+    considered 'a good thing'.
+
+1.5 Definition of Terms
+
+    The definitions used in the C Coding Standard are used in this document.
+
+
+2.0 Comments
+============
+
+2.1 General
+
+    Sooner or later, and more likely sooner, someone is going to have
+    to maintain your code. They will need to understand what it is
+    trying to do, how it is doing it, and why it is doing it the way
+    it is - so document these decisions in the code as you make them.
+
+2.2 Inline Comments vs. Summary Comments
+
+    Inline comments are small comments in front of the piece of code
+    they are describing. They make that piece of code easier to
+    understand. Summary comments are large comments at the start of
+    the function they are describing. They make the function as a
+    whole easier to understand. These should be descriptive - an
+    explanation in English of what the function is trying to do and
+    how it is doing it.
+
+    Consistently use one or the other (or even use both, though this
+    may increase the work maintaining the code, although descriptive
+    summary comments should not need changing unless the design of the
+    function changes).
+
+
+3.0 Automatic Variables
+=======================
+
+3.1 Initialization
+
+    Avoid initializing an automatic variable where it is defined.
+    Instead, initialize it closer to where the decision is made about
+    what its value will be, or where it is used. This makes it easier
+    to see that you have considered all paths through the code, or
+    that the variable is initialized correctly, e.g.
+
+        ! ! ! ! NO ! ! ! !              + + + + YES + + + +
+    
+        int max = 0;                    int max;
+            :                               :
+            :                           max = 0;
+        for ( i=0 ; i<n ; i++ )         for ( i=0 ; i<n ; i++ )
+            {                               {
+            if ( vec[i] > max )             if ( vec[i] > max )
+                {                               {
+                max = vec[i];                   max = vec[i];
+                }                               }
+            }                               }
+
+    In the second example, it is more obvious to someone looking at
+    the for loop (which may be a long way from the definition of max)
+    that max is set to a minimum value.
+
+3.2 Error Code / Return Value
+
+    Avoid initializing a return value variable to an obscure default
+    value for the reasons given above, and also because it may happen
+    that it is not set explicitly when it should be - it can be hard
+    to determine that you have correctly covered all the possible
+    cases, e.g.
+
+      ! ! ! ! NO ! ! ! !              + + + + YES + + + +
+  
+      Status  status = NO_ENT;        Status  status;
+  
+      if ( find_name(label) )         if ( find_name(label) )
+          {                               {
+          :                               :
+          status = OK;                    status = OK;
+          }                               }
+                                      else        /* not found */
+                                          {
+                                          status = NO_ENT;
+                                          }
+
+    The second example more obviously covers both cases correctly.
+
+
+4.0 Control Flow
+================
+
+4.1 Nested if statements
+
+    Use nested if statements if there are alternative actions (i.e.
+    there is something in the else clause), or if something done by a
+    successful evaluation of the condition has to be undone. Don't use
+    nested if statements if there are actions only in the if clause,
+    e.g.
+
+    ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! NO ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
+
+    status = delta_create( (Callback)NULL, &delta);
+    if ( status == NDB_OK )
+        {
+        status = delta_record_condition( delta, ...);
+        if ( status == NDB_OK )
+            {
+            status = delta_field_condition( delta, ...);
+            if ( status == NDB_OK )
+                {
+                status = delta_field_condition( ...);
+                if ( status == NDB_OK )
+                    {
+                    status = delta_commit( delta, ...);
+                    }
+                }
+            }
+        (VOID)ndb_destroy_delta( delta);
+        }
+    return( status);
+
+
+    + + + + + + + + + + + + + + + + YES + + + + + + + + + + + + + + + +
+
+    status = delta_create( (Callback)NULL, &delta);
+    if ( status == NDB_OK )
+        {
+        if (  (status=delta_record_condition(...)) == NDB_OK
+           && (status=delta_field_condition(...)) == NDB_OK
+           && (status=delta_field_condition(...)) == NDB_OK )
+            {
+            status = delta_commit( delta, ...);
+            }
+        (void)ndb_destroy_delta( delta);
+        }
+
+4.2 Multiple Returns vs One Return
+
+    Having a single return statement at the end of a function has the
+    advantage that there is a single, known point which is passed
+    through at the termination of execution of the function. It forces
+    you to write structured code, using if-then-else statements
+    'properly'. It does mean that the code can become deeply indented,
+    but if this becomes a problem, you probably should break the
+    function into a number of sub-functions.
+    Avoid using multiple returns if the code can be just as clearly
+    written with one return. If you think that the multiple return
+    version would be superior, it may be tolerated, e.g.
+
+    ! ! ! ! NO ! ! ! !               + + + + YES + + + +
+
+    for ( i=0 ; i<max ; i++ )        found = FALSE;
+        {                            for ( i=0 ; i<max && !found ; i++ )
+        if ( vec[i] == key )             {
+            {                            if ( vec[i] == key )
+            return TRUE;                     {
+            }                                found = TRUE;
+        }                                    }
+    return( FALSE);                      }
+                                     return( found);
+
+    The latter has the advantage that if we later on decide that there
+    is more to do after the search, we just put it between the for
+    loop and the return, whereas with the former we have to modify the
+    for loop somehow.
+
+4.3 Break statements
+
+    For the same reasons as given above, avoid using break statements
+    where boolean variables can be used, e.g. the second example above
+    could be written to break out of the loop when a match is found,
+    and the test i < max used instead of the variable found - this
+    would be less clear and so harder to maintain.
+
+
+5.0 Pointers
+============
+
+5.1 NULL
+
+    NULL is the null, or invalid, pointer. You can assume it is
+    #defined to the literal value 0, although some machines (none we
+    use regularly) define it to be ((char*) 0) - they are brain-dead.
+
+    0 is the only literal pointer value, and its internal
+    representation may not be the same as the integer literal 0
+    (although it is on the machines we use regularly). So, for the
+    compiler to use the right representation, it must know that the 0
+    is to be treated as a pointer - this is usually achieved by
+    assigning it to, or comparing it with, a pointer variable.
+
+    Implicit conversion to a pointer does not, and cannot occur (in a
+    pre-ANSI compiler) - this is why you must cast NULL to a pointer
+    when it is passed as a function argument (unless you know the code
+    is intended only for ANSI compliant compilers and you have
+    correctly prototyped the function being called).
+
+    o   Do not cast NULL when it is being assigned to, or compared
+        with, a pointer - the compiler will get it right, and you may not.
+
+    o   Do cast NULL when it is being passed as a function argument -
+        the non-ANSI compiler won't get it right, so you'd better.
+
+    o   Do not use 0 as the literal null pointer - the compiler will get
+        it right, but make it obvious to us mere mortals by using NULL.
+
+    o   Do not use NULL as a literal integer - it may be defined to
+        something other than 0, and this is very confusing anyway.
+
+    o   Do not do an implicit pointer comparison with 0 - the compiler will
+        get it right, but make it obvious by comparing it against NULL.
+
+    o   Do not do an implicit integer comparison with 0 - the compiler
+        will get it right, but make it obvious by comparing it against 0.
+
+    *   Note that by "implicit comparison with 0" I mean "if (i) ..."
+        and "if (!i) ...". If i is not intended to be a boolean, it
+        can be difficult working out what the test is really trying to
+        do (it is not glaringly obvious that "if (!i) ..." is true
+        when i is zero), and it indicates that you are not handling
+        all the cases properly (do you mean `i > 0' or `i < 0' or `i
+        != 0').
+
+
+6.0 Data Structures
+===================
+
+6.1 Using struct
+
+    A data structure defines the information about some thing (aka an
+    object). All information about an object should be grouped into a
+    struct to obviate the fact that they relate to the same thing,
+    e.g.
+
+        ! ! ! ! NO ! ! ! !              + + + + YES + + + +
+    
+        GLOBAL Int  width;              GLOBAL struct  
+        GLOBAL Int  height;                 {
+                                            Int    width;
+                                            Int    height;
+                                            }
+                                        rectangle;
+
+    This can often be omitted when there is just one instance of the
+    thing - for automatic variables, it is often best to not do it,
+    but variables with global or file scope should be turned into
+    structs. The utility of this approach is clearer when there is an
+    array of such objects, e.g.
+
+        ! ! ! ! NO ! ! ! !              + + + + YES + + + +
+    
+        GLOBAL Int  width[100];         GLOBAL struct
+        GLOBAL Int  height[100];            {
+                                            Int    width;
+                                            Int    height;
+                                            }
+                                        rectangle[100];
+
+    With the former, we don't know for sure (without inspecting the
+    code) that the arrays must have the same size - conceptually we
+    have n widths and n heights, which as far as we know are unrelated
+    entities. With the latter, conceptually we have n rectangles, each
+    of which has a width and a height.
+
+    Whenever such a struct is deemed necessary, you will usually find
+    that the new type should also have its own set of methods to
+    manipulate it. These are invariably better made explicit and
+    separate from any other type's methods (in other words, each
+    struct should have its own set of manipulation routines).
+
+6.2 Global Data
+
+    Program global data should be avoided at all costs since it cannot
+    be protected against change. Every data item in a program should
+    belong to some `thing', and it is that thing's responsibility to
+    maintain it. Rather than making a datum global, it is far better
+    to provide a function to access it, since the internal details of
+    the datum can be hidden, it is protected against uncontrolled
+    change, and if necessary, it can be abstracted such that the
+    function provides an 'ideal' view of the data while internally it
+    is different, e.g.
+
+    ! ! ! ! NO ! ! ! !
+
+    EXTERN Colour   colour_table [];
+        :
+    rectangle_draw( x, y, width, height, colour_table[c]);
+        :
+
+    + + + + YES + + + +
+
+    GLOBAL Colour   colour_table(int colour);
+        :
+    rectangle_draw( x, y, width, height, colour_table(c));
+        :
+
+    With the former, a later change which involves calling some X
+    function to determine the Colour for an int means that any code
+    that uses colour_table has to be modified, whereas with the
+    former, only the function colour_table has to be modified.
+
+    This principle should also be applied to file global data - it is
+    invariably better to provide a functional interface (possibly
+    using macros) to file global data as it abstracts them better,
+    making it easier to later change their representation.
+
+
+7.0 Functions
+=============
+
+7.1 Function vs. Procedure
+
+    A function is a callable unit which returns a value.
+
+    A procedure is a callable unit which doesn't return a value
+    (except perhaps an error or status code).
+
+    The C language only has functions since all units return a value
+    (even though that value's type may be void or unused).
+
+    In general, C functions should be differentiated into procedures
+    and functions (I will use italics here to make it clear that I
+    don't mean a C function [bad luck for you ASCII readers!]):
+
+    o   A procedure should do something to (i.e. affect the state of,
+        or change) one or more of its arguments (usually its first
+        argument, which it is considered a method of). Successive
+        calls to a procedure will generally have different effects. A
+        procedure should return a status code indicating that it has
+        succeeded or failed in 'doing something'.
+
+    o   A function should not do anything to any of its arguments - it
+        should simply return some indication of the state of its
+        argument(s). Successive calls to a function should produce
+        exactly the same results (i.e. it should be idempotent). A
+        function should return whatever is required to indicate the
+        state being interrogated.
+
+    The rationale for this is to focus procedures and functions on
+    doing one thing - this makes them more reusable, and easier to
+    write, understand, and maintain.  Complex functions which do
+    multiple things are required (e.g. generating a report involves a
+    lot of different activities), but it is better to have these as a
+    third class of [usually] non-reusable functions, e.g.
+
+    ! ! ! ! NO ! ! ! !
+
+    el1 = (Element *)list_delete_current( list);
+                        :
+    el2 = (Element *)list_advance_to_next( list);
+
+    + + + + YES + + + +
+
+    el1 = (Element *)list_current_element( list);
+    (VOID)list_delete_current( list);  /* assume will not fail */
+                
+    (VOID)list_advance_to_next( list); /* assume will not fail */
+    el2 = (Element *)list_current_element( list);
+
+7.2 Size of functions
+
+    Functions should not be too large. This is deliberately not
+    quantified, because any set of figures would be somewhat
+    arbitrary. Do not make functions so large that 'keeping it all in
+    your head' becomes too difficult.
+
+7.3 Function Description
+
+    The purpose of a header description of a function is to provide
+    enough information to fully describe its intent (i.e. what it
+    does), so allowing someone to use it without having to read the
+    body of the function. It should describe:
+
+    o   the arguments it accepts, including,
+        o   type
+        o   acceptable values or ranges of values,
+        o   whether they are input, input+output, or output,
+
+    o   what it is intended to do,
+        o   in English and without any of the details of how it does it,
+
+    o   under what pre-conditions it promises to do this,
+        o   including temporal conditions (e.g. must be called
+            immediately after object_do_something()), and state
+            conditions (e.g. both list_before_first() and
+            list_after_last() must be false),
+
+    o   what post-conditions will apply once the function has finished,
+        o   generally, these will be state conditions,
+
+    o   what the input+output and output arguments will be set to,
+        o   covering all possible cases, including when they will not be set,
+
+    o   if it is a function, what it returns,
+        o   covering all possible cases.
+
+    Note that a function must handle all inputs which are listed as
+    acceptable, and should check all pre-conditions using ASSERT()
+    which will do the checking in development code but should do
+    nothing in production code. It is a 'good thing' if the
+    post-conditions are also checked with ASSERT(). Neither the
+    pre-conditions nor post-conditions must be checked with if
+    statements - this is the caller's responsibility, not the
+    function's.
+
+7.4 Reentrant Functions
+
+    Using structs for all related data, passing a pointer to a struct
+    as a function argument, and using no static data makes the code
+    reentrant. This should be done where possible because of the event
+    driven nature of our software.
+
+
+8.0 Miscellaneous
+=================
+
+8.1 Setting Memory
+
+    There are a number of ways of setting memory in C:
+
+    o   Direct assignment, including structure assignment, which
+        should be used whenever possible as the compiler will work out
+        how much to copy.
+
+    o   The str... functions, which should be used to copy strings
+        (i.e. arrays of characters). Note that str_ncpy is preferred
+        over strncpy as it always terminates the destination with a
+        NUL. NUL terminated strings are preferred because sizes are
+        not required.
+
+    o   The bcopy and bzero routines (memcpy and memset on System V)
+        which should be used to copy any other blocks of memory (e.g.
+        opaque structs). These are the least preferable ways of
+        setting memory because an explicit size is required.
+
+    Initializing blocks of memory biases the design toward using 0 as
+    an initial value (which is not always for the best) and puts a
+    magic number (i.e. 0) in the design. Use explicit initialization
+    of fields instead - defensive programming says to initialize
+    everything, so initialize data with no obvious initial value to an
+    invalid value (e.g. NULL for pointers).
+
+8.2 Allocating and Freeing Memory
+
+    If a module allocates memory for some object, it should also be
+    the one to free it. Similarly, if a module simply fills in a given
+    block of memory, it should not be the one to free the block.
+
+    A corollary to this is that chunks of allocated memory should not
+    be handed over by one module to another (except for modules
+    specifically built to do this - e.g. a heap allocation module).
+    This is poor practice since:
+
+    o   it means that two different modules share the data, making
+        them interdependent and introducing potential for confusion
+        and bugs;
+
+    o   it means that both modules need to understand the structure of
+        the block of memory.
+
+    A better solution is for some unique identifier to be generated
+    for a block of memory and that identifier be used by all modules
+    (other than the owning module) to reference a particular object
+    instance.
+
+    Note that this recommendation should not be followed religiously
+    since it is relatively inefficient, but it does have a few
+    advantages:
+
+    o   The identifiers are not specific to a process so can be saved
+        in databases, unless an address which is meaningless to any
+        other process.
+
+    o   Any memory or data structure corruption problems can be almost
+        guaranteed to be in the owning module since no other module
+        uses the address of the affected object(s).
+
+        ! ! ! ! NO ! ! ! !              + + + + YES + + + +
+    
+        addr = object_new();            id = object_new();
+        addr->field = value;            object_set_field( id, value);
+        object_action( addr);           object_action( id);
+        utility_function( ...           utility_function( ...
+                          addr,                           id,
+                          ...);                           ...);
+        free( addr);                    object_destroy( id);
+
+    addr may be inadvertently reused now, probably causing some awful
+    memory allocation bug that is a nightmare to track down. id can
+    also be reused, but the object routines will complain about it no
+    longer being valid.
+
+-------------------------------------------------------------------------------
+Matt Atterbury [matt@bacchus.esa.oz.au]   Expert Solutions Australia, Melbourne

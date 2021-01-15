@@ -1,0 +1,706 @@
+<HTML>
+<HEAD>
+<TITLE>C++ Programming Style -- End Matter</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<HR>
+<!-- This file was created with the fm2html filter.
+The filter is copyright Norwegian Telecom Research and
+was programmed by Jon Stephenson von Tetzchner. -->
+
+
+<H3> Appendix A:  <B>Glossary</h3>
+<P></B><I><B>Function Declaration: </B></I>An assertion to the compiler that this function is implemented elsewhere with the following return type, name, and parameter attributes. This is also known as a forward declaration. 
+<P><I><B>Function Definition:</B></I> The function's actual implementation.
+<P><I><B>Abstract Class:</B></I> A class that may have some implementation, but not enough to instantiate an object. That is, it has at least one pure virtual member function and at least one implemented member function or some data. Also, a superclass of an interface class.
+<P><I><B>Interface Class:</B></I> A class that has no implementation or data, only pure virtual member functions, including the destructor. Sometimes called a "pure virtual class".
+<P><I><B>Pure Virtual Member Function:</B></I> A <CODE>virtual</CODE> function that must be defined by non-abstract derived classes, that is, a member function with a declaration ending with <CODE>=</CODE> <CODE>0</CODE>.
+<P><I><B>Curly Braces:</B></I> <CODE>'{'</CODE> (<I><B>open</B></I>) and <CODE>'</CODE>}' (<I><B>close</B></I>).
+
+<h3> Appendix B:  Bibliography &amp; Recommended Readings</h3>
+<UNKNOWN> B.1   On C and ANSI-C:</UNKNOWN>
+<UNKNOWN> [1]  B. Kernighan and D. Ritchie, <I>The C Programming Language</I><I>,</I> Prentice-Hall 1978.
+<BR>ISBN 0-13-110163-3</UNKNOWN>
+<DL>
+<DT> [2]  <DD>B. Kernighan and D. Ritchie, <I>The C Programming Language, 2nd edition</I>, Prentice-Hall, 1989
+<BR>ISBN 0-13-110362-8
+<DT> [3]  <DD>Harbison and Steele, <I>C: A Reference Manual</I><I>, 3rd edition</I>.,Prentice- Hall, 1991.
+<BR>ISBN 0-13-110933-2
+<DT> [4]  <DD>K. Arnold and J. Peyton, <I>A C User's Guide to ANSI C</I>, Addison-Wesley, 1992
+<BR>ISBN ?
+<DT> [5]  <DD><I>Draft Proposed American National Standard for Information Systems Programming Language C, 1988</I>, ANSI Doc No X3J11/88-159. (There is a newer version...)
+<DT> [6]  <DD>J Lapin, <I>Portable C and Unix System Programming, </I>Prentice-Hall, 1987.
+<BR>ISBN 0-13-686494-5
+</DL>
+<UNKNOWN> B.2   <B>On C++:</UNKNOWN>
+<DL>
+<DT><A NAME="REF16335"> [7]  </A><DD></B>B. Stroustrup, <I>The C++ Programming Language, 2nd edition</I>, Addison-Wesley, 1991. 
+<BR>ISBN 0-201-53992-6
+<DT> [8]  <DD>S. Lippman, <I>The C++ Primer, 2nd edition</I>, Addison-Wesley, 1991.
+<BR>ISBN 0-201-54848-8
+<DT> [9]  <DD><I>The Evolution of C++: 1985 to 1989</I>, AT&amp;T C++ Selected Readings
+<DT><A NAME="REF23424"> [10]  </A><DD>M. Ellis and B. Stroustrup, <I>The Annotated C++ Reference Manual</I>, Addison-Wesley, 1990.
+<BR>ISBN 0-201-51459-1        (The ARM)
+<DT> [11]  <DD>Hansen, <I>The C++ Answer Book</I>, Addison-Wesley, 1990
+<DT><A NAME="REF94325"> [12]  </A><DD>S. Meyers, <I>Effective C++</I>, Addison-Wesley, 1992
+<BR>ISBN 0-201-56364-9
+<DT><A NAME="REF79763"> [13]  </A><DD>J. Coplien, <I>Advanced C++ Programming Styles and Idioms</I>, Addison-Wesley, 1992
+<BR>ISBN ?
+</DL>
+<UNKNOWN> B.3   <B>On Object Oriented Programming:</UNKNOWN>
+<DL>
+<DT> [14]  <DD></B>A. Snyder, <I>Encapsulation and Inheritance in object-based Programming Languages</I>, <B>OOPSLA Proceedings</B>, 1986
+<DT> [15]  <DD>Liskov, <I>Abstraction and Specification in Program Development</I>, McGraw-Hill, 1987
+<BR>ISBN ?
+<DT> [16]  <DD>B. Meyer, <I>Object-Oriented Software Construction</I>, Prentice-Hall, 1988
+<BR>ISBN ?
+<DT> [17]  <DD>G. Booch, <I>Object-Oriented Design with Applications</I>, Benjamin/Cummings, 1991
+<BR>ISBN 0-8053-0091-0
+
+</DL>
+<UNKNOWN> B.4   <B>Other Style Guides That Influenced This One</UNKNOWN>
+<DL>
+<DT> [18]  <DD></B>R Pike, <I>Notes on Programming in C</I> Bell Labs technical paper
+<DT> [19]  <DD>E. Adams, et al., <I>Naming conventions for Software Packages</I>, June 21, 1987, Sun internal
+<DT> [20]  <DD>W. Teitelman and B. Shannon, <I>C Style and Coding Standards at Sun</I>, Sun internal
+<DT> [21]  <DD>G. Skinner, S. Shah, and B. Shannon, <I>C Style and Coding Standards</I>, Sun internal
+<DT> [22]  <DD>D. Hare, <I>Code Style Guide of Link Service Project</I>, March 1990, Sun internal
+<DT> [23]  <DD>A. Reddy, <I>C++ Style Guide</I>, Sun internal
+<DT> [24]  <DD>D. Goldsmith &amp; J. Palevich, <I>Unofficial C++ Style Guide</I>, <B>develop</B>, April 1990
+<DT><A NAME="REF65323"> [25]  </A><DD>J. Adcock (jimad@microsoft.com), <I>comp.lang.c++
+<DT> [26]  <DD></I>T. Rentsch, <I>C++ Programming Standards</I>, Aug 24, 1992, Personal copy
+
+</DL>
+<h3> Appendix C:  Example Source Code</h3>
+<CENTER><A NAME="REF70274"> C.1   Template for C++ Header Files</A></CENTER>
+<PRE>
+#ifndef _WF_BOILERPLATE_HH
+#define _WF_BOILERPLATE_HH
+
+//
+// Copyright 1993 by Wildfire Communications, Inc.
+// remainder of copyright notice
+//
+// Comment describing module
+//
+
+#ident "$Id: Wildfire-C++Style-endmatter.html,v 1.1 2011/01/18 13:28:41 lott Exp $"
+
+   // Include all header files needed to make this a stand-alone module
+
+#include &lt;C++ Header Files&gt;
+
+extern "C" {
+#include &lt;C Header Files&gt;
+}
+
+#include "private.hh"       // any private headers needed
+
+    // consts
+
+    // forward decl's
+
+    // typedefs as needed
+
+    // struct and union decl's
+
+    // class decl's
+
+    // Global Variables
+
+    // Non-Class function decl's
+
+#endif
+</PRE>
+<CENTER><A NAME="REF16551"> C.2   <B>Template for Shared C and C++ Header Files</B></A></CENTER>
+<PRE>
+#ifndef _MYPROJECT_HEADERFILE_H
+#define _MYPROJECT_HEADERFILE_H
+
+/*
+ * Copyright 1992 by Wildfire Communications, Inc.
+ */
+
+#ident "$Id: Wildfire-C++Style-endmatter.html,v 1.1 2011/01/18 13:28:41 lott Exp $"
+
+#ifdef __cplusplus              /* Note: two leading underscores */
+
+extern "C" {
+
+#endif
+
+    /* consts and #define consts */
+
+    /* forward decl's */
+
+    /* typedefs as needed */
+
+    /* struct and union decl's */
+
+    /* Global Variables */
+
+    /* function decl's */
+
+
+
+#ifdef __cplusplus
+
+}
+
+#endif
+
+#endif
+
+</PRE>
+<CENTER><A NAME="REF53116"> C.3   <B>Template for C++ Implementation files</A></B></CENTER>
+<PRE>
+// Copyright 1993 by Wildfire Communications, Inc.
+
+// remainder of copyright notice
+
+// Comment describing module
+//
+
+#ident "$Id: Wildfire-C++Style-endmatter.html,v 1.1 2011/01/18 13:28:41 lott Exp $"
+
+    // Include all header files needed to make this a
+
+    // stand-alone module
+
+#include &lt;C++ Header Files&gt;
+
+extern "C" {
+#include &lt;C Header Files&gt;
+}
+
+#include "private.hh"       // any private headers needed
+
+        // consts
+
+        // forward decl's
+
+        // typedefs as needed
+
+        // struct and union decl's
+
+        // class decl's
+
+        // Global Variable decl's
+
+        // Non-Class function decl's
+
+
+
+        // Global Variable Definitions
+
+        // Static Variable Definitions
+
+        // Function/Method Definitions
+</PRE>
+<CENTER> C.4   <B>hashtable.hh --- A C++ Header File</B></CENTER>
+<PRE>
+#ifndef _WF_HASHTABLE_HH
+#define _WF_HASHTABLE_HH
+
+// Copyright 1993 by Wildfire Communications, Inc.
+// remainder of copyright notice
+
+// HashTable module - a general purpose hashtable that holds
+//      &lt;char *, void *&gt; pairs. Originally
+//      used as the basis for a symbol table.
+//
+// A HashTable allows you to:
+//      insert      Add items to the HashTable
+//      remove      Remove items from the HashTable
+//      lookup      Find out if an item is in the HashTable
+//      value       If the item is in the hashtable, get the value
+//      stream&lt;&lt;    Print out the contents of the hashtable to cerr
+//
+
+// $Id: Wildfire-C++Style-endmatter.html,v 1.1 2011/01/18 13:28:41 lott Exp $
+
+#include &lt;iostream.h&gt;
+#include "wfbase.hh"
+
+class HashTable;        // Defined below ...
+
+class HashBucket
+{
+  private:
+                         HashBucket();
+                        ~HashBucket();
+
+    friend ostream      &amp;operator&lt;&lt;(ostream &amp;stream,
+		   	                      HashBucket  &amp;bkt);
+
+    friend ostream      &amp;operator&lt;&lt;(ostream &amp;stream,
+		                              HashTable   &amp;htable);
+
+    char        *Token; // key
+    const void  *Value; // info
+    HashBucket  *Next;  // pointer to next node
+    HashTable   *Table; // backpointer to Htabl
+
+    friend class HashTable;     // Needs access...
+};
+
+class HashTable
+{
+  public:
+    enum {
+        default_size = 1027     // default size for tables
+    };
+
+                 HashTable(
+                    unsigned short  sz = HashTable::default_size);
+                ~HashTable();
+
+    void         insert(const char *token, const void *value);
+    void         remove(const char *token);     // remove token
+    int          lookup(const char *token);     // 0 if not in table
+    void        *value(const char *token);      // return value for token
+    WfBoolean    is_strings();
+    void         set_is_strings(WfBoolean new_val);
+    WfBoolean    show_debug();
+    void         set_show_debug(WfBoolean new_state);
+
+    friend ostream      &amp;operator&lt;&lt;(
+                            ostream     &amp;stream,
+                            HashTable   &amp;htable);
+
+
+
+  private:
+    unsigned short        Size;         // number of slots
+    HashBucket          **Array;        // array of slots
+    WfBoolean             IsStrings;    // storing strings?
+    WfBoolean             ShowDebug;    // Trace operation?
+
+    unsigned long         hash(const char *token);
+    HashBucket           *lookup_bucket(const char *token);
+};
+
+#endif
+</PRE>
+<CENTER> C.5   <B>hashtable.cc --- A C++ Header File</B></CENTER>
+<PRE>
+// Copyright 1993 by Wildfire Communications, Inc.
+
+// remainder of copyright notice
+
+//      HashTable module
+//
+//      This implementation uses the private function hash() to generate
+//      "unique" values for tokens, and "seperate chaining" to resolve
+//      hash table collisions.
+//
+//      See figure 7.34 and 7.35 in Aho, Sethi, and Ullman.
+//
+
+#ident "$Id: Wildfire-C++Style-endmatter.html,v 1.1 2011/01/18 13:28:41 lott Exp $"
+
+#include &lt;iostream.h&gt;
+#include &lt;fstream.h&gt; 
+#include &lt;string.h&gt;
+#include &lt;assert.h&gt;
+#include "hashtable.hh"
+
+////////////////////////// Hash Buckets /////////////////////////////
+// Hash Bucket Constructor
+
+HashBucket::HashBucket() :
+    Token(NULL),
+    Value(NULL),
+    Next(NULL),
+    Table(NULL)
+{
+}
+
+// Hash Bucket Destructor
+
+HashBucket::~HashBucket()
+{
+    delete [] Token;    // delete is safe for NULL
+}
+
+// Hash Bucket "print" operator
+
+ostream &amp;
+
+operator&lt;&lt;(ostream &amp;stream, HashBucket &amp;bucket)
+{
+    stream &lt;&lt; "[" &lt;&lt; bucket.Token &lt;&lt; ",";
+
+    if (bucket.Table == NULL || !bucket.Table-&gt;is_strings())
+        stream &lt;&lt; (void *) bucket.Value;
+    else
+        stream &lt;&lt; (char *) bucket.Value;
+
+    stream &lt;&lt; "]";
+
+    return stream;
+
+}
+
+//////////////////////////// HashTable ///////////////////////////////
+// HashTable Constructor
+
+HashTable::HashTable(
+    unsigned short      sz)     // The size of the table (primes are best)
+:
+    Size(sz)
+{
+    unsigned short      i;
+
+    assert(sz != 0);
+
+    set_is_strings(WfFalse);
+    set_show_debug(WfFalse);
+
+    Array = new HashBucket *[Size + 1];
+
+    assert(Array != NULL);
+
+    for (i = 0; i &lt; Size; i++)
+        Array[i] = NULL;                 // no buckets yet
+}
+
+// HashTable Destructor
+//
+//      Unallocate all storage used by the hashtable (table and chains)
+
+HashTable::~HashTable()
+{
+    unsigned short      i;
+
+    if (show_debug())
+        cerr &lt;&lt; "# HashTable::~HashTable(Size = " &lt;&lt; Size &lt;&lt; ")\n";
+
+    for (i = 0; i &lt; Size; i++) {
+        HashBucket      *bucket = Array[i];
+
+        while (bucket) {                                //
+ free the buckets
+            HashBucket  *freeme;
+
+            freeme = bucket;
+            bucket = bucket-&gt;Next;                 // and the contents
+            delete freeme;
+        }
+    }
+
+    delete [] Array;                     // then the table
+}
+
+//      Insert a value into the hashtable
+
+void
+
+HashTable::insert(
+    const char  *token,
+    const void  *value)
+{
+    assert(token != NULL);
+
+    long        chain   = hash(token);
+
+    HashBucket  *bucket = lookup_bucket(token);
+
+    if (show_debug()) {
+        cerr &lt;&lt; "# HashTable::insert(\"" &lt;&lt; token &lt;&lt; "\", ";
+
+        if (is_strings())
+            cerr &lt;&lt; "\"" &lt;&lt; (char *) value &lt;&lt; "\"";
+        else
+            cerr &lt;&lt; "(void *)" &lt;&lt; (void *) value;
+        cerr &lt;&lt; ") into chain [" &lt;&lt; chain &lt;&lt; "]";
+    }
+
+    if (bucket != NULL) {                               // update existing
+        if (show_debug())
+            cerr &lt;&lt; " &lt;updating&gt;";
+        bucket-&gt;Value = value;
+    } else {
+        if (show_debug())
+            cerr &lt;&lt; " &lt;adding&gt;";
+
+        HashBucket *new_bucket = new HashBucket();
+
+        assert(new_bucket != NULL);
+
+        new_bucket-&gt;Token = new char[strlen(token) + 1];
+
+        assert(new_bucket-&gt;Token != NULL);
+
+        strcpy(new_bucket-&gt;Token, token);
+
+        new_bucket-&gt;Value = value;
+
+        new_bucket-&gt;Table = this;
+
+        // insert at beginning of bucket chain
+
+        new_bucket-&gt;Next = Array[chain];
+
+        Array[chain] = new_bucket;
+    }
+
+    if (show_debug())
+        cerr &lt;&lt; "\n";
+
+}
+
+//      Lookup a token to see if it is has a value stored in the table.
+//      return WfTrue if token is in the table, or WfFalse if it
+//      isn't.
+
+WfBool
+HashTable::lookup(const char *token)
+{
+    assert(token != NULL);
+
+    if (show_debug())
+        cerr &lt;&lt; "# HashTable::lookup(" &lt;&lt; token &lt;&lt; ")\n";
+
+    return (lookup_bucket(token) != NULL);
+
+}
+
+//      Get the value stored in the hashtable under "token".  return
+//      value associated with the token if token is in the table, NULL
+//      if it isn't
+
+void *
+HashTable::value(const char *token)
+{
+
+    HashBucket  *bucket;
+    void        *retval;
+
+    assert(token != NULL);
+
+    if (show_debug())
+        cerr &lt;&lt; "# HashTable::value(" &lt;&lt; token &lt;&lt; ") =&gt; ";
+
+    bucket = lookup_bucket(token);
+
+    if (bucket != NULL)
+        retval = (void *) bucket-&gt;Value;
+    else
+        retval = NULL;
+
+    if (show_debug()) {
+        if (retval == NULL)
+            cerr &lt;&lt; "&lt;NULL&gt;";
+        else if (IsStrings)
+            cerr &lt;&lt; "\"" &lt;&lt; (char *) retval &lt;&lt; "\"";
+        else
+            cerr &lt;&lt; "(void *)" &lt;&lt; (void *) retval;
+
+        cerr &lt;&lt; "\n";
+    }
+
+    return retval;
+
+}
+
+//      Remove token from the hashtable.
+
+void
+HashTable::remove(const char *token)
+{
+    HashBucket          *bucket;
+    unsigned long        chain;
+
+    assert(token != NULL);
+
+    chain = hash(token);
+
+    bucket = lookup_bucket(token);
+
+    assert(bucket != NULL);             // if not in table
+
+    if (show_debug())
+        cerr &lt;&lt; "# HashTable::remove(" &lt;&lt; token &lt;&lt; ")\n";
+
+    if (Array[chain] == bucket) {        // at head...
+        Array[chain] = bucket-&gt;Next;
+        bucket-&gt;Next = NULL;
+        delete bucket;
+    } else {                            // or elsewhere...
+        // At this point, back pointers would really be useful
+        // in removing an item.  ASSUMPTION:  remove will be
+        // an infrequent operation, so the space/time tradeoff
+        // of scanning the whole chain -vs- another pointer field 
+        // falls to the side of more time and less space.
+        //
+        // We know that the bucket MUST be on this chain.
+        // because hash(token) pointed here  AND
+        //        lookup_bucket(token) suceeded
+
+        HashBucket      *tmp = Array[chain];
+
+        //   +-----+   +------+   +------+   +------+
+        //   |     |--&gt;|      |--&gt;|        |--&gt;|       |--&gt;@
+        //   +-----+   +------+   +------+   +------+
+        //     tmp                  bucket
+
+        while (tmp-&gt;Next != NULL &amp;&amp; tmp-&gt;Next != bucket)
+            tmp = tmp-&gt;Next;  // step thru till found
+
+        assert(tmp != NULL);
+
+        //   +-----+   +------+   +------+   +------+
+        //   |     |--&gt;|      |--&gt;|        |--&gt;|       |--&gt;@
+        //   +-----+   +------+   +------+   +------+
+        //               tmp        bucket
+
+        tmp-&gt;Next = tmp-&gt;Next-&gt;Next;
+
+        //                      /----------\ 
+        //   +-----+   +------+ | +------+ | +------+
+        //   |     |--&gt;|      |-/ |       | \&gt;|        |--&gt;@
+        //   +-----+   +------+   +------+   +------+
+        //               tmp        bucket
+
+        delete bucket;
+    }
+}
+
+WfBool
+HashTable::is_strings()
+{
+    return IsStrings;
+}
+
+void
+HashTable::set_is_strings(WfBool value_is_strings)
+{
+    IsStrings = value_is_strings;
+}
+
+WfBool
+HashTable::show_debug()
+{
+    return ShowDebug;
+}
+
+void
+HashTable::set_show_debug(WfBool new_show_debug)
+{
+    ShowDebug = new_show_debug;
+}
+
+//      Print out a hashtable
+
+ostream &amp;
+operator&lt;&lt;(ostream &amp;stream, HashTable &amp;htable)
+{
+    int                 how_many;
+    unsigned short      i;
+
+    stream &lt;&lt; "HashTable Size = " &lt;&lt; htable.Size;
+
+    if (htable.IsStrings)
+        stream &lt;&lt; ", value interpreted as a (char *)";
+
+    stream &lt;&lt; "\n";
+
+    how_many = 0;
+
+    for (i = 0; i &lt; htable.Size; i++) { // for each chain
+        HashBucket *bucket = htable.Array[i];
+
+        if (bucket == NULL)
+            continue;
+        else {                          // Print the bucket
+            stream &lt;&lt; "[";
+
+            if (i &lt; 10)                 // attempt
+                stream &lt;&lt; "  ";         // at formatting
+            else if (i &lt; 100)           // output into fixed
+                stream &lt;&lt; " ";          // width columns
+
+            stream &lt;&lt; i &lt;&lt; "]";
+        }
+
+        while (bucket != NULL) {        // ... and each bucket
+            how_many = 0;
+            stream &lt;&lt; "=&gt;" &lt;&lt; *bucket;
+            bucket = bucket-&gt;Next;
+        }
+
+        stream &lt;&lt; "\n";
+    }
+
+    if (!how_many)
+            stream &lt;&lt; "HashTable is empty";
+    else
+            stream &lt;&lt; "HashTable contains " &lt;&lt; how_many &lt;&lt; " items.";
+
+    stream &lt;&lt; "\n";
+
+    return stream;
+}
+
+// Private functions
+
+//      Internal routine used by lookup and insertion functions.
+//      Returns pointer to the location of the desired bucket, or NULL
+//      if the Token was not found
+
+HashBucket *
+HashTable::lookup_bucket(const char *token)
+{
+    assert(token != NULL);
+
+    HashBucket  *bp;
+
+    for (bp = Array[hash(token)]; bp != NULL; bp = bp-&gt;Next) {
+        if (strcmp(bp-&gt;Token, token) == 0)
+            return bp;      // Found a match!
+    }
+
+    return NULL;
+}
+
+//      Produce a hash value for the token string.  This function avoids
+//      primary clustering, the exclusive use of even/odd locations,
+//      and other phenomenom which makes the use of certain locations
+//      more likely than others.
+//      The function is fast and deterministic.
+//      This implementation is from p436 of "Compilers" by Aho, et al
+
+unsigned long
+HashTable::hash(const char *token)
+{
+    const char          *p;     // Steps thru the token
+    unsigned long        hval;  // hash value
+    unsigned long        g;     // intermediate hash value
+
+    assert(token != NULL);
+
+    hval = 0;
+
+    for (p = token; *p != '\0'; p++) {
+        hval = (hval &lt;&lt; 4) + (*p);
+
+        if ((g = hval &amp; 0xf0000000L) != 0) {
+            hval = hval ^ (g &gt;&gt; 24);
+            hval = hval ^ g;
+        }
+    }
+
+    return (hval % Size);
+}
+</PRE>
+
+<HR>
+<ADDRESS>
+Archived by Chris Lott.
+<BR>
+<A HREF="index.html">Collection index</A>
+</ADDRESS>
+
+</BODY>
+</HTML>

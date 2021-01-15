@@ -1,0 +1,323 @@
+# From kolk@shelby.Stanford.EDU Wed Oct 11 14:14:52 1989
+# Received: from shelby.Stanford.EDU 
+# 	by tove.UMD.EDU (5.61/UMIACS-0.9/04-05-88)
+# 	id AA23725; Wed, 11 Oct 89 14:14:29 -0400
+# Received: by shelby.Stanford.EDU (5.61+/inc-1.0)
+# 	id AA22984; Wed, 11 Oct 89 11:06:12 -0700
+# Date: Wed, 11 Oct 89 11:06:12 -0700
+# From: kolk@shelby.Stanford.EDU (Dan Kolkowitz)
+# Message-Id: <8910111806.AA22984@shelby.Stanford.EDU>
+# To: albert@Polya.Stanford.EDU, ari@eleazar.dartmouth.edu,
+#         btni!carney@uunet.UU.NET, cbp%foster.oz.au@uunet.uu.net,
+#         cml@tove.umd.edu, connelly@Neon.Stanford.EDU,
+#         everson%compsci.bristol.ac.uk@nsfnet-relay.ac.uk,
+#         flaps@dgp.toronto.edu, geoff@uunet.uu.net, lhf@aries5.uwaterloo.ca,
+#         perlman@cis.ohio-state.edu, ping@cubmol.bio.columbia.edu,
+#         poser@crystals.STANFORD.EDU,
+#         swbatl!texbell!texbell!moray!siswat!buck@uunet.uu.net,
+#         tang@enuxha.eas.asu.edu, whale!tim@uunet.uu.net
+# Subject: C style recommendations
+# Status: R
+# 
+# Hi,
+# Sorry this took so long.  This is a the text of the recommendations for
+# c programming style guides.  There are many interesting recommendations
+# together with 2 papers contained here. I've put a postscript version of the
+# Indianhills style guide as modified by Henry Spencer in public ftp on 
+# shelby.stanford.edu (~ftp/pub/cstyle/cstyle.ps) since I had a little trouble with
+# missing fonts when trying to troff it.  Again apologies for being late with
+# this and I also hope that I haven't left any recommendations out (I tried
+# to archive them as I received them).
+# 
+# Dan
+# -----
+# >From: ari@eleazar.dartmouth.edu (Ari Halberstadt)
+# 
+# In article <287@shelby.Stanford.EDU> you write:
+# >I was asked for recommendations on books regarding C language programming
+# >style.  I asked around and found there to be general interest in having 
+# >one but no concrete recommendations.  The intended audience if for
+# >skilled programmers who are to cooperate on a large program together and 
+# >who would like to establish reasonable rules of programming style.  Obviously,
+# >broader recommendations regarding system development won't hurt but
+# >the emphasis should be on C rather than on algorithms.  There is no need
+# >for books giving C syntax or introductory programming books unless they
+# >emphasize style in a formal and reasoned way.  If this has appeared before
+# >I'd appreciate receiving a digest of the responses.
+# >
+# >If people want to know what I find out please let me know and I'll 
+# >forward to you the responses I receive.
+# >
+# >Thanks in advance,
+# >Dan 
+# 
+# I don't really know about style guides, but there are several books
+# [which I'm sure you've all read] which seem to sum up the standards:
+# 	* "C Traps and Pitfalls" by Andrew Koenig. Great book; even
+# 	after several years of C I learned a few new things! Really
+# 	helps keep ya out of trouble.
+# 
+# 	* "The UNIX Programming Environment" by [the allways present]
+# 	Kernighan. Not exactly a style guide, but pretty useful.
+# 	I learned my programming style from him -- though I tend
+# 	to use longer variable names, even though only 6 (or is it 8?)
+# 	are portable.
+# 
+# 	* K&R. Kind of sets the tone for everything else. Since
+# 	everybody's read it, they're familiar with the style.
+# 
+# 	* "My Programming Style", by Ari Halberstadt. This book
+# 	is a comprehensive style guide, recognized by many as the
+# 	definitve text on C programming style. Every C programmer
+# 	should read, study, and adhere to the ideas in this book.
+# 	[Editor's note: this book is not yet available].
+# 
+# And I'd love to hear what you find out. So, thanks in advance.
+# 
+# 
+>From: Alan J Rosenthal <flaps@dgp.toronto.edu>
+
+I've wanted to write a proposal for formatting guidelines for where I work for
+some time now.  We could share anything we write with each other.  I haven't
+gotten around to writing anything other than scratchy notes yet, myself.
+
+I think the major problem is usually indentation and brace placement.  For that
+I think you can just follow Kernighan and Ritchie.  It's some amount of work to
+codify the style, but you can usually see whether or not something conforms to
+Kernighan and Ritchie.
+
+To me, indentation and brace placement greatly change the appearance of the
+code.  I think any style guide should be based on the principle that the main
+purpose of writing C programs is to communicate with people, not the computer
+(otherwise, for example, you would write no comments, which the computer
+ignores).  Given that, you should be trying to follow standards as much as
+possible, and resist the temptation to be creative.  For example, you might
+think, in English, that "sighcollugee" is a much better spelling than
+"psychology", but you'd be daft to write articles with that spelling, because
+it hinders comprehension.  Same with putting braces in bizarre places.
+
+Anyway, if you like I'll keep you posted if I ever write anything.  If you get
+any references to things actually in print, please include me in any
+mass-mailing of responses you send out.
+
+I assume you've seen the indian hill C style guide.  It's not so wonderful, but
+it's better than nothing.  Mostly, its scope is a little unclear.  Some of its
+recommendations are complete inventions and imho not wise.  Be sure to get the
+version annotated by Henry Spencer, as some of the most important footnotes are
+the ones that say "well, this is silly, and no one's ever done it, so don't."
+He also adds some other good ideas in the footnotes.
+
+Actually, another good thing that came to mind in reviewing this letter is
+Henry Spencer's ten commandments of C programming (title approximate).  They're
+not actually C style per se, but the fundamental purpose behind them is very
+similar.  I don't have this or the indian hill C style guide on line, but I'd
+be happy to type in the ten commandments if you don't have them because I've
+wanted them on line for awhile and they're short.  The indian hill C style
+guide should be available from Henry, failing all else (henry@zoo.utoronto.ca),
+but should also be ftpable from somewhere, although I just looked around and
+couldn't find it, but I looked only briefly.
+
+ajr
+----
+
+>From: everson%compsci.bristol.ac.uk@nsfnet-relay.ac.uk
+
+I'd be very interested in hearing about any responses you might have.
+One possibility would be 'Software tools in Pascal' by Kernighan and
+Plauger'. Not C, but very 'good style' orientated.
+
+Phill Everson
+University of Bristol, UK
+
+------
+
+>From: Gary Perlman <perlman@cis.ohio-state.edu>
+
+The above document is more philosophical than a standard.
+The Indian Hill style guide or the Ingres project standard
+might be more of what you want.  I think I could dig up a
+standard that we used on a medium sized project.  I suggest
+that you use indent(1) to enforce style, after you choose the
+indent(1) parameters that suit your needs.
+
+If you want any of the above, send me your us mail address.
+You might also look at a paper of mine about a loosely
+integrated (an oxymoron if I ever saw one) UNIX environment
+of tools.
+
+Software Engineering Notes (ACM SIGSOFT Newsletter)
+pages   =   44-50
+date    =   1986
+vol =   11:3
+
+------
+
+>From: btni!carney@uunet.UU.NET (Edward Carney)
+Dear Dan,
+
+A while back I came across a book by Thomas Plum, called
+_C Programming Guidelines_, published by Prentice-Hall, 1984.
+Here are two quotes from the preface:
+
+"Disagreements over programming style have been a primary obstacle to
+teams attempting to work closely together.  One suggestion for
+preventing style arguments is for each project to choose its own
+standard in the early phases of the project.  The layout of this
+book was chosen to facilitate its use in a pick-and-choose fashion.
+Space has been left for local notes so that the book could be
+used to keep a record of meetings regarding style
+agreements."
+[...stuff follows on licensing hard-copy and machine-readable
+originals from Prentice-Hall; ec]
+
+"In this edition of _C Programming Guidelines_, the usage of types,
+function names, and indentation conforms to the format of the
+UNIX manuals published by Bell Laboratories.  The style usage is
+consistent with _Learning to Program in C_, by Thomas Plum (Plum
+Hall Inc., 1983)."
+
+I am not at all certain if this book is still in print, but it is
+worthwhile, and might be just what some users need.  The address
+and phone of Plum Hall Inc. is 1 Spruce Avenue, Cardiff, NJ 08232,
+(609) 927-3770 (as given in the book).
+
+
+
+Edward Carney
+
+--------
+Apparently-From: swbatl!texbell!texbell!moray!siswat!buck
+
+There is a reasonable book called something like "C with Style" by
+Henry Ledgard(?sp) which I can't find at the moment.  It is his latest
+in a series that includes "Fortran with Style" and "Basic with Style".
+It is not really a C style book but more a good programming style book,
+so it doesn't concentrate a lot on brace issues, etc.
+
+Also, "Portable C and Unix System Programming" by J. E. Lapin has a
+small section on style and a large number of rules for writing portable C.
+
+---
+A. Lester Buck		...!texbell!moray!siswat!buck
+-----
+
+>From: whale!tim@uunet.uu.net
+
+hi,
+try "C Programming Standards and Guidelines - Version U (Unix and
+Offspring)" by Thomas Plum.
+It is (was) available from Plum Hall Inc, 1 Spruce Ave, Cardiff NJ 08232.
+The phone number is 609-927-3770. Tom Plum is vice-chair of the ANSI
+C standard committee. I have a copy labeled edition 3: January 1982.
+The book is targeted as a guide to programming style standards for
+C programming projects.
+Hope this helps. I would be interested in hearing of any other items you
+might find.
+
+---
+
+
+Article 22579 of comp.lang.c:
+Path: mimsy!tank!ncar!mailrus!cs.utexas.edu!uunet!mcsun!hp4nl!philapd!ssp1!roelof
+From: roelof@idca.tds.PHILIPS.nl (R. Vuurboom)
+Newsgroups: comp.lang.c
+Subject: Re: C Style help requested
+Message-ID: <264@ssp1.idca.tds.philips.nl>
+Date: 28 Sep 89 18:21:11 GMT
+References: <oZ8MU0G00WB70biUAO@andrew.cmu.edu>
+Organization: Philips Telecommunication and Data Systems, The Netherlands
+Lines: 91
+
+In article <oZ8MU0G00WB70biUAO@andrew.cmu.edu> dg3s+@andrew.cmu.edu (David Gentzel) writes:
+>A friend of mine has been put in charge of coming up with a C (and C++) style
+>guide for his company.  The goals are
+>
+>    1) Name and comment conventions to enhance comprehension and
+>	maintainability on projects with large numbers of programmers.
+>    2) Guidelines for writing portable code.
+>    3) Common coding mistakes to avoid (and the usual symptoms if they
+>	are not avoided).
+
+Maybe there's no need to re-invent the wheel on this one.
+
+For portabilty issues the best book (by far) I've seen on this 
+subject is:
+
+Portability and the C language
+Rex Jaeschke
+Hayden Books (1988)
+ISBN-0-672-48428-5
+
+Jaeschke also discusses the impact of the ANSI-C standard which is particularly
+interesting for this group and the group next door (comp.std.c).
+
+Another interesting book on portability is:
+
+Portable C and UNIX System Programming
+J.E. Lapin
+Rabbit Software
+Prentice-Hall (1987)
+ISBN-0-13-686494-5
+
+This book is aimed specifically at porting code between UNIX and its
+derivative systems. It describes a port philosophy, briefly covers
+C language issues, and concentrates on the operating system and library
+issues.
+
+
+
+The best I've seen on coding style standards is something Philips has 
+come up with: 
+
+		C Coding Standards (Release 1.1). 
+		J.Aerts and J.Langhout
+		(1988)
+		Order nr: 12NC: 4322 270 50001
+
+Its about 70 pages thick. An (arbitrary)  sample section:
+
+6.2 The use of ++ and --
+
+These operators are very often used in the manipulation of pointers.
+Together with the definition of "register pointer" these operators
+may result in a saving of both execution time and program space.
+
+The use of "name_p++;" is preferred to "name_p = name_p + 1;" as the
+former is more suited for the task of setting  a pointer to the 
+next element in of an array.
+
+Do not use "++" and "--" in actual function or macro parameters, e.g:
+
+	call_fn(x++,y++,*x,*y);		/* WRONG */
+
+Avoid the use of "++" and "--" in combination with other operators. Such
+may easily lead to mistakes in the expected evaluation order and the
+side effects that go with it.
+
+
+Its not for the C expert (what standard is? :-). But its pretty good 
+for the beginner/intermediate C programmer. 
+I don't know the price now but last I heard they were selling for all
+of 5 bucks. Of course if it has to go overseas and they know you
+rich americans are interested ...:-). See telephone nr and address
+below if you're still interested. 
+
+
+
+	CST Sales,Service and Support
+	Centre for Software Technology
+	Nederlandse Philips Bedrijven B.V.
+	Building HOE 1.15
+	P.O. Box 80000
+	5600 JA Eindhoven
+	The Netherlands
+
+tel nr.	+31 40 743561
+	+31 40 744696	
+-- 
+wiskunde: Dutch for mathematics. Literally: Knowledge of certainty   
+wis: certainty			kunde: 	Knowledge
+Roelof Vuurboom  SSP/V3   Philips TDS Apeldoorn, The Netherlands   +31 55 432226
+domain: roelof@idca.tds.philips.nl             uucp:  ...!mcvax!philapd!roelof
+
+

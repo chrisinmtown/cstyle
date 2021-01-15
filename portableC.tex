@@ -1,0 +1,1132 @@
+
+\documentstyle{article}
+\pagestyle{headings}
+\begin{document}
+\bibliographystyle{alpha}
+
+\title{Notes On Writing Portable Programs In C\\
+       {\small (June 1990, 5th Revision)}
+      }
+
+\author{A. Dolenc \\
+        A. Lemmke
+  \protect\thanks{Helsinki University of Technology,
+  Laboratory of Information Processing Sciences, SF-02150 Espoo, Finland.
+  This document is in the public domain.
+  Email address (Internet) are ado@sauna.hut.fi (preferred contact)
+  and arl@sauna.hut.fi, respectively.}
+         \\ and \\
+         D. Keppel
+  \protect\thanks{CS\&E, University of Washington. Email address (Internet) is
+   pardo@cs.washington.edu.}
+   }
+\maketitle
+
+\tableofcontents
+
+\hyphenation{inter-chan-ge-ably}
+\hyphenation{com-pi-ler}
+\hyphenation{por-tableC}
+
+\parskip=6pt plus 1pt
+\parindent=0pt
+
+%-----------------------------------------------------------------------------
+\section{Foreword}
+%-----------------------------------------------------------------------------
+
+A few words about the intended audience before we begin. This document
+is mainly for those who have {\bf never} ported a program to another
+platform --- a specific hardware and software environment ---
+and, evidently, for those who plan to write large systems which
+must be used across different vendor machines.
+
+If you have done some porting before you may not find the information herein
+very useful.
+
+We suggest that \cite{kn:style} be read in conjunction with this
+ document\footnote{It can be obtained via anonymous {\em ftp} from
+ {\em cs.washington.edu} in {\em $\sim$ftp/pub/cstyle.tar.Z}.}.
+Submitters to the News group {\bf comp.lang.c} have repeatedly recommended
+\cite{kn:MH,kn:AK}\footnote{We note here that none of the information herein
+as been taken from those two references.}.
+
+{\bf Disclaimer:} The code fragments presented herein
+ are intended to make applications
+``more'' portable, meaning that they may fail with some compilers
+and/or environments.
+
+This file can be obtained via anonymous ftp from {\em sauna.hut.fi
+[130.233.251.253]} in {\em $\sim$ ftp/pub/CompSciLab/doc}. The files
+{\em portableC.tex}, {\em portableC.bib} and {\em portableC.ps.Z}
+are the \LaTeX, Bib\TeX\ and the compressed PostScript, respectively.
+
+%-----------------------------------------------------------------------------
+\section{Introduction}
+%-----------------------------------------------------------------------------
+
+The aim of this document is to collect the experience of several people
+who have had to write and/or port programs in C to more than one platform.
+
+In order to keep this document within reasonable bounds we must
+restrict ourselves to programs which must execute under
+Unix-like
+operating systems and those which implement a reasonable Unix-like
+environment. The only exception we will consider is
+VMS.
+
+A wealth of information can be obtained from programs which have been
+written to run on several platforms. This is the case of
+publicly available software such as
+developed by the Free Software
+Foundation and the MIT X Consortium.
+
+When discussing portability one focuses on two issues:
+\begin{description}
+
+\item{\bf The language,} which includes the preprocessor and the syntax and the
+ semantics of the language.
+
+\item{\bf The environment,} which includes the location and contents of header
+  files and the run-time library.
+
+\end{description}
+
+We include in our discussions the standardization efforts of
+the language and the environment. Special attention will be given
+to floating-point representations and arithmetic, to limitations
+of specific compilers,  and to VMS.
+
+Our main focus will be {\em boiler-plate} problems.
+System programming\footnote{We include raw I/O, e.g. from terminals in
+this category.}
+and twisted code associated with bizarre interpretations of \cite{kn:ansi}
+-- henceforth refered to as the Standard --
+will not be extensively covered in this document\footnote{We regard
+this document
+as a living entity growing as needed and as information is gathered.
+Future versions of this document may contain a lot of such information.}.
+
+
+%-----------------------------------------------------------------------------
+\section{Standardization Efforts}
+%-----------------------------------------------------------------------------
+
+All standards have a good and an evil side. Due to the nature of this
+ document we are forced to focus our attention on the later.
+
+The American National Standards Institute (ANSI) has recently approved
+of a standard for the C programming language \cite{kn:ansi}. The Standard
+concentrates on the syntax and semantics of the language and specifies
+a minimum environment (the name and contents of some header files and
+the specification of some run-time library functions).
+
+Copies of the ANSI~C Standard can be obtained from the following address:
+{\small
+\begin{center}
+\begin{flushleft}
+American National Standards Institute\\
+Sales Department\\
+1430 Broadway\\
+New York, NY 10018\\
+(Voice) (212) 642--4900\\
+(Fax) (212) 302--1286\\
+\end{flushleft}
+\end{center}
+}
+
+%-----------------------------------------------------------------------------
+\subsection{ANSI C}
+%-----------------------------------------------------------------------------
+
+\subsubsection{Translation limits}
+
+We first bring to attention the fact that the Standard states some
+environmental limits. These limits are {\em lower bounds}, meaning that
+a correct (compliant) compiler may refuse to compile an otherwise correct
+ program which exceeds one of those limits\footnote{Maybe
+ there {\bf are} people out there
+who still write compilers in FORTRAN after all...}.
+
+Below are the limits which we judge to be the most important. The ones
+related to the preprocessor are listed first.
+
+\begin{itemize}
+
+\item {\em 8 nesting levels of conditional inclusion.}
+
+\item {\em 8 nesting levels for {\tt \#included} files.}
+
+\item {\em 32 nesting levels of parenthesized expressions within
+ a full expression.} This will probably occur when using macros.
+
+\item {\em 1024 macro identifiers simultaneously.} Can happen if
+ one includes too many header files.
+
+\item {\em 509 characters in a logical source line.}
+ This is a serious restriction if it applies {\em after} preprocessing.
+ Since a macro
+ expansion always results in one line this affects the maximum
+ size of a macro. It is unclear what the Standard means by a logical
+ source line in this context and in most implementations this limit
+ will probably apply {em before} macro expansion.
+
+\item {\em 6 significant initial characters in an external identifier.}
+ Usually this constraint is imposed by the environment, e.g. the linker,
+ and not by the compiler.
+
+\item {\em 127 members in a single structure or union.}
+
+\item {\em 31 parameters in one function call.} This may cause trouble
+ with functions which accept a variable number of arguments. Therefore,
+ it is advisable that when designing such functions that either the
+ number of parameters be kept within reasonable bounds or that alternative
+ interfaces be supplied, e.g. using arrays.
+
+\end{itemize}
+
+It is really unfortunate that some of these limits may force a programmer
+to code in a less elegant way. We are of the opinion that
+the remaining limits stated in the Standard can usually be obeyed
+if one follows ``good'' programming practices.
+
+However, these limits may break programs which {\em generate} C code
+such as compiler-compilers and many C++ compilers.
+
+\subsubsection{Unspecified and undefined behaviour}
+
+The following are examples of unspecified and undefined behaviour:
+
+\begin{enumerate}
+
+\item The order in which the function designator and the arguments
+ in a function call are evaluated.
+
+\item The order in which the preprocessor concatenation operators
+ {\tt \#} and {\tt \#\#} are evaluated during macro substitution.
+
+\item The representation of floating types.
+
+\item An identifier is used that is not visible in the current scope.
+
+\item A pointer is converted to other than an integral or pointer type.
+
+\end{enumerate}
+
+The list is long. One of the main reasons for explicitly defining what
+is {\em not} covered by the Standard is to allow the implementor of the
+C environment to make use the most efficient alternative.
+
+%-----------------------------------------------------------------------------
+\subsection{POSIX}
+%-----------------------------------------------------------------------------
+
+% arl:	We should order the release9 (10 ?) manual ... maybe LK does ?
+The objective of the POSIX working group P1003.1 is to define a common
+interface for UNIX. Granted, the ANSI C standard does specify the
+contents of some header files and the behaviour of some library functions
+but it falls short of defining a usefull environment. This is the
+task of P1003.1.
+
+We do not know how far P1003.1 addresses the problems presented in this
+document as at the moment we lack proper documentation.
+Hopefully, this will be corrected in a future release of this document.
+
+%-----------------------------------------------------------------------------
+\section{Preprocessors}
+%-----------------------------------------------------------------------------
+
+Preprocessors may present different behaviour in the following:
+
+\begin{enumerate}
+
+\item The interpretation of the {\bf -I} command option can differ from
+ one system to another. Besides, it is not covered by the Standard. For
+ example, the directive {\tt \#include ``dir/file.h''} in conjunction with
+ {\bf -I..} would cause most preprocessors in a Unix-like environment
+ to search for {\tt file.h} in {\tt ../dir} but under VMS {\tt file.h}
+ is only searched for in the subdirectory {\tt dir} in the current
+ working directory.
+
+\item We would {\bf not} trust the following to work on {\bf all}
+ preprocessors:
+
+\begin{verbatim}
+#define  D  define
+#D this that
+\end{verbatim}
+
+The Standard does not allow such a syntax (see section 3.8.3 \S 20
+ in \cite{kn:ansi}).
+
+\item Directives are very much the same in all preprocessors, except that
+ some preprocessors may not know about the {\tt defined} operator in a
+ {\tt \#if} directive nor about the {\tt \#pragma} directive.
+
+ The {\tt \#pragma} directive should pose no problems even to old
+ preprocessors {\em if it comes indented}\footnote{Old preprocessors
+ only take directives which begin with {\tt \#} in the first column.}.
+ Furthermore, it is advisable to
+ enclose them with {\tt \#ifdef}'s in order to document under which
+ platform they make sense:
+\begin{verbatim}
+#ifdef <platform-specific-symbol>
+   #pragma ...
+#endif
+\end{verbatim}
+
+\item Concatenation of symbols has two variants. One is the old K\&R style
+ which simply relied on the fact that the preprocessor substituted
+ comments such as {\tt /**/} for nothing. Obviously, that does not result
+ in concatenation
+ if the preprocessor includes a space in the output.
+ The ANSI C Standard defines the operators {\tt \#\#} and 
+ (implicit) concatenation of adjacent strings. Since both
+ styles are a fact of life it is useful to include the following in one's
+ header files\footnote{Some have suggeested using {\tt \#if \_\_STDC\_\_ ==
+ 1}
+ instead of simply {\tt \#ifdef \_\_STDC\_\_} to test if the compiler
+is ANSI-compliant.}:
+
+\begin{verbatim}
+#ifdef  __STDC__
+# define  GLUE(a,b)  a##b
+#else
+# define  GLUE(a,b)  a/**/b
+#endif
+\end{verbatim}
+
+ If needed, one could define similar macros to {\tt GLUE} several arguments
+\footnote{{\tt GLUE(a,GLUE(b,c))} would not result in the concatenation
+ of {\tt a, b,} and {\tt c}.}.
+
+\item Some preprocessors perform token substitution within quotes while others
+ do not. Therefore, this is intrinsicly non-portable. The Standard
+ disallows it but provides mechanism to obtain the same results. The
+ following should work with ANSI-compliant preprocessors or with the
+ ones that which perform token substitution within quotes:
+
+\begin{verbatim}
+#ifdef  __STDC__
+# define  MAKESTRING(s)  # s
+#else
+# define  MAKESTRING(s)  "s"
+#endif
+\end{verbatim}
+
+\end{enumerate}
+
+There are good publicly available preprocessors which are ANSI C compliant.
+One such preprocessor is the one distributed with the X
+Window System developed by the MIT X Consortium.
+
+Take note of {\tt \#pragma} directives which
+alter the semantics of the program and consider the case when they
+are not recognized by a particular compiler. Evidently,
+if the behaviour of the program relies on their correct interpretation
+then, in order for the program to be portable, all target platforms
+must recognize them properly.
+
+Finally, we must add that the Standard has fortunately included
+a {\tt \#error} directive with obvious semantics. Indent the {\tt \#error}
+since old preprocessors do not recognize it.
+
+%-----------------------------------------------------------------------------
+\section{The Language}
+%-----------------------------------------------------------------------------
+
+\subsection{The syntax}
+
+The syntax defined in the Standard is a {\em superset} of the one defined in K\&R.
+It follows that if one restricts oneself to the former there should be no problems
+with an ANSI~C compliant compiler. The Standard extends the syntax with the
+following:
+
+\begin{enumerate}
+
+\item The inclusion of the keywords {\bf const} and
+   {\bf volatile}.
+
+\item The ellipsis (``...'') notation to indicate a variable number
+ of arguments.
+
+\item Function prototypes.
+
+\item Trigraph notation for specifying ``wide'' character strings.
+
+\end{enumerate}
+
+We encourage the use of the reserved words {\bf const} and {\bf volatile}
+since they aid in documenting the code.
+It is useful to add the following to one's header files if the code must
+be compiled by an non-conforming compiler as well:
+\begin{verbatim}
+#ifndef __STDC__
+# define const
+# define volatile
+#endif
+\end{verbatim}
+
+However, one must then make sure that the behaviour of the application does not
+depend on the presence of such keywords.
+
+\subsection{The semantics}
+
+The syntax does not pose any problem with regard to interpretation because
+it can be defined precisely. However, programming languages are always
+described using a natural language, e.g. English, and this can lead to
+different interpretations of the same text.
+
+Evidently, \cite{kn:KR} does not provide an unambiguous definition
+of the C language otherwise there would have been no need for a standard.
+Although the Standard is much more precise,
+there is still room for different interpretations in situations
+such as {\tt f(p=\&a, p=\&b, p=\&c)}. Does this mean {\tt f(\&a,\&b,\&c)} or
+{\tt f(\&c,\&c,\&c)}? Even ``simple'' cases such as {\tt a[i] = b[i++]}
+are compiler-dependent \cite{kn:style}.
+
+As stated in the Introduction we would like to exclude such topics.
+The reader is instead directed to the USENET news group {\bf comp.std.c}
+or {\bf comp.lang.c}
+where such discussions take place and from where the above example
+was taken. {\em The Journal of C Language Translation}\footnote{Address
+is 2051, Swans Neck Way, Reston, Virginia 22091, USA.} could, perhaps,
+be a good reference. Another possibility is to obtain a clarification
+from the Standards Committee and the address is:
+{\small
+\begin{center}
+\begin{flushleft}
+X3 Secretariat, CBEMA\\
+311 1st St NW Ste 500\\
+Washington DC, USA\\
+\end{flushleft}
+\end{center}
+}
+%-----------------------------------------------------------------------------
+\section{Unix flavours: System V and BSD}
+%-----------------------------------------------------------------------------
+
+A long time ago (1969),
+ Unix said ``{\tt papa}'' for the first time at AT\&T
+(then called Bell Laboratories, or Ma Bell for the
+intimate) on a PDP-11. Everyone liked Unix very much and its widespread
+use we see today is probably due to the relative simplicity 
+of its design and of its implementation (it is written, of course, mostly
+in C).
+
+However, these facts also contributed for each one to develop their own
+dialect. In particular, the University of Berkeley at California distribute
+the so-called BSD\footnote{Berkeley Software Distribution.} Unix whereas
+AT\&T distribute (sell) System V Unix. All other vendors are descendants of
+one of these major dialects.
+
+The differences between these two major flavours should not upset most
+application programs. In fact, we would even say that most differences are
+just annoying.
+
+BSD Unix has an enhanced signal handling capability and implements sockets.
+However, {\bf all} Unix flavours differ significantly in their raw i/o
+interface (that is, {\bf ioctl} system call) which should
+be avoided if possible.
+
+The reader interested in knowing more about the past and future of
+Unix can consult \cite{kn:unix1,kn:unix2}.
+
+%-----------------------------------------------------------------------------
+\section{Header Files}
+%-----------------------------------------------------------------------------
+
+Many useful system header files are in different places in different systems
+or they define different symbols. We will assume henceforth that the
+application has been developed on a BSD-like Unix and must be ported
+to a System V-like Unix or VMS or an Unix-like system with header files
+which comply to the Standard.
+
+In the following sections, we show how to handle the most simple cases which
+arise in practice. Some of the code which appears below was derived from
+the header file {\tt Xos.h} which is part of the X Window System distributed
+by MIT. We have added changes, e.g. to support VMS.
+
+Many header files are unprotected in many systems, notably those derived
+from BSD version 4.2 and earlier. By unprotected we mean that an attempt
+to include a header file more than once will either cause compilation
+errors (e.g. due to recursive includes) or,
+in some implementations, warnings from the preprocessor stating
+that symbols are being redefined. It is good practice to protect header
+files.
+
+\subsection{\tt ctype.h}
+
+They provide the same functionality in all systems except that some
+symbols must be renamed.
+
+\begin{verbatim}
+#ifdef SYSV
+# define  _ctype_  _ctype
+# define  toupper  _toupper
+# define  tolower  _tolower
+#endif
+\end{verbatim}
+
+Note however that the definitions in {\tt <ctype.h>} are not portable across
+character sets.
+
+\subsection{{\tt fcntl.h} and {\tt sys/file.h}}
+
+Many files which a BSD systems expects to find in the {\tt sys}
+directory are placed in {\tt /usr/include} in System V. Other systems,
+like VMS, do not even have a {\tt sys} directory\footnote{Under VMS,
+since a path such as {\tt <sys/file.h>} will evaluate to {\tt sys:file.h}
+it is sufficient to equate the logical name {\tt sys} to {\tt sys\$library}.}.
+
+The symbols used in the {\tt open} function call are defined in different
+header files in both types of systems:
+\begin{verbatim}
+#ifdef  SYSV
+# include <fcntl.h>
+#else
+# include <sys/file.h>
+#endif
+\end{verbatim}
+
+\subsection{\tt errno.h}
+
+The semantics of the error number may differ from one system to another
+and the list may differ as well (e.g. BSD systems have more error numbers
+than System V). Some systems, e.g. SunOS, define the global symbol
+{\bf errno} which will hold the last error detected by the run-time
+library. This symbol is not available in most systems, although the
+Standard requires that such a symbol be defined (see
+section 4.1.3 of \cite{kn:ansi}).
+
+The most portable way to print error messages is to use {\bf perror}.
+
+\subsection{{\tt math.h}}
+
+System V has more definitions in this header file than BSD-like
+systems. The corresponding library has more functions as well. This header
+file is unprotected under VMS and Cray, and that case we must do-it-ourselves:
+\begin{verbatim}
+#if defined(CRAY) || defined(VMS)
+# ifndef  __MATH__
+#  define  __MATH__
+#  include <math.h>
+# endif
+#endif
+\end{verbatim}
+
+\subsection{{\tt strings.h} vs. {\tt string.h}}
+
+Some systems cannot be treated as System V or BSD but are really a special
+case, as one can see in the following:
+
+\begin{verbatim}
+#ifdef  SYSV
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  _STDH_  /* ANSI C Standard header files */
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  macII
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  vms
+#ifndef SYSV_STRINGS
+# define  SYSV_STRINGS
+#endif
+#endif
+
+#ifdef  SYSV_STRINGS
+# include <string.h>
+# define  index   strchr
+# define  rindex  strrchr
+#else
+# include <strings.h>
+#endif
+\end{verbatim}
+
+As one can easily observe, System V-like Unix systems use different names
+for {\tt index} and {\tt rindex} and place them in different header files.
+Although VMS supports better System V features
+it must be treated as a special case.
+
+\subsection{{\tt time.h} and {\tt types.h}}
+
+When using {\tt time.h} one must also include {\tt types.h}. The following
+code does the trick:
+
+\begin{verbatim}
+#ifdef macII
+# include <time.h>   /* on a Mac II we need this one as well */
+#endif
+
+#ifdef  SYSV
+# include <time.h>
+#else
+# ifdef vms
+#  include <time.h>
+# else
+#  ifdef CRAY
+#   ifndef __TYPES__   /* it is not protected under CRAY */
+#   define __TYPES__
+#   include <sys/types.h>
+#   endif
+#  else
+#   include <sys/types.h>
+#  endif /* of ifdef CRAY */
+# include <sys/time.h>
+# endif  /* of ifdef vms  */
+#endif
+\end{verbatim}
+
+The above is not sufficient in order for the code to be portable since
+the structure which defines time values is not the same in all systems.
+Different systems have vary in the way {\tt time\_t} values are represented.
+The Standard, for instance, only requires that it be an arithmetic type.
+Recognizing this difficulty, the Standard defines a function called
+{\tt difftime} to compute the difference between two time values of
+type {\tt time\_t}, and {\tt mktime} which takes a string and produces
+a value of type {\tt time\_t}.
+
+\subsection{{\tt varargs.h} vs. {\tt stdarg.h}}
+
+In some systems the definitions in both header files
+are contradictory. For instance, the following will produce compilation
+errors under VMS\footnote{We are not sure this behaviour occurs only
+under VMS.}:
+\begin{verbatim}
+#include <varargs.h>
+#include <stdio.h>
+\end{verbatim}
+
+This is because {\tt <stdio.h>} includes {\tt <stdarg.h>} which in turn
+redefines all the symbols ({\tt va\_start}, {\tt va\_end}, etc.)
+in {\tt <varargs.h>}. The solution we adopt is to always include
+{\tt <varargs.h>} last and not define in the same module functions
+which use {\tt <varargs.h>} and functions which use the ellipsis notation.
+
+%-----------------------------------------------------------------------------
+\section{Run-time Library}
+%-----------------------------------------------------------------------------
+
+% System V vs. BSD
+% The Tektronix manual has some good stuff about this
+% arl:	o	I think hpux manuals have too. hpux is a sysV based
+%		system which has nowadays lots of bsd features.
+%	o	Sun is also sysV based 'all the goodies' from bsd
+%		implemented os. Mostly you can program with it like
+%		bsd or sysV or mixed ... it tries (?) to support both.
+%	o	some X11 manuals might help, because X is 'portable'
+%	o	88open manuals & stuff. 88open is a consortium
+%		which describes portability of software & binaries
+%		between Motorola 88k based computers.
+%	o	we should have here something about signals too ?
+%		the stuff is not so portable, but in extensive hacking
+%		you need signals ... I have some information of that.
+
+\begin{description}
+
+\item[getlogin:] This one is not defined, e.g. under VMS.
+ In that case, one can always use {\tt getenv(``HOME'')}.
+
+\item[scanf:] Scanf can behave differently in different platforms because
+ it's descriptions, including the one in the Standard, allows for different
+ interpretations under some circumstances. The most portable input parser
+ is the one you write yourself.
+
+\item[setjmp and longjmp:] Quoting anonymously
+ from {\bf comp.std.c}, ``pre-X3.159 implementations of
+setjmp and longjmp often did not meet the requirements of the Standard. Often
+they didn't even meet their own documented specs. And the specs varied
+from system to system. Thus it is wise not to depend too heavily on the
+exact standard semantics for this facility...''.
+
+In other words, it is not that you should {\em not} use them but
+be careful if you do. Furthermore, the behaviour of a {\bf longjmp}
+invoked from a nested signal handler\footnote{That is, a function invoked
+as a result of a signal raised during the handling of another signal.
+See section 4.6.2.1 \S 15 in \cite{kn:ansi}.}
+is undefined.
+
+Finally, the symbols {\tt \_setjmp} and {\tt \_longjmp} are only defined
+under SunOS, BSD, and HP-UX.
+
+\end{description}
+
+%-----------------------------------------------------------------------------
+\section{Compiler limitations}
+%-----------------------------------------------------------------------------
+% particularly IBM PC, GNU Compiler on Sun-4's, VMS compiler, etc.
+
+In practice, much too frequently one runs into several, unstated
+ compiler limitations:
+
+\begin{itemize}
+
+\item Some of these {\em limitations} are {\em bugs}. Many of these bugs
+ are in the optimizer and therefore when dealing with a new environment it is
+ best to explicitly disable optimization until one gets the application ``going''.
+
+\item Some compilers cannot handle large modules or ``large''
+   statements\footnote{Programs which generate other programs, e.g. YACC, can
+   generate, for instance, very large {\bf switch} statements.}. Therefore,
+   it is advisable to keep the size of modules within reasonable bounds.
+   Besides, large modules are more cumbersome to edit and understand.
+
+\end{itemize}
+
+% arl:	o	MSC has serious problem .. when you write big modules, or
+%		yacc or other generator generates them, compiler can't
+%		handle them ... ugh
+%	o	MSC can't also handle big switch statements ... so if
+%		you want to write big state machine ... tough luck
+
+%-----------------------------------------------------------------------------
+\section{Using floating-point numbers}
+%-----------------------------------------------------------------------------
+
+To say that the implementation of numerical algorithms
+ which exhibit the same behaviour across a wide variety of platforms is
+difficult is an understatement. This section provides very little
+help but we hope it is worth reading. Any additional suggestions
+and information is {\em very much} appreciated as we would like
+to expand this section.
+
+\subsection{Machine constants}
+
+One problem when writing numerical algorithms is obtaining machine
+constants. Typical values one needs are:
+
+\begin{itemize}
+
+\item The radix of the floating-point representation.
+
+\item The number of digits in the floating-point significand expressed
+   in terms of the radix of the representation.
+
+\item The number of bits reserved for the representation of the exponent.
+
+\item The smallest positive floating-point number $eps$ such that $ 1.0 + eps
+  \neq 1.0$.
+
+\item The smallest non-vanishing normalized floating-point power of the radix.
+
+\item The largest finite\footnote{Some representations have reserved values
+    for $+inf$ and $-inf$.} floating-point number.
+
+\end{itemize}
+
+On Sun's they can be obtained in {\tt <values.h>}.
+The ANSI C Standard recommends that such constants be defined in the
+header file {\tt <float.h>}.
+
+Sun's and standards apart, these values are not always readily available,
+e.g. in
+Tektronix workstations running UTek. One solution is to
+use a modified version of a program which can be obtained from the network
+called
+{\em \bf machar}. {\bf Machar} is described in \cite{kn:machar} and can
+obtained by anonymous {\em ftp} from the
+{\em netlib}\footnote{Email (Internet) address is netlib@ornl.gov.
+For more information, send a message containing the line {\em send index}
+to that address.}.
+
+It is straightforward to modify the C version of
+ {\bf machar} to generate a C preprocessor
+file which can be included directly by C programs.
+
+There is also a publicly available
+program called {\em config.c} which attempts to
+determine many properties of the C compiler and machine that it is run on. This
+program was submitted to {\bf comp.sources.misc}\footnote{The arquive site
+of {\bf comp.sources.misc} is {\em uunet.uu.net}.}.
+
+\subsection{Floating-point arguments}
+
+In the days of K\&R{\cite{kn:KR}} one was ``encouraged'' to use
+{\em float} and {\em double} \linebreak
+ interchangeably{\footnote{In fact one wonders
+why they even bothered to define two representations for floating-point numbers
+considering the rules applied to them.}} since all expressions with
+such data types where always evaluated using the {\em double} representation
+-- a real nightmare for those implementing efficient numerical algorithms
+in C. This rule applied, in particular, to floating-point arguments and
+for most compiler around it does not matter whether one defines the argument
+as {\em float} or {\em double}.
+
+According to the ANSI C Standard such programs will continue to exhibit the same
+behaviour {\em as long as one does not prototype the function}. Therefore, when
+prototyping functions make sure the prototype is included when the function
+definition is compiled so the compiler can check if the arguments match.
+
+\subsection{Floating-point arithmetic}
+
+Be careful when using the {\tt ==} and {\tt !=} operators when comparing
+floating types. Expressions such as
+\begin{center}
+{\tt if ({\em float\_expr1} == {\em float\_expr2})}
+\end{center}
+will seldom be satisfied due to {\em rounding errors}.
+To get a feeling about rounding errors, try evaluating the following
+expression using your favourite C compiler\cite{kn:fparith}:
+\[
+10^{50} + 812 - 10^{50} + 10^{55} + 511 - 10^{55} = 812 + 511 = 1323
+\]
+
+Most computers will produce zero regardless if one uses {\em float} or
+{\em double}. Although the {\em absolute error} is large, the {\em relative
+error} is quite small and probably acceptable for many applications.
+
+It is rather better to use expressions such as
+ $\left| float\_expr1 - float\_expr2 \right| \leq K$ or
+ $\left| \left| \frac{float\_expr1}{float\_expr2} \right| - 1.0 \right| \leq K$
+ (if $float\_expr2 \neq 0.$), where $0 < K < 1$ is
+a function of:
+\begin{enumerate}
+\item The floating type, e.g. {\em float} or {\em double},
+\item the machine architecture (the machine constants defined in the
+ previous section), and
+\item the precision of the input values and the rounding errors introduced
+ by the numerical method used.
+\end{enumerate}
+
+Other possibilities exist and the choice depends on the application.
+
+The development of reliable and robust numerical algorithm is a very
+difficult undertaking. Methods for certifying that the results are
+correct within reasonable bounds must usually be implemented.
+A reference such as \cite{kn:NRC} is always useful.
+
+\begin{itemize}
+
+\item Keep in mind that the {\em double} representation does not
+ necessarily increase the {\em precision}. Actually, in most implementations
+ the precision decreases but the {\em range} increases.
+
+\item Do not use {\em double} unnecessarily since in most cases there is
+ a large performance penalty. Furthermore, there is no point in using higher
+ precision if the additional bits which will be computed are garbage anyway.
+ The precision one needs depends mostly on the precision of the input data
+ and the numerical method used.
+
+\end{itemize}
+
+\subsection{Exceptions}
+
+Floating-point exceptions (overlow, underflow, division by zero, etc)
+are not signaled automatically in some systems. In that case, they
+must be explicitly enabled.
+
+{\em Always} enable floating-point exceptions since they may be an
+indication that the method is unstable. Otherwise, one must be sure
+that such events do not affect the output.
+
+%-----------------------------------------------------------------------------
+\section{VMS}
+%-----------------------------------------------------------------------------
+
+In this section we will report some common problems encountered when
+porting a C program to a VMS environment and which we have not mentioned
+in the previously.
+
+\subsection{File specifications}
+
+Under VMS one can use two flavours of command interpreters: DCL and
+DEC/Shell. The syntax of file specifications under DCL differs significantly
+from the Unix syntax.
+
+Some C run-time library functions in VMS which take file specifications
+as arguments or return file specifications to the caller will accept
+an additional argument indicating which syntax is preferred. It is
+useful to use these run-time library functions via macros as follows:
+
+\begin{verbatim}
+#ifdef  VMS
+#ifndef VMS_CI     /* Which Command Interpreter flavour to use */
+# define VMS_CI  0 /* 0 for DEC/Shell, 1 for DCL */
+#endif
+
+# define  Getcwd(buff,siz)   getcwd((buff),(siz),VMS_CI)
+# define  Getname(fd,buff)   getname((fd),(buff),VMS_CI)
+# define  Fgetname(fp,buff)  fgetname((fp),(buff),VMS_CI)
+#else
+# define  Getcwd(buff,siz)   getcwd((buff),(siz))
+# define  Getname(fd,buff)   getname((fd),(buff))
+# define  Fgetname(fp,buff)  fgetname((fp),(buff))
+
+#endif /* of ifdef VMS */
+\end{verbatim}
+
+More pitfalls await the unaware who accept file specifications from the
+user or take them from environment values (e.g. using the {\bf getenv}
+function).
+
+\subsection{Miscellaneous}
+
+\begin{description}
+
+\item[end, etext, edata:] these global symbols are not available under
+ VMS.
+
+\item[{\tt Struct} assignments:] VAX C allows assignment of structs if
+ the types of both sides have the same size. {\em This is not a portable
+feature.}
+
+\item[The system function:]
+the {\bf system} function under VMS has the same {\em functionality} as
+the Unix version, except that one must take care that the command
+interpreter provide also the same functionality. If the user is using
+DCL then the application must send a DCL-like command.
+
+\item[The linker:]
+what follows applies only to modules stored in
+ libraries\footnote{This
+ does not really belong in this document but whenever one
+ is porting a program to a VMS environment one is bound to come across
+ this strange behaviour which can result in  a lot of wasted time.}.
+If none of the global {\em functions} are explicitly used (referenced
+by another module) then the
+module is not linked {\em at all}. It does not matter whether one of the
+global {\em variables} is used. As a side effect, the initialization
+of variables is not done.
+
+The easiest solution is to force the linker to add  the
+module using the /INCLUDE command modifier. Of course, there is the
+possibility that the command line may exceed 256 characters...(*sigh*).
+
+\end{description}
+
+%-----------------------------------------------------------------------------
+\section{General Guidelines}
+%-----------------------------------------------------------------------------
+
+\subsection{Machine architectures, Type compatibility, Pointers, etc.}
+
+\begin{enumerate}
+
+\item {\bf Never} make any assumptions about the size of a given type,
+ especially pointers. \cite{kn:style} Statements such as
+ {\tt x \&= 0177770} make
+ implicit use of the size of {\tt x}. If the intention is to clear the
+ lower three bits then it is best to use {\tt x \&= $\sim$07}. The first
+ alternative will also clear the high order 16 bits if {\tt x} is
+ 32 bits wide.
+
+\item In some architectures the byte order is inverted; these are called
+ {\em little-endian} versus {\em big-endian} architectures. This problem
+ is illustrated by the code below\footnote{The code will only
+ function correctly if {\tt sizeof(long int)} is 32 bits. Although not
+ portable it serves well as an example for the given problem.}:
+\begin{verbatim}
+long int str[2] = {0x41424344, 0x0}; /* ASCII ``ABCD'' */
+printf (``%s\n'', (char *)&str);
+\end{verbatim}
+
+A little-endian (e.g. VAX) will print ``{\tt DCBA}''
+ whereas a big-endian (e.g. MC68000 microprocessors) will print ``{\tt ABCD}''.
+
+\item Beware of alignment constraints when allocating memory and using
+ pointers. Some
+ architectures restrict the addresses that certain operands
+ may be assigned to (that is, addresses of the form $2^k E, k > 0$).
+
+\item \cite{kn:style} Pointers to objects may have the same size but
+ different formats. This is illustrated by the code below:
+\begin{verbatim}
+int *p = (int *) malloc(...); ... free(p);
+\end{verbatim}
+
+This code may malfunction in architectures where {\tt int*} and {\tt char*}
+have different representations because {\tt free} expects a pointer of
+the latter type.
+
+\item \cite{kn:style} Only the operators {\tt ==} and {\tt !=} are
+ defined for all pointers of a given type. The remaining comparison
+ operators ({\tt <}, {\tt <=}, {\tt >}, and {\tt >=}) can only be used when
+ both operands point into the same array or to the first element after
+ the array. The same applies to arithmetic operators on
+ pointers\footnote{One of the reasons for these rules is that in some
+ architectures pointers are represented as a pair of values and only
+ under those circumstances are two pairs comparable.}.
+
+\item {\bf Never} redefine the {\tt NULL} symbol. The NULL symbol should
+ always be the {\em constant} zero. A null pointer of a given type will
+ always compare equal to the {\em constant} zero, whereas comparison
+ with a variable with value zero or to some non-zero constant has
+ implementation defined behaviour.
+
+ A null pointer of a given type will always convert to a null
+ pointer of another type if implicit or explicit conversion is performed.
+ (See item 4 above.)
+
+ The contents of a null pointer may be anything the
+ implementor wishes and dereferencing it may cause strange things to
+ happen...
+
+\end{enumerate}
+
+\subsection{Compiler differences}
+
+\begin{enumerate}
+
+\item When {\tt char} types are used in expressions most implementations
+ will treat them as {\tt unsigned} {\em but there are others which treat
+ them as} {\tt signed} (e.g. VAX C and HP-UX).
+ It is advisable to always cast them when used in arithmetic expressions.
+
+\item Do not rely on the initialization of {\tt auto} variables and
+ of memory returned by {\tt malloc}.
+
+\item Some compilers, e.g. VAX C, require that bit fields within {\tt struct}s
+ be of type {\tt int} or {\tt unsigned}. Futhermore, the upper bound on
+ the length of the bit field may differ among different implementations.
+
+\item The result of {\tt sizeof} may be {\tt unsigned}.
+
+\end{enumerate}
+
+\subsection{Files}
+
+\begin{enumerate}
+
+\item Keep files reasonably small in order not to upset some compilers.
+
+\item File names should not exceed 14 characters (many System V derived
+ system impose this limit, whereas in BSD derived systems a limit
+ of 15 is usually the case).
+ In some implementations
+ this limit can be as low as 8 characters.
+These limits are often {\em not}
+ imposed by the operating system but by system utilities such as {\em ar}.
+
+\item Do not use special characters especially multiple dots (dots have
+ a very special meaning under VMS).
+
+\end{enumerate}
+
+\subsection{Miscellaneous}
+\begin{description}
+
+\item[Functions as arguments:] when calling functions passed as arguments
+ always dereference the pointer. In other words, if {\tt F} is a pointer
+ to a function, use {\tt (*F)} instead of simply {\tt (F)} because some
+ compilers may not recognize the latter.
+
+\item[System dependencies:] Isolate system dependent code in separate modules
+ and use conditional compilation.
+
+\item[Utilities:] Utilities for compiling and linking such
+ as {\bf Make} simplify considerably the task of moving an application from
+ one environment to another.
+
+\item[Name space pollution:] Minimize the number of global symbols in the
+ application. One of the benefits is the lower probability that any
+ conflicts will arise with system-defined functions.
+
+\item[String constants:] Do not modify string constants since many
+ implementations place them in read-only memory. Furthermore, that
+ is what the Standard requires --- and that is how a {\em constant}
+ should behave!
+
+\end{description}
+
+%-----------------------------------------------------------------------------
+\section{Acknowledgements}
+%-----------------------------------------------------------------------------
+
+We are grateful for the help of Antti Louko (HTKK/Lsk) and Jari Helminen (HTKK)
+in commenting and
+correcting a previous draft of this document. We thank all the
+contributors of USENET News groups {\bf comp.std.c} and {\bf comp.lang.c} from
+where we have taken
+a lot of information. Some information within was obtained from
+\cite{kn:HP}.
+
+%-----------------------------------------------------------------------------
+\section{Trademarks}
+%-----------------------------------------------------------------------------
+{
+\footnotesize
+DEC, PDP-11, VMS and VAX are trademarks of Digital Equipment Corporation. \\
+HP is a trademark of Hewlett-Packard, Inc.\\
+MC68000 is a trademark of Motorola.\\
+PostScript is a registred trademark of Adobe Systems, Inc.\\
+Sun is a trademark of Sun Microsystems, Inc. \\
+UNIX is a registred trademark of AT\&T. \\
+X Window System is a trademark of MIT.\\
+}
+
+
+\begin{thebibliography}{PFTV88}
+
+\bibitem[Can89]{kn:style}
+L.W. Cannon.
+\newblock {Recommended C Style and Coding Standards}.
+\newblock Technical report, November 1989.
+
+\bibitem[Cod88]{kn:machar}
+W.~J. Cody.
+\newblock Algorithm 665, {MACHAR: A Subroutine to Dynamically Determine Machine
+  Parameters}.
+\newblock {\em {ACM Transactions on Mathematical Software}}, 14(4):303--311,
+  December 1988.
+
+\bibitem[Hew88]{kn:HP}
+Hewlett-Packard Company.
+\newblock {\em {HP-UX Portability Guide}}, 1988.
+
+\bibitem[Hor90]{kn:MH}
+Mark Horton.
+\newblock {\em {Portable C Software}}.
+\newblock Prentice-Hall, 1990.
+
+\bibitem[Int90]{kn:unix2}
+Interviews.
+\newblock {Interview With Five Technologists}.
+\newblock {\em {UNIX Review}}, 8(1):41--89, January 1990.
+
+\bibitem[KM86]{kn:fparith}
+U.~W. Kulish and W.~L. Miranker.
+\newblock {The Arithmetic of the Digital Computer: A New Approach}.
+\newblock {\em {SIAM Review}}, 28(1):1--40, March 1986.
+
+\bibitem[Koe89]{kn:AK}
+Andrew Koenig.
+\newblock {\em {C Traps and Pitfalls}}.
+\newblock Addison-Wesley Publishing Co., Reading, Massachusetts, 1989.
+
+\bibitem[KR78]{kn:KR}
+Brian~W. Kernighan and Dennis~M. Ritchie.
+\newblock {\em {The C Programming Language}}.
+\newblock Prentice-Hall, Inc., 1978.
+
+\bibitem[Man89]{kn:unix1}
+Tom Manuel.
+\newblock {A Single Standard Emerges from the UNIX Tug-Of-War}.
+\newblock {\em Electronics}, pages 141--143, January 1989.
+
+\bibitem[PFTV88]{kn:NRC}
+William~H. Press, Brian~P. Flannery, Saul~A. Teukolsky, and William~T.
+  Vetterling.
+\newblock {\em {NUMERICAL RECIPES in C: The Art of Scientific Computing}}.
+\newblock Cambridge University Press, 1988.
+
+\bibitem[{X3J}88]{kn:ansi}
+{X3J11}.
+\newblock {Draft Proposed American National Standard for Information Systems}
+  --- {Programming Language C}.
+\newblock Technical Report {X3J11/88--158}, {ANSI Accredited Standards
+  Committee, X3 Information Processing Systems}, December 1988.
+
+\end{thebibliography}
+
+\end{document}

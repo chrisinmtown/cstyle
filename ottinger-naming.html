@@ -1,0 +1,446 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (Win95; U) [Netscape]">
+   <TITLE>Ottinger's Rules for Variable and Class Naming</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<table>
+<tr>
+  <td width="70%">
+    <H1><A NAME="Top"></A>Ottinger's Rules for Variable and Class Naming</H1>
+    <small>Tim Ottinger</small>
+
+    <small><small>
+    <p><i>Brad Appleton took the time to convert the original 
+    textual version to hypertext, and I thank him for the this 
+    encouragement.</a></small></small>
+    </p>
+  </td>
+</tr>
+</table>
+
+This is an archived copy; you might prefer
+<A HREF="http://objectmentor.com/resources/articles/naming.htm">
+the original (and maintained) version</A>.
+
+<p>This paper grew out of some postings made on usenet, specifically 
+<a href="news:comp.object">comp.object</a>, in 1997. There was some 
+response, and so it is presented here in entirety, enhanced a bit.</p>
+
+<BR>
+<HR WIDTH="100%">
+<OL COMPACT START=1>
+<LI>
+<A NAME="TOC_Pronounceable" HREF="#Pronounceable"></A><A NAME="TOC_Pronounceable" HREF="#Pronounceable"></A><A NAME="TOC_Pronounceable" HREF="#Pronounceable"></A><A HREF="#Pronounceable" NAME="TOC_Pronounceable">Use
+Pronounceable names</A></LI>
+
+<LI>
+<A NAME="TOC_Avoid_Encodings" HREF="#Avoid_Encodings"></A><A NAME="TOC_Avoid_Encodings" HREF="#Avoid_Encodings"></A><A NAME="TOC_Avoid_Encodings" HREF="#Avoid_Encodings"></A><A HREF="#Avoid_Encodings" NAME="TOC_Avoid_Encodings">Avoid
+Encodings</A></LI>
+
+<LI>
+<A NAME="TOC_Too_Cute" HREF="#Too_Cute"></A><A NAME="TOC_Too_Cute" HREF="#Too_Cute"></A><A NAME="TOC_Too_Cute" HREF="#Too_Cute"></A><A HREF="#Too_Cute" NAME="TOC_Too_Cute">Don't
+be too cute</A></LI>
+
+<LI>
+<A NAME="TOC_Pick_One" HREF="#Pick_One"></A><A NAME="TOC_Pick_One" HREF="#Pick_One"></A><A NAME="TOC_Pick_One" HREF="#Pick_One"></A><A HREF="#Pick_One" NAME="TOC_Pick_One">Most
+meanings have multiple words. Pick ONE</A></LI>
+
+<LI>
+<A NAME="TOC_Mult_Meanings" HREF="#Mult_Meanings"></A><A NAME="TOC_Mult_Meanings" HREF="#Mult_Meanings"></A><A NAME="TOC_Mult_Meanings" HREF="#Mult_Meanings"></A><A HREF="#Mult_Meanings" NAME="TOC_Mult_Meanings">Most
+words have multiple meanings</A></LI>
+
+<LI>
+<A NAME="TOC_Nouns_Verbs" HREF="#Nouns_Verbs"></A><A NAME="TOC_Nouns_Verbs" HREF="#Nouns_Verbs"></A><A NAME="TOC_Nouns_Verbs" HREF="#Nouns_Verbs"></A><A HREF="#Nouns_Verbs" NAME="TOC_Nouns_Verbs">Nouns
+and Verb Phrases</A></LI>
+
+<LI>
+<A NAME="TOC_Solution_Domain" HREF="#Solution_Domain"></A><A NAME="TOC_Solution_Domain" HREF="#Solution_Domain"></A><A NAME="TOC_Solution_Domain" HREF="#Solution_Domain"></A><A HREF="#Solution_Domain" NAME="TOC_Solution_Domain">Use
+Solution Domain Names</A></LI>
+
+<LI>
+<A NAME="TOC_Problem_Domain" HREF="#Problem_Domain"></A><A NAME="TOC_Problem_Domain" HREF="#Problem_Domain"></A><A NAME="TOC_Problem_Domain" HREF="#Problem_Domain"></A><A HREF="#Problem_Domain" NAME="TOC_Problem_Domain">Also
+Use Problem Domain Names</A></LI>
+
+<LI>
+<A NAME="TOC_Mental_Map" HREF="#Mental_Map"></A><A NAME="TOC_Mental_Map" HREF="#Mental_Map"></A><A NAME="TOC_Mental_Map" HREF="#Mental_Map"></A><A HREF="#Mental_Map" NAME="TOC_Mental_Map">Avoid
+Mental Mapping</A></LI>
+
+<LI>
+<A NAME="TOC_Nothing_Intuitive" HREF="#Nothing_Intuitive"></A><A NAME="TOC_Nothing_Intuitive" HREF="#Nothing_Intuitive"></A><A NAME="TOC_Nothing_Intuitive" HREF="#Nothing_Intuitive"></A><A HREF="#Nothing_Intuitive" NAME="TOC_Nothing_Intuitive">Nothing
+is intuitive</A></LI>
+
+<LI>
+<A NAME="TOC_Avoid_Disinfo" HREF="#Avoid_Disinfo"></A><A NAME="TOC_Avoid_Disinfo" HREF="#Avoid_Disinfo"></A><A NAME="TOC_Avoid_Disinfo" HREF="#Avoid_Disinfo"></A><A HREF="#Avoid_Disinfo" NAME="TOC_Avoid_Disinfo">Avoid
+Disinformation</A></LI>
+
+<LI>
+<A NAME="TOC_In_Context" HREF="#In_Context"></A><A NAME="TOC_In_Context" HREF="#In_Context"></A><A NAME="TOC_In_Context" HREF="#In_Context"></A><A HREF="#In_Context" NAME="TOC_In_Context">Names
+are only Meaningful in Context</A></LI>
+
+<LI>
+<A NAME="TOC_Artificial_Context" HREF="#Artificial_Context"></A><A NAME="TOC_Artificial_Context" HREF="#Artificial_Context"></A><A NAME="TOC_Artificial_Context" HREF="#Artificial_Context"></A><A HREF="#Artificial_Context" NAME="TOC_Artificial_Context">Don't
+add Artificial Context</A></LI>
+
+<LI>
+<A NAME="TOC_Disambig" HREF="#Disambig"></A><A NAME="TOC_Disambig" HREF="#Disambig"></A><A NAME="TOC_Disambig" HREF="#Disambig"></A><A HREF="#Disambig" NAME="TOC_Disambig">No
+Disambiguation without Differentiation</A></LI>
+</OL>
+
+<HR WIDTH="100%">
+<H1>
+Introduction</H1>
+When a new developer joins a project which is already in progress, there
+is a steep learning curve. If the new developer already knows the methodology
+and programming language, some of this is reduced. If the new developer
+already knows the problem domain fairly well, this also shortens the ramp-up
+time.
+
+<P>There is often a great deal of artificial curve which is added to a
+project by decree or by accident. This has the opposite effect; it increases
+ramp-up time and can hurt the new developer's time-to-first-contribution
+considerably. And not only the first contribution, but the next several.
+
+<P>The goal of these rules set is to help avoid creating one type of artificial
+learning curve, that of deciphering or memorizing strange names.
+
+<P>The rules were developed in group discussions, largely by examining
+poor names and dissecting them to determine the cause of their "badness".
+<OL COMPACT START=1>
+<H4>
+<A NAME="Pronounceable" HREF="#TOC_Pronounceable"></A><A NAME="Pronounceable" HREF="#TOC_Pronounceable"></A><A NAME="Pronounceable" HREF="#TOC_Pronounceable"></A><A HREF="#TOC_Pronounceable" NAME="Pronounceable">Use
+Pronounceable names</A></H4>
+If you can't pronounce it, you can't discuss it without sounding like an
+idiot. <I>"Well, over here on the bee cee arr three cee enn tee we have
+a pee ess zee kyew int, see?"</I>
+
+<P>I company I know has <TT>genymdhms</TT> (generation date, year, month
+day, hour, minute and second) so they walked around saying <I>"gen why
+emm dee aich emm ess"</I>. I have an annoying habit of pronouncing everything
+as-written, so I started saying <I>"gen-yah-mudda-hims"</I>. It later was
+being called this by a host of designers and analysts, and we still sounded
+silly. But we were in on the joke, so it was fun. Fun or not, don't do
+that.
+<BR>&nbsp;
+<BR>It would have been so much better if it had been called <TT><I>generation_timestamp</I>.
+<I>"Hey, Mikey, take a look at this record! The generation timestamp is
+tomorrow! How can that be?"</I></TT>
+<H4>
+<A NAME="Avoid_Encodings" HREF="#TOC_Avoid_Encodings"></A><A NAME="Avoid_Encodings" HREF="#TOC_Avoid_Encodings"></A><A NAME="Avoid_Encodings" HREF="#TOC_Avoid_Encodings"></A><A HREF="#TOC_Avoid_Encodings" NAME="Avoid_Encodings">Avoid
+Encodings</A></H4>
+Encoded names require deciphering. This is true for Hungarian and other
+`type-encoded' or otherwise encoded variable names. To allow any encoded
+prefixes or suffixes in code is suspect, but to require it seems irresponsible
+inasmuch as it requires each new employee to learn an encoding "language"
+in addition to learning the (usually considerable) body of code that they'll
+be working in.
+
+<P>When you worked in name-length-challenged programs, you probably violated
+this rule with impunity and regret. Fortran forced it by basing type on
+the first letter, making the first letter a `code' for the type. Hungarian
+has taken this to a whole new level.
+
+<P>We've all seen bizarre encoded naming standards for files, producing
+(real name) <TT>cccoproi.sc</TT> and <TT>SRD2T3</TT>. This is an artificially-created
+naming standard in the modern world of long filenames, though it had it's
+time.
+<BR>This isn't intended as an attack on Hungarian notation out of malice
+toward Microsoft or Windows. It's a simple rule of simplifying and clarifying
+names. HN was pretty important back when everything was an integer handle
+or a long pointer, but in C++ we have (and should have) a much richer type
+system. We don't need HN any more.&nbsp; Besides, encoded names are seldom
+pronounceable (<A HREF="#Pronounceable">[#1]</A>).
+
+<P>Of course, you can get used to anything, but why create an artificial
+learning curve for new hires? Avoid this if you can avoid it.
+<H4>
+<A NAME="Too_Cute" HREF="#TOC_Too_Cute"></A><A NAME="Too_Cute" HREF="#TOC_Too_Cute"></A><A NAME="Too_Cute" HREF="#TOC_Too_Cute"></A><A HREF="#TOC_Too_Cute" NAME="Too_Cute">Don't
+be too cute</A></H4>
+If the names are too clever, they will be memorable only to people who
+share your sense of humor and remember the joke. Will the people coming
+after you really remember what <I>HolyHandGrenade</I> is supposed to do
+in your program? Sure, it's cute, but maybe in this case <I>ListItemRemover
+</I>might be a better name. I've seen Monty Python's <I>The Holy Grail,
+</I>but it may take me a while to realize what you are meaning to do.
+
+<P>I've seen other similar cutesy namings fail.
+
+<P>Given the choice, choose clarity over entertainment value. It's a good
+practice.
+<H4>
+<A NAME="Pick_One" HREF="#TOC_Pick_One"></A><A NAME="Pick_One" HREF="#TOC_Pick_One"></A><A NAME="Pick_One" HREF="#TOC_Pick_One"></A><A HREF="#TOC_Pick_One" NAME="Pick_One">Most
+meanings have multiple words. Pick ONE</A></H4>
+Pick one word for one abstract function and stick with it.&nbsp; I hear
+that the Eiffel libraries excel at this, and I know that the C++ STL is
+very consistent. Sometimes the names seem a little odd (like <TT>pop_front</TT>
+for a list), but being consistent will reduce the overall learning curve
+for the whole library.
+
+<P>For instance, it's confusing to have <TT>fetch</TT>, <TT>retrieve</TT>
+and <TT>get</TT> as same-acting methods of the different classes. How do
+you remember which method name goes with which class? Sadly, you often
+have to remember who wrote the library in order to remember which term
+was used. Otherwise, you spend an awful lot of time browsing through headers
+and previous code samples. This is a considerably worse practice than the
+use of encodings.
+
+<P>Likewise, it's confusing to have a <TT>controller</TT> and a <TT>manager</TT>
+and a <TT>driver</TT> in the same process. What is the essential difference
+between a DeviceManager and a ProtocolController? Why are both not controllers,
+or both not managers? The name leads you to expect two objects that have
+very different <I>type</I> as well as having different <I>classes.</I>
+
+<P>We can take advantage of this to create consistent interfaces and simplify
+learning dramatically.
+<H4>
+<A NAME="Mult_Meanings" HREF="#TOC_Mult_Meanings"></A><A NAME="Mult_Meanings" HREF="#TOC_Mult_Meanings"></A><A NAME="Mult_Meanings" HREF="#TOC_Mult_Meanings"></A><A HREF="#TOC_Mult_Meanings" NAME="Mult_Meanings">Most
+words have multiple meanings</A></H4>
+Don't use the same word for two purposes, if you can at all avoid it.
+
+<P>This is the inverse of the previous rule. When you use different terms,
+it leads one to think that there are different <I>types </I>underlying
+them. If I use DeviceManager and ProtocolManager, it leads one to expect
+the two to have very similar interfaces. If I can call <TT>DeviceManager::add(),
+</TT>I should be able to call <TT>ProtocolManager::add().</TT> Why? Because
+the name created an association between the two. I expect to see <TT>*Manager::add()</TT>
+now.
+
+<P>If you use the same word, but you have very different interfaces, this
+isn't a total evil (see&nbsp; <A HREF="#In_Context">#12</A> ), but it does
+cause some confusion. If you system or your module is small enough, or
+your controls rigorous enough to prevent synonyms, then that's great.
+
+<P>If you're learning a framework, though, you need to be most careful
+not to be fooled by synonyms. While you <B>should</B> be able to count
+on the names denoting type, you frequently cannot.
+
+<P>Remember also that it's not polite at all to have the same name in two
+scopes.
+<H4>
+<A NAME="Nouns_Verbs" HREF="#TOC_Nouns_Verbs"></A><A NAME="Nouns_Verbs" HREF="#TOC_Nouns_Verbs"></A><A NAME="Nouns_Verbs" HREF="#TOC_Nouns_Verbs"></A><A HREF="#TOC_Nouns_Verbs" NAME="Nouns_Verbs">Nouns
+and Verb Phrases</A></H4>
+Classes and objects should have noun or noun phrase names.
+
+<P>There are some methods (commonly called&nbsp;<DFN>"accessors"</DFN>)
+which calculate and/or return a value. These can and probably should have
+noun names. This way accessing a person's first name can read like:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string x = person.name();</PRE>
+Other methods (sometimes called&nbsp;<DFN>"manipulators"</DFN>, but not
+so commonly anymore) cause something to happen. These should have verb
+or verb-phrase names. This way, changing a name would read like:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fred.changeNameTo("mike")</PRE>
+As a class designer, does this sound boringly unimportant? If so, then
+go write code that uses your classes. The best way to test an interface
+is to use it and look for ugly, contrived, or confusing text. This really
+helps.
+<H4>
+<A NAME="Solution_Domain" HREF="#TOC_Solution_Domain"></A><A NAME="Solution_Domain" HREF="#TOC_Solution_Domain"></A><A NAME="Solution_Domain" HREF="#TOC_Solution_Domain"></A><A HREF="#TOC_Solution_Domain" NAME="Solution_Domain">Use
+Solution Domain Names</A></H4>
+Go ahead, use computer science (CS) terms, algorithm names, pattern names,
+math terms, etc.
+
+<P>Yeah, it's a bit heretical, but you don't want your developers having
+to run back and forth to the customer asking what every name means <B><I>if</I></B>
+they already know the concept by a different name.
+
+<P>We're talking about code here, so you're more likely to have your code
+maintained by a CS major or informed programmer than by a domain expert
+with no programming background. End users of a system very seldom read
+the code, but the maintainers have to.
+<H4>
+<A NAME="Problem_Domain" HREF="#TOC_Problem_Domain"></A><A NAME="Problem_Domain" HREF="#TOC_Problem_Domain"></A><A NAME="Problem_Domain" HREF="#TOC_Problem_Domain"></A><A HREF="#TOC_Problem_Domain" NAME="Problem_Domain">Also
+Use Problem Domain Names</A></H4>
+When there is no `programmer-ese' for what you're doing, use the name from
+the problem domain. At least the programmer who maintains your code <B>can</B>
+ask his boss what it means.
+
+<P>In analysis, of course, this is the superior rule to&nbsp; <A HREF="#Solution_Domain">[Use
+Solution Domain Names]</A>, because the end-user is the target audience.
+<H4>
+<A NAME="Mental_Map" HREF="#TOC_Mental_Map"></A><A NAME="Mental_Map" HREF="#TOC_Mental_Map"></A><A NAME="Mental_Map" HREF="#TOC_Mental_Map"></A><A HREF="#TOC_Mental_Map" NAME="Mental_Map">Avoid
+Mental Mapping</A></H4>
+Readers shouldn't have to mentally translate your names into other names
+they already know.
+
+<P>There are some unfortunate examples for this. One of them is Microsoft's
+choice to call the things that walk through a list <B>Enumerators</B> instead
+of <B>Iterators.</B>&nbsp; This is sad because the term <I>iterator</I>
+is in common use in software circles and was completely appropriate to
+the domain (see&nbsp; <A HREF="#TOC_Pick_One">Pick One</A> ) and also because
+the term <I>enumeration </I>typically has a very different meaning (see&nbsp;
+<A HREF="#TOC_Mult_Meanings">Multiple Meanings</A> ). Between the two,
+most developers have to translate <I>enumerator</I> to <I>iterator </I>mentally
+as the conversations about such things go on.
+
+<P>This problem generally&nbsp; arises from a choice to use neither&nbsp;
+<A HREF="#Problem_Domain">problem domain terms</A> nor&nbsp; <A HREF="#Solution_Domain">solution
+domain terms.</A>
+<H4>
+<A NAME="Nothing_Intuitive" HREF="#TOC_Nothing_Intuitive"></A><A NAME="Nothing_Intuitive" HREF="#TOC_Nothing_Intuitive"></A><A NAME="Nothing_Intuitive" HREF="#TOC_Nothing_Intuitive"></A><A HREF="#TOC_Nothing_Intuitive" NAME="Nothing_Intuitive">Nothing
+is intuitive</A></H4>
+Sadly, and in contradiction to the above, all names require some mental
+mapping, since this is the nature of language. If you use a term which
+might not be known to your audience, you must map it to the concept you'd
+like it to represent.
+
+<P>For this reason, most important names should be in a glossary or should
+be explained in comments at least. Even if they're parameters or local
+variables. Even if they're inside the static member of a class, unless
+the term is completely in harmony with all of these naming rules.
+<H4>
+<A NAME="Avoid_Disinfo" HREF="#TOC_Avoid_Disinfo"></A><A NAME="Avoid_Disinfo" HREF="#TOC_Avoid_Disinfo"></A><A NAME="Avoid_Disinfo" HREF="#TOC_Avoid_Disinfo"></A><A HREF="#TOC_Avoid_Disinfo" NAME="Avoid_Disinfo">Avoid
+Disinformation</A></H4>
+Avoid words which already mean something else. For example, "<TT>hp</TT>",
+"<TT>aix</TT>", and "<TT>sco</TT>" would be horrible variable names because
+they are the names of Unix platforms or variants. Even if you are coding
+a hypotenuse and "<TT>hp</TT>" looks like a good abbreviation, it violates
+too many rules and also is disinformative.
+
+<P>Likewise don't refer to a grouping of accounts as an <TT>AccountList</TT>
+unless it's actually a list. A list means something to CS people. It denotes
+a certain type of data structure. If the container isn't a list, you've
+disinformed the programmer who has to maintain your code. <TT>AccountGroup</TT>
+or <TT>BunchOfAccounts</TT> would have been better.
+
+<P>The absolute worse example of this would be the use of lower-case L
+or uppercase o as variable names, especially in combination. The problem,
+of course is in code where such things as this occur:
+<PRE>&nbsp;&nbsp;&nbsp; int a = l;
+&nbsp;&nbsp;&nbsp; if ( O = l )
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a = O1;
+&nbsp;&nbsp;&nbsp; else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; l = 0;</PRE>
+You think that I made this one up, right? Sorry. I've examined code this
+year (1997) where such things were abundant. It's a great technique for
+shrouding your code.
+
+<P>When I complained, one author told me that I should use a different
+font so that the differences were more obvious. I think that the problem
+could be more easily and finally corrected by search-and-replace than by
+publishing a requirement that all future readers to choose <I>Font X</I>..
+<H4>
+<A NAME="In_Context" HREF="#TOC_In_Context"></A><A NAME="In_Context" HREF="#TOC_In_Context"></A><A NAME="In_Context" HREF="#TOC_In_Context"></A><A HREF="#TOC_In_Context" NAME="In_Context">Names
+are only Meaningful in Context</A></H4>
+There are few names which are meaningful in and of themselves. Most, however
+are not. Instead, you need to place names in context for your reader by
+enclosing them in classes, well-named functions, or comments.
+
+<P>The term `<DFN>tree</DFN>' needs some disambiguation, for example if
+the application is a forestry application. You may have syntax trees, red-black
+or b-trees, and also elms, oaks, and pines. The word `tree' is a good word,
+and is not to be avoided, but it must be placed in context every place
+it is used.
+
+<P>If you review a program or enter into a conversation where the word
+"tree" could mean either, and you aren't sure, then the author (speaker)
+will have to clarify.
+<H4>
+<A NAME="Artificial_Context" HREF="#TOC_Artificial_Context"></A><A NAME="Artificial_Context" HREF="#TOC_Artificial_Context"></A><A NAME="Artificial_Context" HREF="#TOC_Artificial_Context"></A><A HREF="#TOC_Artificial_Context" NAME="Artificial_Context">Don't
+add Artificial Context</A></H4>
+In an imaginary application called "Gas Station Deluxe", it is a bad idea
+to prefix every class with `<TT>GSD</TT>' if there is a chance that the
+class might later be used in "Inventory Manager" (at which time the prefix
+becomes meaningless).
+
+<P>Likewise, say you invented a `Mailing Address' class in <TT>GSD</TT>'s
+accounting module, and you named it <TT>AccountAddress</TT>. Later, you
+need a mailing address for your customers. Do you use `<TT>AccountAddress</TT>'?
+
+<P>In both these cases, the naming reveals an earlier short-sightedness
+regarding reuse. It shows that there was a failing at the design level
+to look for common classes across an application.
+
+<P>Sadly, this is the standard being used by many Java authors. Even in
+C++, this is becoming increasingly common. We need language support for
+this type of work. I've not had too much trouble with it in Python, but
+I'm watching out. You should also.
+
+<P>The names `<TT>accountAddress</TT>' and `<TT>customerAddress</TT>' are
+fine names for instances of the class.
+<H4>
+<A NAME="Disambig" HREF="#TOC_Disambig"></A><A NAME="Disambig" HREF="#TOC_Disambig"></A><A NAME="Disambig" HREF="#TOC_Disambig"></A><A HREF="#TOC_Disambig" NAME="Disambig">No
+Disambiguation without Differentiation</A></H4>
+This is a problem that usually arises from writing code solely for the
+compiler/interpreter. You can't have the same name referring to two things
+in the same scope, so you change one of them. Well, that's better than
+misspelling one (I've seen code that looks like this was intentional, and
+correcting the spelling prevented compiles due to symbol clashes), but
+there should be some fundamental change in name that make it clear that
+they are different.
+
+<P>Imagine that you have a <TT>Product</TT> class. If you have another
+called <TT>ProductInfo</TT> or <TT>ProductData</TT>, you have failed to
+make the names different. <TT>Info</TT> and <TT>Data</TT> are like "stuff":
+basically meaningless. Likewise, using the words <TT>Class</TT> or <TT>Object</TT>
+in an OO system is so much noise; can you imagine having CustomerObject
+and Customer as two different class names?
+
+<P><TT>MoneyAmount</TT> is no better than `<TT>money</TT>'. <TT>CustomerInfo</TT>
+is no better than <TT>Customer</TT>. The word `<TT>variable</TT>' should
+never appear in a variable name. The word `<TT>table</TT>' should never
+appear in a table name. How is <TT>NameString</TT> better than <TT>Name</TT>?
+Would a <TT>Name</TT> ever be a floating point number? Probably not. If
+so, it breaks an <A HREF="#Avoid_Disinfo">earlier rule about disinformation</A>.
+
+<P>There is an application I know of where this is illustrated. I've changed
+the name of the thing we're getting to protect the guilty, but the exact
+form of the error is:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; getSomething();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; getSomethings();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; getSomethingInfo();</PRE>
+The second tells you there are many of these things. The first lets you
+know you'll get one, but which? The third tells you nothing more than the
+first, but the compiler (and hopefully the author) can tell them apart.
+You are going to have to work harder.
+
+<P>Try to disambiguate in such a way that the reader knows what the different
+versions offer her, instead of merely that they're different.</OL>
+
+<H3>
+<A NAME="Final_Words"></A>Final Words ...</H3>
+The hardest thing about choosing good names is that it requires good descriptive
+skills and a shared cultural background. This is a teaching issue, rather
+than a technical, business, or management issue. As a result many people
+in this field don't do it very well.
+
+<P>Follow some of these rules, and see if you don't improve the readability
+of your code. If you are maintaining someone else's code, make changes
+to resolve these problems. It will pay off in the long run.
+
+<hr>
+<table>
+  <tr>
+    <td width=100>
+        <center>
+            <a href="http://www.oma.com/ottinger">
+            <img src="http://www.oma.com/GIF/images/color_left.gif"><br>Back</a>
+        </center>
+    </td>
+
+    <td width=600>
+        <center>
+            <a href="http://www.oma.com/">
+            <img src="http://www.oma.com/GIF/omaLogo.gif" 
+             border="0" width="63" height="60">
+            <br>Object Mentor</a>
+        </td>
+
+    <td width=100>
+    <center>
+        <!-- img src="http://www.oma.com/GIF/images/color_right.gif"><br>Next</a -->
+    </td>
+
+    </tr>
+</table>
+
+<ADDRESS>
+Archived by Chris Lott.
+<BR>
+<A HREF="index.html">Collection index</A>
+</ADDRESS>
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,944 @@
+ <html>
+<head>
+<title>Tao of Coding by Koen Witters</title>
+
+<body>
+<h1>Tao of Coding by Koen Witters</h1>
+
+<script type="text/javascript">
+<!--
+me = 'pandora'
+fake = 'witters@yeahright.com'
+me = me + '.be'
+me = fake.substring(0, 8) + me
+document.write('<a href="mai' + 'lto:k' + me + '">Contact me</a>')
+//-->
+</script>
+
+    
+<h2>Introduction</h2>
+<p>
+
+  This guide describes the coding style that I
+  developed over the years. My style isn't verry
+  widespeard. As a matter of fact, I don't know anyone
+  who comes even close to the weird way I program. But
+  I like it and want to share it with you anyway (you
+  lucky bastard!). I use it for all kinds of
+  programming languages: C, C++, Java, C#,
+  Python,... .
+</p>
+
+<p>
+  If you just want a quick overview of the style,
+  scroll to the <a href="#vs">bottom</a> of this page
+  and see how some sourcecode was rewritten to my
+  deWiTTERS Style, this should give you an quick idea of how
+  nice it all looks.
+</p>
+
+<h2>Why a Coding Style?</h2>
+
+<p>
+  Every programmer uses some sort of style, some good,
+  some terrible. A coding style can give code a
+  uniform look. It can make algorithms more clear or
+  more complex. There are 2 main reasons for a certain
+  coding style:
+
+  </p><ol>
+    <li>Develop clean and readable code, so when
+    someone else has to dig through it, he can pick it
+    up rather quickly. And more important when you get
+    back to some old code you have written a year ago,
+    you don't start thinking "I can't remember being
+    that wasted...". </li>
+
+    <li>When working in team, it's best that everybody
+    uses the same style so the code has a uniform
+    look.</li>
+  </ol>
+
+  Since I develop most of my code on my own, I don't
+  have to consider the second reason. And since I am
+  very stuburn, I am not going to take over someone
+  elses style. That's why my style is completely
+  optimized to produce clean and readable code.
+<p></p>
+
+
+<h2>The Basic Rules</h2>
+<p>
+  I tried to capture the most important aspects of
+  coding style in the following rules.
+
+</p><ol>
+  <li>All should be as understandable as
+    possible. </li>
+  
+  <li>All should be as readable as possible, except
+    when it would conflict with the previous rule. </li>
+  
+  <li>All should be as simple as possible, except when
+    it would conflict with the previous rules.</li>
+</ol>
+
+  The best way to look at these rules is make everything
+  as simple as possible, unless understandability or
+  readability suffer. Or to quote Albert Einstein: 
+<blockquote>
+  Make everything as simple as possible, but not
+  simpler.
+</blockquote>
+  As a programmer you must always try to respect the
+  above rules, even if you don't follow my style of
+  coding.
+        <p></p>
+
+
+<p>
+  Writing understandable and readable code became
+  possible with the birth of modern programming
+  languages. The days when programming was entirely
+  done in assembly are long past us. Therefore my
+  style tries to be as closely to our natural language
+  as possible. You can almost say my code reads like a
+  book. This is probably also the reason why my code
+  is badly documented. I hardly document at all! I
+  even consider documenting as "bad" (and not in the
+  cool sense of the word). Only when I do something
+  weird I add a comment to explain why. In my humble
+  opinion, comments should never say what your code
+  does, let your code say what it does.
+</p>
+
+<blockquote>
+  Any fool can write code that a computer can
+  understand.  Good programmers write code that humans
+  can understand.
+  <div align="right">Martin Fowler</div>
+</blockquote>
+  
+
+<h2>Identifiers</h2>
+<p>
+  Let's start with the most important topic of coding
+  style: identifiers. All identifiers and the rest of
+  your code and comments should be written in
+  English. It is not unusual that software projects
+  shift from one person to another, from one company
+  to another one, located at the opposite side of the
+  world. So since you never know where your code is
+  going to be next, write all in english.
+</p>
+
+
+<h2>Variables</h2>
+<p>
+  Variable names should be all lowercase with the
+  words seperated by underscores. It resembles our
+  natural writing the most and therefore it is the
+  most readable. The underscores just replace the
+  spaces in our normal way of writing. A variable
+  called "RedPushButton" cannot be read as easely and
+  as fast as "red_push_button", thrust me.
+</p>
+
+<p>
+  If you want the variables to be understandable, you
+  must give them obvious names. It is clear that
+  variables all represent some kind of "object" or
+  "value", so name them accordingly. Please don't
+  waste your time with jkuidsPrefixing vndskaVariables
+  ncqWith ksldjfTheir nmdsadType because it just isn't
+  understandable or clean. If you have a variable
+  "age" it's clear that it's an int or unsigned
+  short. If it is "filename", well then it must be a
+  string. Easy! Sometimes for some variables it is
+  more understandable if you include the type in it,
+  for example for gui buttons like "play_button" or
+  "cancel_button".
+</p>
+
+<p>
+  There are some pre- and postfixes that can increase
+  the readability of your variables. Here follows a
+  list of the most common ones:
+
+</p><dl>
+  <dt>
+    is_, has_
+  </dt>
+  <dd>
+    Use these for all boolean values so there can be
+    no mistake about their type. It also fits nicely
+    in if statements.
+  </dd>
+
+  <dt>
+    the_
+  </dt>
+  <dd>
+    Start all global variables with "the_", which
+    makes it verry clear that there is only one.
+  </dd>
+
+  <dt>
+    _count
+  </dt>
+  <dd>
+    Use _count to represent the number of
+    elements. Don't use plural like "bullets"
+    instead of "bullet_count", as plural will
+    represent arrays.
+  </dd>
+</dl>
+<p></p>
+
+<p>
+  Arrays or other variables that represent lists must
+  be written in plural, like enemies, walls and
+  weapons. However, you don't have to do this for all
+  array types since some arrays don't really represent
+  a list of items. Some examples of these are "char
+  filename[64]" or "byte buffer[128]".
+</p>
+
+
+
+<h2>Const or Final</h2>
+<p>
+  Consts or finals must always be written in
+  UPPERCASE, with the words seperated by underscores
+  to make them readable, like MAX_CHILDREN, X_PADDING
+  or PI. This use is widespread and should be used to
+  avoid any confusion with normal variables.
+</p>
+
+<p>
+  You can use MAX and MIN in your constant names to
+  represent value limits.
+</p>
+
+
+<h2>Types</h2> 
+<p>
+  Types define the classification of variables. It is
+  a rather abstract term, so we cannot use the english
+  language as a reference on how to write them. But we
+  should definitely make an obvious distinction
+  between them and other identifiers. So for types, I
+  use UpperCamelCase. For every class, struct, enum and
+  other things you can put in front of your variable
+  declarations, use UpperCamelCase.
+</p>
+
+<p>
+  Name your types in such a way that you can use the
+  same name for generic variables, for example:
+</p><pre class="example">    HelpWindow help_window;
+    FileHeader file_header;
+    Weapon weapons[ MAX_WEAPONS ];
+</pre>
+<p></p>
+
+<h2>Program Flow</h2>
+<h3>if, else if, else</h3>
+<p>
+  There are a few ways to write if statements. Let's
+  start with the braces. There are 3 mayor ways to place
+  your braces:
+</p><pre class="example">    if(condition)
+
+    if (condition)
+
+    if( condition )
+</pre>
+
+I have never seen an english text where braces are
+placed like the first example, so why should we code
+like that?  The words are just not properly seperated.
+The second example puts the braces with the condition
+instead of the if statement, while the braces are
+actually part of the if statement and not the
+condition, so the last example is the best. The last
+one also has the advantage that one has a better
+overview over the braces structure.
+
+<pre class="example">    if (!((age &gt; 12) &amp;&amp; (age &lt; 18)))
+
+    if( !((age &gt; 12) &amp;&amp; (age &lt; 18)) )
+</pre>
+
+Personally I would write this code differently, but
+it's just to show you an example.
+<p></p>
+
+<p>
+  Now what to do with the curled braces? Don't use
+  them! Unfortunately C, C++, Java or C# don't allow
+  this, only Python does. So we can't just drop them,
+  but what we can do is place our braces so it looks
+  like a Python program, simple and clean:
+
+</p><pre class="example">    if( condition ) {
+        statements;
+    }
+    else if( condition ) {
+        statements;
+    }
+    else {
+        statements;
+    }
+</pre>
+<p></p>
+
+<p>
+  When conditions get too long, you'll have to split
+  the line. Try to split it up before an operator and
+  where conditions are leastly related. Align the next
+  line with the previous one and use indentation to
+  reveal the nested structure. Don't put the curled
+  brace right behind the condition, but in this case
+  put it on the next line to make the subblock clear.
+</p><pre class="example">    if( (current_mayor_version &lt; MIN_MAYOR_VERSION)
+        || (current_mayor_version == MIN_MAYOR_VERSION
+            &amp;&amp; current_minor_version &lt; MIN_MINOR_VERSION) ) 
+    {
+        update();
+    }
+</pre>
+      <p></p>
+
+<p>
+  When there is only one statement after the if
+  condition, you can skip the curled braces, but make
+  sure you put the statement on the next line, unless
+  it is a return or a break.
+</p><pre class="example">    if( bullet_count == 0 )
+        reload();
+
+    if( a &lt; 0 ) return;
+</pre>
+<p></p>
+
+
+<h3>while</h3>
+<p>
+  While loops are written the same as if structures. I
+  use 4 spaces for every indentation.
+
+</p><pre class="example">    while( condition ) {
+        statements;
+    }
+</pre>
+<p></p>
+
+<p>
+  For do-while loops, put the while at the same line
+  as the closing bracket. This way there is no
+  confusion if it is a while at the end or the
+  beginning of a subblock.
+</p><pre class="example">    do {
+        statements;
+    } while( condition )
+</pre>
+<p></p>
+
+<h3>for</h3>
+<p>
+  for-loops' one and only purpose in life is
+  iteration. It's what they do! for-loops can always
+  be replaced with while-loops, but please don't do
+  that. When you iterate over some elements, try using
+  'for', and if it really doesn't work out, use a
+  'while'. The 'for' structure is pretty straight
+  forward:
+</p><pre class="example">    for( int i = 0; i &lt; MAX_ELEMENTS; i++ ) {
+        statements;
+    }
+</pre>
+
+  Use i, j, k, l, m for iterating over numbers and
+  'it' for iterating over objects.
+<p></p>
+
+<h3>switch</h3>
+<p>
+  Switch statements have a similar structure to if and
+  while structures. The only thing you have to
+  consider is the extra indentation. Also leave an
+  extra space right behind the break.
+
+</p><pre class="example">    switch( variable ) {
+        case 0:
+            statements;
+            break;
+
+        case 1:
+            statements;
+            break;
+
+        default:
+            break;
+    }
+</pre>
+
+<p></p>
+
+
+<h2>Functions</h2>
+<p>
+  Functions do things, and their name should make this
+  clear. Therefore, always include a verb in it, no
+  exceptions! Use the same naming as with variables,
+  this means all lowercase words seperated by
+  underscores. This allows you to make nice little
+  sentences in your code that everyone can understand.
+</p>
+
+<p>
+  Also make sure the function does what the name says
+  it does, no more, no less. So if you have a function
+  called "load_resources", make sure it only loads
+  resources and doesn't do any other init
+  stuff. Sometimes you get tempted by quickly
+  initializing things in the load_resources because
+  you already call it from a higher level, but this
+  will only get you into trouble later. My deWiTTERS
+  Style uses verry few comments, so a function should
+  definitely do what it's name says it does. And when
+  a function returns something, make sure it is clear
+  from it's name what it returns.
+</p>
+
+<p>
+  Some functions come in "yin and yang" pairs, and you
+  should be consistent with your naming. Some examples
+  are get/set, add/remove, insert/delete,
+  create/destroy, start/stop, increment/decrement,
+  new/old, begin/end, first/last, up/down, next/prev,
+  open/close, load/save, show/hide, enable/disable,
+  resume/suspend, etc.
+</p>
+
+<p>
+  Here follows a simple function call. Use a space
+  right after the opening brace and right before the
+  closing brace, just as with if structures. Also
+  leaver a space right after the comma, like done in
+  the english language.
+
+</p><pre class="example">    do_something( with, these, parameters );
+</pre>
+<p></p>
+
+<p>
+  When function calls get too long, you'll
+  have to split it up in several lines. Align the next
+  lines with the previous so the structure gets
+  obvious, and break after the comma.
+</p><pre class="example">    HWND hwnd = CreateWindow( "MyWin32App", "Cool application",
+                              WS_OVERLAPPEDWINDOW, 
+                              my_x_pos, my_y_pos, 
+                              my_width, my_height
+                              NULL, NULL, hInstance, NULL );
+</pre>
+      <p></p>
+
+
+<h3>Definition</h3>
+<p>
+  Here follows an example of a function definition:
+
+</p><pre class="example">    bool do_something_today( with, these, parameters ) {
+        get_up();
+        go_to( work, car );
+        work();
+        go_to( home, car );
+        sleep();
+
+        return true;
+    }
+</pre>
+
+Make sure your functions don't get too long. Or to
+quote Linus: 
+<blockquote>
+  The maximum length of a function is inversely
+  proportional to the complexity and indentation level
+  of that function. So, if you have a conceptually
+  simple function that is just one long (but simple)
+  case-statement, where you have to do lots of small
+  things for a lot of different cases, it's ok to have
+  a longer function.
+
+  However, if you have a complex function, and you
+  suspect that a less-than-gifted first-year
+  high-school student might not even understand what
+  the function is all about, you should adhere to the
+  maximum limits all the more closely. Use helper
+  functions with descriptive names (you can ask the
+  compiler to in-line them if you think it's
+  performance-critical, and it will probably do a
+  better job of it that you would have done).
+</blockquote>
+<p></p>
+
+<h2>Classes</h2>
+<p>
+  For the naming of classes I use the same
+  UpperCamelCase as for types. Don't bother putting a
+  'C' as a prefix for every class, it's just a waste of
+  bytes and time.
+</p>
+
+<p>
+  As for everything, give classes clear and obvious
+  names. So if a class is a child of class "Window",
+  name it "MainWindow".
+</p><p>
+
+</p><p>
+  When creating a new class, remember that
+  everyting starts from data structures.
+  </p><blockquote>
+  Data dominates. If you've chosen the right data
+  structures and organized things well, the algorithms
+  will almost always be self-evident. Data structures,
+  not algorithms, are central to programming.
+  <div align="right">Fred Brooks</div>
+  </blockquote>
+
+<p></p>
+
+
+<h3>Inheritence</h3> 
+<p>
+  "Is a" relationship should be modelled by inheritance,
+  "has a" should be modelled by containment. Make sure
+  you don't overuse inheritence, it is a great
+  technique, but only when applied properly.
+</p>
+
+<h3>Members</h3>
+<p>
+  You should definitely make a distinction between
+  members and normal variables. If you don't do this,
+  you'll regret it later on. Some
+  possibilities to name them are m_Member or
+  fMember. I prefer to use my_member for non static
+  members and our_member for statics. This way you get
+  nice sentenses in you method bodies like
+
+</p><pre class="example">    if( my_help_button.is_pressed() ) {
+        our_screen_manager.go_to( HELP_SCREEN );
+    }
+</pre>
+For the rest everything that applies to variable
+naming also applies to members. There is one problem
+that I was unable to fix as of yet, and that is with boolean
+members. Remember that boolean values must always have
+"is" or "has" in them. When combining this with "my_"
+you get crazy stuff like "my_is_old" and
+"my_has_childeren". I haven't found the perfect
+solution for this yet, so if you have any suggestions,
+please mail me!
+<p></p>
+
+<p>
+  You shouldn't declare members of a class as
+  public. Sometimes it seems quicker to
+  implement, and therefore better, but oh boy are you
+  wrong (as I was many times before). You should
+  pass through public methods to get to the members of
+  a class.
+</p>
+
+<h3>Methods</h3>
+<p>
+  Everything that applies to functions also applies to
+  methods, so always include a verb in the name. Make
+  sure you don't include the name of the class in your
+  method names.
+
+
+</p><h2>Code Structure</h2>
+<p>
+  Align simular lines to give your code a better overview, like:
+</p><pre class="example">    int object_verts[6][3] = {
+        {-100,  0, 100}, {100, 0,  100}, { 100, 0, -100},
+        {-100, 11, 100}, (100, 0, -100}, {-100, 0, -100}
+    };
+
+    RECT rect;
+    rect.left   = x;
+    rect.top    = y;
+    rect.right  = rect.left  + width;
+    rect.bottom = rect.right + height;
+</pre>
+
+<p></p>
+<p>
+  Never put multiple statements on the same line
+  unless you have a good reason for it. One or those reason
+  could be that simular lines can be put right after
+  each other for clarity, like:
+</p><pre class="example">    if( x &amp; 0xff00 ) { exp -= 16; x &gt;&gt;= 16; }
+    if( x &amp; 0x00f0 ) { exp -=  4; x &gt;&gt;=  4; }
+    if( x &amp; 0x000c ) { exp -=  2; x &gt;&gt;=  2; }
+</pre>
+<p></p>
+
+<p>
+  Related variables of the same type can be declared
+  in a common statement. This makes the code more compact and provides a
+  nicer overview. But never declare unrelated variables in
+  the same statement!
+</p><pre class="example">    int x, y;
+    int length;
+</pre>
+<p></p>
+
+
+<h2>Namespaces, packages</h2> Namespaces or packages
+should be written in lower case, without any
+underscores. Use a namespace for every module or layer
+you write so that the different layers become clear in
+the code.
+
+<h2>Design</h2> 
+<p>
+  When I start a project I don't do that much upfront
+  design. I just have a global structure in my mind
+  and start coding. Code evolves, whether you like it
+  or not, so give it the chance to evolve.
+</p>
+
+<p>
+  Evolving code means reworking bad code, and after
+  some programming your code will turn bad. I use
+  following rules to keep a good structure in the
+  code.
+  </p><ol>
+    <li>
+      When a functions gets too big, divide the
+      problem in some smaller helper functions.
+    </li>
+    <li>
+      If a class contains too many members and
+      methods, split a part of the class up in a
+      helper class and include the helper class in
+      your main class (don't use inheritence for
+      this!). Make sure your helper class doesn't
+      reference or use the main class for anything.
+    </li>
+    <li>
+      When a module contains too many classes, divide
+      it up into more modules where the higer level
+      module make use of the lower level module.
+    </li>
+    <li>
+      When you are done implementing a feature or
+    fixing a bug, read over the entire files you have
+    changed to make sure everything is in the most
+    perfect state.
+      </li>
+  </ol>
+
+<p>
+  Some projects may become big, verry big. A way to
+  cope with this increasing complexity is splitting
+  your project up into different layers. In practice,
+  layers are implemented as namespaces. Lower layers
+  are used by the higher layers. So every layer
+  provides functionality to the above, and the topmost
+  provides functionality to the user.
+</p>
+
+
+  
+
+<h2>Files</h2>
+<p>
+  Files should be named after the class they
+  contain. Don't put more than one class in a file, so
+  you know where to look when you search a specific
+  class. The directory structure should represent the
+  namespaces.
+</p>
+
+
+<h3>.h file structure</h3>
+<p>
+  C or C++ header files show the interface of the
+  implementation. This is crucial knowledge when
+  designing the layout of a .h file. In a class, first
+  define the "public" interface that can be used by
+  other classes, then define all "protected" methods
+  and members. This way the most important information
+  for people using the class is shown first. I don't
+  use private methods or members so all members are
+  grouped at the bottom of the class declaration. This
+  way you have a quick overview of the contents of the
+  class at the bottom. Group the methods together by
+  their meaning.
+</p>
+
+
+<pre class="example">    /*
+     * license header
+     */
+
+    #ifndef NAMESPACE_FILENAME_H
+    #define NAMESPACE_FILENAME_H
+
+    #include &lt;std&gt;
+
+    #include "others.h"
+
+
+    namespace dewitters {
+
+        class SomeClass : public Parent {
+            public:
+                Constructor();
+                ~Destructor();
+
+                void public_methods();
+        
+            protected:
+                void protected_methods();
+
+                int     my_fist_member;
+                double  my_second_member;
+
+                const static int MAX_WIDTH;
+        };
+
+        extern SomeClass the_some_class;
+    }
+
+    #endif
+</pre>
+
+<h3>.java .cs file structure</h3>
+<p>
+  .java or .cs files don't provide an interface to the
+  class, they just contain the implementation. Since
+  data structures are more important than algorithms,
+  define your members before your methods. This way
+  when you browse through the code, you have a quick
+  impression of the class through its data members.
+  Simular methods should be grouped together.
+</p>
+
+<p>
+  Here follows a sketchy overview of a .java or .cs
+  file:
+</p><pre class="example">    /*
+     * license header
+     */
+    package com.dewitters.example;
+
+    import standard.modules.*;
+
+    import custom.modules.*;
+
+
+    class SomeClass extends Parent {
+        public final int MAX_WIDTH = 100;
+
+        protected int     my_first_member;
+        protected double  my_second_member;
+
+        Constructor() {
+        }
+
+        Methods() {
+        }
+    }
+
+</pre>
+
+<p></p>
+
+
+<h2>Jokes</h2>
+<p>
+  Some people like to put little jokes in their code,
+  while others hate this kind of funny stuff. In my
+  opinion you can use them as long as the joke doesn't
+  interfere with the readability of the code or
+  execution of the program. 
+</p>
+
+<a name="vs"></a>
+<h2>deWiTTERS Style vs. others</h2>
+<p>
+  Here I will present you with some live action
+  code. I stole some code from others and rewrote it
+  to my style. Decide for yourself if my style is
+  better or not. In my opinion you can read faster
+  through my code since it is shorter, and all
+  identifiers are carefully named. 
+
+</p>
+
+  <p>
+  If you think you have seen code that can beat the
+  crap out of my style, just just mail it to
+<script type="text/javascript">
+<!--
+me = 'pandora'
+fake = 'witters@yeahright.com'
+me = me + '.be'
+me = fake.substring(0, 8) + me
+document.write('<a href="mai' + 'lto:k' + me + '">me</a>.')
+//-->
+</script>
+
+  and I will write it in the most extraordinary
+  'deWiTTERS' style and post it here.
+</p>
+
+<h3>Indian Hill C Style</h3>
+
+<pre>/*
+ *skyblue()
+ *
+ *Determine if the sky is blue.
+ */
+
+int/* TRUE or FALSE */
+skyblue()
+
+{
+extern int hour;
+
+if (hour &lt; MORNING || hour &gt; EVENING)
+return(FALSE);/* black */
+else
+return(TRUE);/* blue */
+}
+
+/*
+ *tail(nodep)
+ *
+ *Find the last element in the linked list
+ *pointed to by nodep and return a pointer to it.
+ */
+
+NODE */* pointer to tail of list */
+tail(nodep)
+
+NODE *nodep;/* pointer to head of list */
+
+{
+register NODE *np;/* current pointer advances to NULL */
+register NODE *lp;/* last pointer follows np */
+
+np = lp = nodep;
+while ((np = np-&gt;next) != NULL)
+lp = np;
+return(lp);
+}
+
+</pre>
+
+<h4>Rewritten to deWiTTERS Style:</h4>
+<pre class="example">bool sky_is_blue() {
+    return the_current_hour &gt;= MORNING &amp;&amp; the_current_hour &lt;= EVENING;
+}
+
+Node* get_tail( Node* head ) {
+    Node* tail;
+    tail = NULL;
+
+    Node* it;
+    for( it = head; it != NULL; it = it-&gt;next ) {
+        tail = it;
+    }
+
+    return tail;
+}
+
+</pre>
+
+
+<h3>"Commenting Code" from Ryan Campbell</h3>
+<pre>/*
+ * Summary:     Determine order of attacks, and process each battle
+ * Parameters:  Creature object representing attacker 
+ *              | Creature object representing defender
+ * Return:      Boolean indicating successful fight
+ * Author:      Ryan Campbell
+ */
+function beginBattle(attacker, defender) {
+    var isAlive;    // Boolean inidicating life or death after attack
+    var teamCount;  // Loop counter
+
+    // Check for pre-emptive strike
+    if(defender.agility &gt; attacker.agility) {
+        isAlive = defender.attack(attacker);
+    }
+
+    // Continue original attack if still alive
+    if(isAlive) {
+        isAlive = attacker.attack(defender);
+    }
+
+    // See if any of the defenders teammates wish to counter attack
+    for(teamCount = 0; teamCount &lt; defender.team.length; i++) {
+        var teammate = defender.team[teamCount];
+        if(teammate.counterAttack = 1) {
+            isAlive = teammate.attack(attacker);
+        }
+    }   
+
+    // TODO: Process the logic that handles attacker or defender deaths
+
+    return true;
+} // End beginBattle
+</pre>
+
+<h4>Rewritten to deWiTTERS Style:</h4>
+<pre class="example">function handle_battle( attacker, defender ) {
+    if( defender.agility &gt; attacker.agility ) {
+        defender.attack( attacker );
+    }
+
+    if( attacker.is_alive() ) {
+        attacker.attack( defender );
+    }
+
+    var i;
+    for( i = 0; i &lt; defender.get_team().length; i++ ) {
+        var teammate = defender.get_team()[ i ];
+        if( teammate.has_counterattack() ) {
+            teammate.attack( attacker );
+        }
+    }
+
+    // TODO: Process the logic that handles attacker or defender deaths
+}
+</pre>
+
+      </center>
+      
+<br><br><br>
+
+<hr color="#ffffff">
+
+<p align="right">
+Copyright (c) 2005 Koen Witters<br>
+<!-- Created: Sat Sep 11 17:04:29 CEST 2004 -->
+<!-- hhmts start -->
+Last modified: Tue Oct 25 21:20:13 CEST 2005
+<!-- hhmts end -->
+</p>
+
+<hr>
+Archived with explicit permission from Koen Witters 
+by Chris Lott on 1 Nov 2005. 
+</body></html>

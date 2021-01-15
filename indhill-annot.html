@@ -1,0 +1,1192 @@
+<HTML>
+<HEAD>
+<TITLE>indhill-annot.ms.tbl</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H1>
+Indian Hill C Style and Coding Standards
+<BR>
+as amended for U of T Zoology
+Unix
+</H1>
+<CENTER>
+L.W. Cannon	<BR>
+R.A. Elliott	<BR>
+L.W. Kirchhoff	<BR>
+J.H. Miller	<BR>
+J.M. Milner	<BR>
+R.W. Mitze	<BR>
+E.P. Schan	<BR>
+N.O. Whittington<BR>
+<ADDRESS>
+Bell Labs
+</ADDRESS>
+</CENTER>
+<P>
+<CENTER>
+Henry Spencer
+<BR>
+<ADDRESS>
+Zoology Computer Systems
+University of Toronto
+</ADDRESS>
+</CENTER>
+<H2>Abstract</H2>
+<BLOCKQUOTE>
+<P>
+This document is an annotated
+(by the last author) version of the original paper of the same title.
+It describes a set of coding standards and recommendations
+which are local standards for officially-supported Unix programs.
+The scope is coding style, not functional organization.
+</P>
+</BLOCKQUOTE>
+<H2>
+1. Introduction
+</H2>
+<P>
+This document is a result of a committee formed at Indian Hill to establish
+a common set of coding standards and recommendations for the Indian Hill
+community.
+The scope of this work is the coding style,
+not the functional organization of programs.
+The standards in this document are not specific to ESS programming
+only (footnote 1).
+We have tried to combine previous work [1,6] on C style into a uniform
+set of standards that should be appropriate for any project using C
+(footnote 2). 
+</UL>
+<H2>
+2. File Organization
+</H2>
+<P>
+A file consists of various sections that should be separated by
+several blank lines.
+Although there is no maximum length requirement for source files,
+files with more than about 1500 lines are cumbersome to deal with.
+The editor may not have enough temp space to edit the file,
+compilations will go slower,
+etc.
+Since most of us use 300 baud terminals,
+entire rows of asterisks, for example, should be discouraged (footnote 3).
+Also lines longer than 80 columns are not handled well by all terminals
+and should be avoided if possible (footnote 4).
+<P>
+The suggested order of sections for a file is as follows:
+</P>
+<UL>
+<LI>
+Any header file includes should be the first thing in the file.
+<LI>
+Immediately after the includes (footnote 5) should be a prologue that
+tells what is in that file.
+A description of the purpose of the objects in the files (whether
+they be functions, external data declarations or definitions, or
+something else) is more useful than a list of the object names.
+<LI>
+Any typedefs and defines that apply to the file as a whole are next.
+<LI>
+Next come the global (external) data declarations.
+If a set of defines applies to a particular piece of global data
+(such as a flags word), the defines should be immediately after
+the data declaration (footnote 6).
+<LI>
+The functions come last (footnote 7).
+</UL>
+<H2>
+2.1.
+File Naming Conventions
+</H2>
+<P>
+Unix
+requires certain suffix conventions for names of files to be processed
+by the <I>cc</I> command [5] (footnote 8).
+The following suffixes are required:
+</P>
+<UL>
+<LI>
+C source file names must end in <I>.c</I>
+<LI>
+Assembler source file names must end in <I>.s</I>
+</UL>
+<P>
+In addition the following conventions are universally followed:
+<LI>
+Relocatable object file names end in <I>.o</I>
+<LI>
+Include header file names end in <I>.h</I>&#160; (footnote 9) or <I>.d</I>
+<LI>
+Ldp (footnote 10) specification file names end in <I>.b</I>
+<LI>
+Yacc source file names end in <I>.y</I>
+<LI>
+Lex source file names end in <I>.l</I>
+</UL>
+<H2>
+3.
+Header Files
+</H2>
+<P>
+Header files are files that are included in other files prior to compilation
+by the C preprocessor.
+Some are defined at the system level like <I>stdio.h</I> which must be included
+by any program using the standard I/O library.
+Header files are also used to contain data declarations and defines
+that are needed by more than one program (footnote 11).
+Header files should be functionally organized,
+i.e., declarations for separate subsystems should be in separate header files.
+Also, if a set of declarations is likely to change when code is
+ported from one machine to another, those declarations should be
+in a separate header file.
+</UL>
+<P>
+Header files should not be nested.
+Some objects like typedefs and initialized data definitions cannot be
+seen twice by the compiler in one compilation.
+On non-Unix
+systems this is also true of uninitialized declarations without the
+<I>extern</I> keyword (footnote 12).
+This can happen if include files are nested and will cause the
+compilation to fail.
+</UL>
+<H2>
+4.
+External Declarations
+</H2>
+<P>
+External declarations should begin in column 1.
+Each declaration should be on a separate line.
+A comment describing the role of the object being declared should be
+included, with the exception that a list of defined constants do not
+need comments if the constant names are sufficient documentation.
+The comments should be tabbed so that they line up underneath each
+other (footnote 13).
+Use the tab character (CTRL I if your terminal doesn't have a separate key)
+rather than blanks.
+For structure and union template declarations, each element should be alone
+on a line with a comment describing it.
+The opening brace (&#160;{&#160;) should be on the same line as the structure
+tag, and the closing brace should be alone on a line in column 1, i.e.
+<PRE>
+struct boat {
+	int wllength;	/* water line length in feet */
+	int type;	/* see below */
+	long sarea;	/* sail area in square feet */
+};
+/*
+ * defines for boat.type (footnote 14)
+ */
+#define	KETCH	1
+#define	YAWL	2
+#define	SLOOP	3
+#define	SQRIG	4
+#define	MOTOR	5
+</PRE>
+If an external variable is initialized the equal sign should not be
+omitted (footnote 15). 
+<PRE>
+int x = 1;
+char *msg = &quot;message&quot;;
+struct boat winner = {
+	40,	/* water line length */
+	YAWL,
+	600l	/* sail area */
+};
+</PRE>
+(footnote 16)
+</UL>
+<H2>
+5.
+Comments
+</H2>
+<P>
+Comments that describe data structures, algorithms, etc., should be
+in block comment form with the opening /* in column one, a * in column
+2 before each line of comment text (footnote 17), and the closing */
+in columns 2-3. 
+<PRE>
+/*
+ *	Here is a block comment.
+ *	The comment text should be tabbed over (footnote 18)
+ *	and the opening /* and closing star-slash
+ *	should be alone on a line.
+ */
+</PRE>
+</UL>
+<P>
+Note that <I>grep ^.\*</I> will catch all block comments in the file.
+In some cases, block comments inside a function are appropriate, and
+they should be tabbed over to the same tab setting as the code that
+they describe.
+Short comments may appear on a single line indented over to the tab
+setting of the code that follows.
+<PRE>
+if (argc &gt; 1) {
+	/* Get input file from command line. */
+	if (freopen(argv[1], &quot;r&quot;, stdin) == NULL)
+		error(&quot;can't open %s\n&quot;, argv[1]);
+}
+</PRE>
+</P>
+<P>
+Very short comments may appear on the same line as the code they describe,
+but should be tabbed over far enough to separate them from the statements.
+If more than one short comment appears in a block of code they should all
+be tabbed to the same tab setting.
+<PRE>
+if (a == 2)
+	return(TRUE);		/* special case */
+else
+	return(isprime(a));	/* works only for odd a */
+</PRE>
+</P>
+<H2>
+6.
+Function Declarations
+</H2>
+<P>
+Each function should be preceded by a block comment prologue that gives
+the name and a short description of what the function does (footnote 19).
+If the function returns a value, the type of the value returned should
+be alone on a line in column 1 (do not default to <I>int</I>).
+If the function does not return a value then it should not be given
+a return type.
+If the value returned requires a long explanation, it should be given
+in the prologue;  otherwise it can be on the same line as the return
+type, tabbed over.
+The function name and formal parameters should be alone on a line
+beginning in column 1.
+Each parameter should be declared (do not default to <I>int</I>),
+with a comment on a single line.
+The opening brace of the function body should also be alone on a line
+beginning in column 1.
+The function name, argument declaration list, and opening brace
+should be separated by a blank line (footnote 20).
+All local declarations and code within the function body should be
+tabbed over at least one tab.
+</UL>
+<P>
+If the function uses any external variables, these should have their
+own declarations in the function body using the <I>extern</I> keyword.
+If the external variable is an array the array bounds must be repeated
+in the <I>extern</I> declaration.
+There should also be <I>extern</I> declarations for all functions called
+by a given function.
+This is particularly beneficial to someone picking up code written
+by another.
+If a function returns a value of type other than <I>int</I>,
+it is required by the compiler that such functions be declared before
+they are used.
+Having the <I>extern</I> delcaration in the calling function's
+declarations section avoids all such problems (footnote 21).
+</UL>
+<P>
+In general each variable declaration should be on a separate line with
+a comment describing the role played by the variable in the function.
+If the variable is external or a parameter of type pointer which is
+changed by the function, that should be noted in the comment.
+All such comments for parameters and local variables should be
+tabbed so that they line up underneath each other.
+The declarations should be separated from the function's statements
+by a blank line.
+</P>
+<P>
+A local variable should not be redeclared in nested blocks (footnote 22).
+Even though this is valid C, the potential confusion is enough
+that
+<I>lint</I> will complain about it when given the <B>-h</B> option.
+</UL>
+<H2>
+6.1.
+Examples
+</H2>
+<P>
+<PRE>
+/*
+ *	skyblue()
+ *
+ *	Determine if the sky is blue.
+ */
+
+int			/* TRUE or FALSE */
+skyblue()
+
+{
+	extern int hour;
+
+	if (hour &lt; MORNING || hour &gt; EVENING)
+		return(FALSE);	/* black */
+	else
+		return(TRUE);	/* blue */
+}
+</PRE>
+<PRE>
+/*
+ *	tail(nodep)
+ *
+ *	Find the last element in the linked list
+ *	pointed to by nodep and return a pointer to it.
+ */
+
+NODE *			/* pointer to tail of list */
+tail(nodep)
+
+NODE *nodep;		/* pointer to head of list */
+
+{
+	register NODE *np;	/* current pointer advances to NULL */
+	register NODE *lp;	/* last pointer follows np */
+
+	np = lp = nodep;
+	while ((np = np-&gt;next) != NULL)
+		lp = np;
+	return(lp);
+}
+</PRE>
+</P>
+<H2>
+7.
+Compound Statements
+</H2>
+<P>
+Compound statements are statements that contain lists of statements
+enclosed in braces.
+The enclosed list should be tabbed over one more than the tab position
+of the compound statement itself.
+The opening left brace should be at the end of the line beginning the
+compound statement and the closing right brace should be alone on a
+line, tabbed under the beginning of the compound statement.
+Note that the left brace beginning a function body is the only occurrence
+of a left brace which is alone on a line.
+</P>
+<H2>
+7.1.
+Examples
+</H2>
+<P>
+<PRE>
+if (expr) {
+	statement;
+	statement;
+}
+
+if (expr) {
+	statement;
+	statement;
+} else {
+	statement;
+	statement;
+}
+</PRE>
+Note that the right brace before the <I>else</I> and the right brace
+before the <I>while</I> of a <I>do-while</I> statement (below) are the
+only places where a right braces appears that is not alone on a line.
+<PRE>
+for (i = 0; i &lt; MAX; i++) {
+	statement;
+	statement;
+}
+
+while (expr) {
+	statement;
+	statement;
+}
+
+do {
+	statement;
+	statement;
+} while (expr);
+
+switch (expr) {
+case ABC:
+case DEF:
+	statement;
+	break;
+case XYZ:
+	statement;
+	break;
+default:
+	statement;
+	break (footnote 23);
+}
+</PRE>
+Note that when multiple <I>case</I> labels are used, they are placed
+on separate lines.
+The fall through feature of the C <I>switch</I> statement should
+rarely if ever be used when code is executed before falling through
+to the next one.
+If this is done it must be commented for future maintenance.
+<PRE>
+if (strcmp(reply, &quot;yes&quot;) == EQUAL) {
+	statements for yes
+	...
+} else if (strcmp(reply, &quot;no&quot;) == EQUAL) {
+	statements for no
+	...
+} else if (strcmp(reply, &quot;maybe&quot;) == EQUAL) {
+	statements for maybe
+	...
+} else {
+	statements for none of the above
+	...
+}
+</PRE>
+The last example is a generalized <I>switch</I> statement and the
+tabbing reflects the switch between exactly one of several
+alternatives rather than a nesting of statements.
+</UL>
+<H2>
+8.
+Expressions
+</H2>
+<H2>
+8.1.
+Operators
+</H2>
+<P>
+The old versions of equal-ops =+, =-, =*, etc. should not be used.
+The preferred use is +=, -=, *=, etc.
+All binary operators except . and -&gt; should be separated from their
+operands by blanks (footnote 24).
+In addition, keywords that are followed by expressions in parentheses
+should be separated from the left parenthesis by a blank (footnote 25).
+Blanks should also appear after commas in argument lists to help
+separate the arguments visually.
+On the other hand, macros with arguments and function calls should
+not have a blank between the name and the left parenthesis.
+In particular, the C preprocessor requires the left parenthesis
+to be immediately after the macro name or else the argument list
+will not be recognized.
+Unary operators should not be separated from their single operand.
+Since C has some unexpected precedence rules,
+all expressions involving mixed operators should be fully parenthesized.
+</UL>
+<P>
+<I>Examples</I>
+<PRE>
+a += c + d;
+a = (a + b) / (c * d);
+strp-&gt;field = str.fl - ((x &amp; MASK) &gt;&gt; DISP);
+while (*d++ = *s++)
+	;	/* EMPTY BODY */
+</PRE>
+</P>
+<H2>
+8.2.
+Naming Conventions
+</H2>
+<P>
+Individual projects will no doubt have their own naming conventions.
+There are some general rules however.
+</P>
+<UL>
+<LI>
+An initial underscore should not be used for any user-created names
+(footnote 26). 
+Unix
+uses it for names that the user should not have to know (like
+the standard I/O library) (footnote 27).
+<LI>
+Macro names, <I>typedef</I> names, and <I>define</I> names should be
+all in CAPS.
+<LI>
+Variable names, structure tag names, and function names should be in
+lower case (footnote 28).
+Some macros (such as <I>getchar</I> and <I>putchar</I>) are in lower case
+since they may also exist as functions.
+Care is needed when interchanging macros and functions since functions
+pass their parameters by value whereas macros pass their arguments by
+name substitution (footnote 29).
+</UL>
+<H2>
+8.3.
+Constants
+</H2>
+<P>
+Numerical constants should not be coded directly (footnote 30).
+The <I>define</I> feature of the C preprocessor should be used to
+assign a meaningful name.
+This will also make it easier to administer large programs since the
+constant value can be changed uniformly by changing only the <I>define</I>.
+The enumeration data type is the preferred way to handle situations where
+a variable takes on only a discrete set of values, since additional type
+checking is available through <I>lint</I>.
+</UL>
+<P>
+There are some cases where the constants 0 and 1 may appear as themselves
+instead of as defines.
+For example if a <I>for</I> loop indexes through an array, then
+<PRE>
+for (i = 0; i &lt; ARYBOUND; i++)
+</PRE>
+is reasonable while the code
+<PRE>
+fptr = fopen(filename, &quot;r&quot;);
+if (fptr == 0)
+	error(&quot;can't open %s\n&quot;, filename);
+</PRE>
+is not.
+In the last example the defined constant <I>NULL</I> is available as
+part of the standard I/O library's header file <I>stdio.h</I> and
+must be used in place of the 0.
+</P>
+<H2>
+9.
+Portability
+</H2>
+<P>
+The advantages of portable code are well known.
+This section gives some guidelines for writing portable code,
+where the definition of portable is taken to mean that a source file
+contains portable code if it can be compiled and executed on different
+machines with the only source change being the inclusion of possibly
+different header files.
+The header files will contain defines and typedefs that may vary from
+machine to machine.
+Reference [1] contains useful information on both style and portability.
+Many of the recommendations in this document originated in [1].
+The following is a list of pitfalls to be avoided and recommendations
+to be considered when designing portable code:
+</P>
+<UL>
+<LI>
+First, one must recognize that some things are inherently non-portable.
+Examples are code to deal with particular hardware registers such as
+the program status word,
+and code that is designed to support a particular piece of hardware
+such as an assembler or I/O driver.
+Even in these cases there are many routines and data organizations
+that can be made machine independent.
+It is suggested that source file be organized so that the machine-independent
+code and the machine-dependent code are in separate files.
+Then if the program is to be moved to a new machine,
+it is a much easier task to determine what needs to be changed
+(footnote 31). 
+It is also possible that code in the machine-independent files
+may have uses in other programs as well.
+<LI>
+Pay attention to word sizes.
+The following sizes apply to basic types in C for the machines
+that will be used most at IH (footnote 32):
+<BR>
+<PRE>
+                  type    pdp11   3B   IBM
+                  ________________________
+                  char        8    8     8
+                  short      16   16    16
+                  int        16   32    32
+                  long       32   32    32
+</PRE>
+In general if the word size is important, <I>short</I> or <I>long</I>
+should be used to get 16 or 32 bit items on any of the above machines
+(footnote 33). 
+If a simple loop counter is being used where either 16 or 32 bits will
+do, then use <I>int</I>, since it will get the most efficient (natural)
+unit for the current machine (footnote 34).
+<LI>
+Word size also affects shifts and masks.
+The code
+<PRE>
+x &amp;= 0177770
+</PRE>
+will clear only the three rightmost bits of an <I>int</I> on a PDP11.
+On a 3B it will also clear the entire upper halfword.
+Use
+<PRE>
+x &amp;= ~07
+</PRE>
+instead which works properly on all machines (footnote 35).
+<LI>
+Code that takes advantage of the two's complement representation of
+numbers on most machines should not be used.
+Optimizations that replace arithmetic operations with equivalent
+shifting operations are particularly suspect.
+You should weigh the time savings with the potential for obscure
+and difficult bugs when your code is moved, say, from a 3B to a 1A.
+<LI>
+Watch out for signed characters.
+On the PDP-11, characters are sign extended when used in expressions,
+which is not the case on any other machine.
+In particular, <I>getchar</I> is an integer-valued function (or macro)
+since the value of <I>EOF</I> for the standard I/O library is -1,
+which is not possible for a character on the 3B or IBM (footnote 36).
+<LI>
+The PDP-11 is unique among processors on which C exists in that the
+bytes are numbered from right to left within a word.
+All other machines (3B, IBM, Interdata 8/32, Honeywell) number the
+bytes from left to right (footnote 37).
+Hence any code that depends on the left-right orientation of bits
+in a word deserves special scrutiny.
+Bit fields within structure members will only be portable so long as
+two separate fields are never concatenated and treated as a unit
+(footnote 38). 
+[1,3]
+<LI>
+Do not default the boolean test for non-zero, i.e.
+<PRE>
+if (f() != FAIL)
+</PRE>
+is better than
+<PRE>
+if (f())
+</PRE>
+even though <I>FAIL</I> may have the value 0 which is considered to mean
+false by C (footnote 39).
+This will help you out later when somebody decides that a failure return
+should be -1 instead of 0&#160; (footnote 40).
+<LI>
+Be suspicious of numeric values appearing in the code.
+Even simple values like 0 or 1 could be better expressed using
+defines like <I>FALSE</I> and <I>TRUE</I> (see previous item) (footnote 41).
+Any other constants appearing in a program would be better expressed
+as a defined constant.
+This makes it easier to change and also easier to read.
+<LI>
+Become familiar with existing library functions and defines (footnote 42).
+You should not be writing your own string compare routine, or making
+your own defines for system structures (footnote 43).
+Not only does this waste your time, but it prevents your program
+from taking advantage of any microcode assists or other
+means of improving performance of system routines (footnote 44).
+<LI>
+Use <I>lint</I>.
+It is a valuable tool for finding machine-dependent constructs as well
+as other inconsistencies or program bugs that pass the compiler (footnote 45).
+</UL>
+<H2>
+10.
+Lint
+</H2>
+<P>
+<I>Lint</I> is a C program checker [2] that examines C source files to
+detect and report type incompatibilities, inconsistencies between
+function definitions and calls,
+potential program bugs, etc.
+It is expected that projects will require programs to use <I>lint</I>
+as part of the official acceptance procedure (footnote 46).
+In addition, work is going on in department 5521 to modify <I>lint</I>
+so that it will check for adherence to the standards in this document.
+</UL>
+<P>
+It is still too early to say exactly which of the standards given here
+will be checked by <I>lint</I>.
+In some cases such as whether a comment is misleading or incorrect there
+is little hope of mechanical checking.
+In other cases such as checking that the opening brace of a function
+body is alone on a line in column 1, the test has already been added
+(footnote 47). 
+Future bulletins will be used to announce new additions to <I>lint</I>
+as they occur.
+</UL>
+<P>
+It should be noted that the best way to use <I>lint</I> is not as a barrier
+that must be overcome before official acceptance of a program, but
+rather as a tool to use whenever major changes or additions to the
+code have been made.
+<I>Lint</I>
+can find obscure bugs and insure portability before problems occur.
+</P>
+<H2>
+11.
+Special Considerations
+</H2>
+<P>
+This section contains some miscellaneous do's and don'ts.
+</P>
+<UL>
+<LI>
+Don't change syntax via macro substitution.
+It makes the program unintelligible to all but the perpetrator.
+<LI>
+There is a time and a place for embedded assignment statements (footnote 48).
+In some constructs there is no better way to accomplish the results
+without making the code bulkier and less readable.
+The <I>while</I> loop in section 8.1 is one example of an appropriate
+place.
+Another is the common code segment:
+<PRE>
+while ((c = getchar()) != EOF) {
+	process the character
+}
+</PRE>
+Using embedded assignment statements to improve run-time performance
+is also possible.
+However, one should consider the tradeoff between increased speed and
+decreased maintainability that results when embedded assignments are
+used in artificial places.
+For example, the code:
+<PRE>
+a = b + c;
+d = a + r;
+</PRE>
+should not be replaced by
+<PRE>
+d = (a = b + c) + r;
+</PRE>
+even though the latter may save one cycle.
+Note that in the long run the time difference between the two will
+decrease as the optimizer gains maturity, while the difference in
+ease of maintenance will increase as the human memory of what's
+going on in the latter piece of code begins to fade (footnote 49).
+<LI>
+There is also a time and place for the ternary <I>?&#160;:</I> operator
+and the binary comma operator.
+The logical expression operand before the <I>?&#160;:</I> should be
+parenthesized:
+<PRE>
+(x &gt;= 0) ? x : -x
+</PRE>
+Nested <I>?&#160;:</I> operators can be confusing and should be avoided
+if possible.
+There are some macros like <I>getchar</I> where they can be useful.
+The comma operator can also be useful in <I>for</I> statements to
+provide multiple initializations or incrementations.
+<LI>
+Goto statements should be used sparingly as in any well-structured
+code (footnote 50).
+The main place where they can be usefully employed is to break out
+of several levels of <I>switch</I>, <I>for</I>, and <I>while</I>
+nesting (footnote 51), e.g.
+<PRE>
+	for (...)
+		for (...) {
+			...
+			if (disaster)
+				goto error;
+		}
+	...
+error:
+	clean up the mess
+</PRE>
+When a <I>goto</I> is necessary the accompanying label should be alone
+on a line and tabbed one tab position to the left of the associated
+code that follows.
+<LI>
+This committee recommends that programmers not rely on automatic
+beautifiers for the following reasons.
+First, the main person who benefits from good program style is the
+programmer himself.
+This is especially true in the early design of handwritten algorithms
+or pseudo-code.
+Automatic beautifiers can only be applied to complete, syntactically
+correct programs and hence are not available when the need for
+attention to white space and indentation is greatest.
+It is also felt that programmers can do a better job of making clear
+the complete visual layout of a function or file, with the normal
+attention to detail of a careful programmer (footnote 52).
+Sloppy programmers should learn to be careful programmers instead of
+relying on a beautifier to make their code readable.
+Finally, it is felt that since beautifiers are non-trivial programs
+that must parse the source,
+the burden of maintaining them in the face of the continuing evolution
+of C is not worth the benefits gained by such a program.
+</UL>
+<H2>
+12.
+Project Dependent Standards
+</H2>
+<P>
+Individual projects may wish to establish additional standards beyond
+those given here.
+The following issues are some of those that should be adddressed by
+each project program administration group.
+</P>
+<UL>
+<LI>
+What additional naming conventions should be followed?
+In particular, systematic prefix conventions for functional grouping
+of global data and also for structure or union member names can be useful.
+<LI>
+What kind of include file organization is appropriate for the
+project's particular data hierarchy?
+<LI>
+What procedures should be established for reviewing <I>lint</I>
+complaints?
+A tolerance level needs to be established in concert with the <I>lint</I>
+options to prevent unimportant complaints from hiding complaints about
+real bugs or inconsistencies.
+<LI>
+If a project establishes its own archive libraries, it should plan on
+supplying a lint library file [2] to the system administrators.
+This will allow <I>lint</I> to check for compatible use of library
+functions.
+</UL>
+<H2>
+13.
+Conclusion
+</H2>
+<P>
+A set of standards has been presented for C programming style.
+One of the most important points is the proper use of white space
+and comments so that the structure of the program is evident from
+the layout of the code.
+Another good idea to keep in mind when writing code is that it is
+likely that you or someone else will be asked to modify it or make
+it run on a different machine sometime in the future.
+<P>
+As with any standard, it must be followed if it is to be useful.
+The Indian Hill version of <I>lint</I> will enforce those standards
+that are amenable to automatic checking.
+If you have trouble following any of these standards don't just ignore them.
+Programmers at Indian Hill should bring their problems to the
+Software Development System Group (Lee Kirchhoff, contact) in department
+5522.
+Programmers outside Indian Hill should contact the Processor
+Application Group (Layne Cannon, contact) in department 5512&#160;
+(footnote 53). 
+<P>
+<H2>Footnotes</H2>
+<OL>
+<LI>
+In fact, they're pretty good general standards.
+This document is presented unadulterated;  U of T variations, comments,
+exceptions, etc. are presented in footnotes.
+<LI>
+Of necessity, these standards cannot cover all situations.
+Experience and informed judgement count for much.
+Inexperienced programmers who encounter unusual situations should
+consult 1) code written by experienced C programmers following
+these rules, or 2) experienced C programmers.
+<LI>
+This is not a problem at U of T, or most other sensible places,
+but rows of asterisks are still annoying.
+<LI>
+Excessively long lines which result from deep indenting are often
+a symptom of poorly-organized code.
+<LI>
+A common variation, in both Bell code and ours, is to reverse the
+order of sections 1 and 2.
+This is an acceptable practice.
+<LI>
+Such defines should be indented to put the <I>define</I>s one level
+deeper than the first keyword of the declaration to which they apply.
+<LI>
+They should be in some sort of meaningful order.
+Top-down is generally better than bottom-up, and a ``breadth-first''
+approach (functions on a similar level of abstraction together) is
+preferred over depth-first (functions defined as soon as possible
+after their calls).
+Considerable judgement is called for here.
+If defining large numbers of essentially-independent utility
+functions, consider alphabetical order.
+<LI>
+In addition to the suffix conventions given here,
+it is conventional to use `Makefile' (not `makefile') for the
+control file for <I>make</I>
+and
+`README' for a summary of the contents of a directory or directory
+tree.
+<LI>
+Preferred.
+An alternate convention that may
+be preferable in multi-language environments
+is to use the same suffix as an ordinary source file
+but with two periods instead of one (e.g. ``foo..c'').
+<LI>
+No idea what this is.
+<LI>
+Don't use absolute pathnames for header files.
+Use the <I>&lt;name&gt;</I> construction for getting them from a standard
+place, or define them relative to the current directory.
+The <B>-I</B> option of the C compiler is the best way to handle
+extensive private libraries of header files;  it permits reorganizing
+the directory structure without having to alter source files.
+<LI>
+It should be noted that declaring variables in a header file
+is often a poor idea.
+Frequently it is a symptom of poor partitioning of code between files.
+<LI>
+So should the constant names and their defined values.
+<LI>
+These defines are better put right after the declaration of <I>type</I>,
+within the <I>struct</I> declaration, with enough tabs
+after # to indent <I>define</I> one level more than
+the structure member declarations.
+<LI>
+The empty initializer, ``{}'', should never be used.
+Structure
+initializations should be fully parenthesized with braces.
+Constants used to initialize longs should be explicitly long.
+<LI>
+In any file which is part of a larger whole rather than a self-contained
+program, maximum use should be made of the <I>static</I> keyword to make
+functions and variables local to single files.
+Variables in particular should be accessible from other files
+only when there is a clear
+need that cannot be filled in another way.
+Such usages should be commented to make it clear that another file's
+variables are being used; the comment should name the other file.
+<LI>
+Some automated
+program-analysis
+packages use a different character in this position as
+a marker for lines with specific items of information.
+In particular, a line with a `-' here in a comment preceding a function
+is sometimes assumed to be a one-line summary of the function's purpose.
+<LI>
+A common practice in both Bell and local code is to
+use a space rather than a tab after the *.
+This is acceptable.
+<LI>
+Discussion of non-trivial design decisions is also appropriate,
+but avoid duplicating information that is present in (and clear from)
+the code.
+It's too easy for such redundant information to get out of date.
+<LI>
+Neither Bell nor local code has ever included these separating blank
+lines, and it is not clear that they add anything useful.
+Leave them out.
+<LI>
+These rules tend to produce a lot of clutter.
+Both Bell and local practice frequently omits <I>extern</I> declarations
+for <I>static</I> variables and functions.
+This is permitted.
+Omission of declarations for standard library routines
+is also permissible,
+although if they <I>are</I> declared it is better to declare them within
+the functions that use them rather than globally.
+<LI>
+In fact, avoid any local declarations that override declarations
+at higher levels.
+<LI>
+This <I>break</I> is, strictly speaking, unnecessary, but it is required
+nonetheless because it prevents a fall-through error if another <I>case</I>
+is added later after the last one.
+<LI>
+Some judgement is called for in the case of complex expressions,
+which may be clearer if the ``inner'' operators are not surrounded
+by spaces and the ``outer'' ones are.
+<LI>
+<I>Sizeof</I> is an exception, see the discussion of function calls.
+Less logically, so is <I>return</I>.
+<LI>
+Trailing underscores should be avoided too.
+<LI>
+This convention is reserved for system purposes.
+If you must have your own private identifiers,
+begin them with a capital letter identifying the
+package to which they belong.
+<LI>
+It is best to avoid names that differ only in case, like <I>foo</I>
+and <I>FOO</I>.
+The potential for confusion is considerable.
+<LI>
+This difference also means that carefree use of macros requires care
+when they are defined.
+Remember that complex expressions can be used as parameters,
+and operator-precedence problems can arise unless all occurrences of
+parameters in the definition have parentheses around them.
+There is little that can be done about the problems caused by side
+effects in parameters
+except to avoid side effects in expressions (a good idea anyway).
+<LI>
+At the very least, any directly-coded numerical constant must have a
+comment explaining the derivation of the value.
+<LI>
+If you <I>#ifdef</I> dependencies,
+make sure that if no machine is specified,
+the result is a syntax error, <I>not</I> a default machine!
+<LI>
+The 3B is a Bell Labs machine.
+The VAX, not shown in the table, is similar to the 3B in these respects.
+The 68000 resembles either the pdp11 or the 3B, depending on the
+particular compiler.
+<LI>
+Any unsigned type other than plain <I>unsigned int</I> should be
+<I>typedef</I>ed, as such types are highly compiler-dependent.
+This is also true of long and short types other than <I>long int</I>
+and <I>short int</I>.
+Large programs should have a central header file which supplies
+<I>typedef</I>s for commonly-used width-sensitive types, to make
+it easier to change them and to aid in finding width-sensitive code.
+<LI>
+Beware of making assumptions about the size of pointers.
+They are not always the same size as <I>int</I>.
+Nor are all pointers always the same size, or freely interconvertible.
+Pointer-to-character is a particular trouble spot on machines which
+do not address to the byte.
+<LI>
+The or operator (&#160;|&#160;) does not have these problems,
+nor do bitfields (which, unfortunately, are not very portable due to
+defective compilers).
+<LI>
+Actually, this is not quite the real reason why <I>getchar</I> returns
+<I>int</I>, but the comment is valid:  code which assumes either
+that characters are signed or that they are unsigned is unportable.
+It is best to completely avoid using <I>char</I> to hold numbers.
+Manipulation of characters as if they were numbers is also
+often unportable.
+<LI>
+Actually, there are some more right-to-left machines now, but
+the comments still apply.
+<LI>
+The same applies to variables in general.
+Alignment considerations and loader peculiarities make it very rash
+to assume that two consecutively-declared variables are together
+in memory, or that a variable of one type is aligned appropriately
+to be used as another type.
+<LI>
+A particularly notorious case is using <I>strcmp</I>
+to test for string equality, where the result should <I>never</I>
+<I>ever</I> be defaulted.
+The preferred approach is to define a macro <I>STREQ</I>:
+<PRE>
+#define STREQ(a, b) (strcmp((a), (b)) == 0)
+</PRE>
+<LI>
+An exception is commonly made for predicates, which are functions
+which meet the following restrictions:
+<UL>
+<LI>
+Has no other purpose than to return true or false.
+<LI>
+Returns 0 for false, 1 for true, nothing else.
+<LI>
+Is named so that the meaning of (say) a `true' return
+is absolutely obvious.
+</UL>
+Call a predicate <I>isvalid</I> or <I>valid</I>, not <I>checkvalid</I>.
+<LI>
+Actually, <I>YES</I> and <I>NO</I> often read better.
+<LI>
+But not <I>too</I> familiar.
+The internal details of library facilities, as opposed to their
+external interfaces, are subject to change without warning.
+They are also often quite unportable.
+<LI>
+Or, especially, writing your own code to control terminals.
+Use the <I>termcap</I> package.
+<LI>
+It also makes your code less readable, because the reader has to
+figure out whether you're doing something special in that reimplemented
+stuff to justify its existence.
+Furthermore, it's a fruitful source of bugs.
+<LI>
+The use of <I>lint</I> on all programs is strongly recommended.
+It is difficult to eliminate complaints about functions whose return
+value is not used (in the current version of C, at least), but most
+other messages from <I>lint</I> really do indicate something wrong.
+The -h, -p, -a, -x, and -c options are worth learning.
+All of them will complain about some legitimate things, but they will
+also pick up many botches.
+<LI>
+Yes.
+<LI>
+Little of this is relevant at U of T.
+The version of <I>lint</I> that we have lacks these mods.
+<LI>
+The <B>++</B> and <B>--</B> operators count as assignment statements.
+So, for many purposes, do functions with side effects.
+<LI>
+Note also that side effects within expressions can result in code
+whose semantics are compiler-dependent, since C's order of evaluation
+is explicitly undefined in most places.
+Compilers do differ.
+<LI>
+The <I>continue</I> statement is almost as bad.
+<I>Break</I> is less troublesome.
+<LI>
+The need to do such a thing may indicate
+that the inner constructs should be broken out into
+a separate function, with a success/failure return code.
+<LI>
+In other words, some of the visual layout is dictated by intent
+rather than syntax.
+Beautifiers cannot read minds.
+<LI>
+At U of T Zoology, it's Henry Spencer in 336B.
+</OL>
+<P>
+<H2>References</H2>
+<OL>
+<LI>
+B.A. Tague, &quot;C Language Portability&quot;, Sept 22, 1977.
+This document issued by department 8234 contains three memos by
+R.C. Haight, A.L. Glasser, and T.L. Lyon dealing with style and
+portability.
+<LI>
+S.C. Johnson, &quot;Lint, a C Program Checker&quot;, Technical Memorandum,
+77-1273-14, September 16, 1977.
+<LI>
+R.W. Mitze, &quot;The 3B/PDP-11 Swabbing Problem&quot;, Memorandum for File,
+1273-770907.01MF,
+September 14, 1977.
+<LI>
+R.A. Elliott and D.C. Pfeffer, &quot;3B Processor Common Diagnostic
+Standards- Version 1&quot;,
+Memorandum for File, 5514-780330.01MF, March 30, 1978.
+<LI>
+R.W. Mitze,
+&quot;An Overview of C Compilation of UNIX User Processes on the 3B&quot;,
+Memorandum for File, 5521-780329.02MF, March 29, 1978.
+<LI>
+B.W. Kernighan and D.M. Ritchie,
+<I>The C Programming Language</I>, 
+Prentice-Hall 1978.
+</OL>
+<HR>
+<P>
+<PRE>
+/*
+ * The C Style Summary Sheet				Block comment,
+ * by Henry Spencer, U of T Zoology			describes file.
+ */
+
+#include <errno.h>;					Headers; don't nest.
+
+typedef int	SEQNO;	/* ... */			Global definitions.
+#define	STREQ(a, b)	(strcmp((a), (b)) == 0)
+
+static char *foo = NULL;	/* ... */		Global declarations.
+struct bar {						Static whenever poss.
+	SEQNO alpha;	/* ... */
+#		define	NOSEQNO	0
+	int beta;	/* ... */			Don't assume 16 bits.
+};
+
+/*
+ * Many unnecessary braces, to show where.		Functions.
+ */
+static int		/* what is returned */		Don't default int.
+bletch(a)
+int a;			/* ... */			Don't default int.
+{
+	int bar;		/* ... */
+	extern int errno;	/* ..., changed here */
+	extern char *index();
+
+	if (foobar() != FAIL) {			if (!isvalid()) {
+		return(5);				errno = ERANGE;
+	}					} else {
+							x = &amp;y + z-&gt;field;
+	while (x == (y &amp; MASK)) {		}
+		f += (x &gt;= 0) ? x : -x;
+	}					for (i = 0; i &lt; BOUND; i++) {
+							/* Use lint -hpcax. */
+	do {					}
+		/* Avoid nesting ?: */
+	} while (index(a, b) != NULL);		if (STREQ(x, &quot;foo&quot;)) {
+							x |= 07;
+	switch (...) {				} else if (STREQ(x, &quot;bar&quot;)) {
+	case ABC:					x &amp;= ~07;
+	case DEF:				} else if (STREQ(x, &quot;ugh&quot;)) {
+		printf(&quot;...&quot;, a, b);			/* Avoid gotos */
+		break;				} else {
+	case XYZ:					/* and continues. */
+		x = y;				}
+		/* FALLTHROUGH */
+	default:				while ((c = getc()) != EOF)
+		/* Limit imbedded =s. */		;	/* NULLBODY */
+		break;
+	}
+}
+</PRE>
+
+<HR>
+<ADDRESS>Converted from troff to HTML and archived by Chris Lott.
+<BR>
+<A HREF="index.html">Collection index</A>
+</ADDRESS>
+
+</BODY>
+</HTML>

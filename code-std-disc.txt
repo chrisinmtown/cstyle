@@ -1,0 +1,467 @@
+Article 13386 of comp.software-eng:
+Xref: uklirb comp.software-eng:13386 comp.lang.c:57762
+Newsgroups: comp.software-eng,comp.lang.c
+Path: uklirb!stepsun.uni-kl.de!rz.uni-karlsruhe.de!xlink.net!howland.reston.ans.net!darwin.sura.net!haven.umd.edu!uunet!mole-end!mat
+From: mat@mole-end.matawan.nj.us
+Subject: Re: Coding Standards: Opinions please
+Message-ID: <1993Aug1.013518.20694@mole-end.matawan.nj.us>
+Organization: :
+References: <743598546snz@soliton.demon.co.uk>
+Date: Sun, 1 Aug 1993 01:35:18 GMT
+Lines: 32
+
+
+Very briefly, I see three sorts of `coding standards.'
+
+The first states where braces shall be placed and how long comments are
+to be and so forth.
+
+All this does it make developers unhappy.
+
+The second states how external variables may be named and what identifying
+information shall be put in header files and so forth.  This can be a
+good thing if it is changed into the third sort of thing.
+
+The third sort of thing is a `plan.'  It states what is to be accomplished
+(e.g. unity in information conventions, availability of information), and
+how it is to be accomplished (by requiring certain identifying information
+in program files, by requiring that certain questions be answered in the
+commentary, etc.).  This can be a Very Good Thing, especially if it goes
+beyond coding and extends to the detailing of the code.  Under what
+circumstances (and to what code) will an external Gyrobaxx be known by a
+systemwide index, by a pointer, by ... ?  This sort of `Detailing Plan'
+can assure program unity and coherence, establishing the Vocabulary
+available in each part of the program (and other things besides).
+
+It should be obvious to everyone who lacks an accounting degree and an
+obsessive-compulsive complex that the third is actually useful, and the
+first an exercise in individually wrapping the bricks in heat-sealed
+plastic before sending them out to the masons.
+-- 
+ (This man's opinions are his own.)
+ From mole-end				Mark Terribile
+
+ mat@mole-end.matawan.nj.us, Somewhere in Matawan, NJ
+
+
+Article 13388 of comp.software-eng:
+Xref: uklirb comp.software-eng:13388 comp.lang.c:57813
+Newsgroups: comp.software-eng,comp.lang.c
+Path: uklirb!stepsun.uni-kl.de!rz.uni-karlsruhe.de!xlink.net!sol.ctr.columbia.edu!spool.mu.edu!uwm.edu!linac!att!cbnewsk!dwwx
+From: dwwx@cbnewsk.ATT.COM (david.w.wood)
+Subject: Re: Coding Standards: Opinions please
+Organization: AT&T Bell Laboratories
+Date: Sun, 1 Aug 1993 05:31:58 GMT
+Message-ID: <DWWX.93Aug1003158@cbnewsk.ATT.COM>
+In-Reply-To: hopps@yellow.mmm.com's message of Thu, 29 Jul 93 15:42:14 GMT
+References: <743598546snz@soliton.demon.co.uk> <hopps.743951353@mmm.com>
+Sender: dwwx@cbnewsk.cb.att.com (david.w.wood)
+Lines: 91
+
+In article <hopps.743951353@mmm.com> hopps@yellow.mmm.com (Kevin J Hopps) writes:
+
+<long but necessary point on establishing WHAT the standards are to 
+	accomplish deleted>
+
+   I've never seen a published list of attributes related to software or
+   software development, but off the top of my head I can think of several.
+       - Correctness
+       - Reliability
+       - Rate of Production
+       - Execution Speed
+       - Maintainability
+       - Portability
+       - Extensibility
+       - Reuseability
+       - Readability
+       - Memory Usage
+       - Source Code Size
+       - Compiled Code Size
+       - Other?
+
+Good list from the top of your head!  I have been involved in a couple
+of coding standards attempts and developed the following classification:
+	Readability
+	Maintainability [subsumes Extensibility]
+	Portability
+	Correctness [subsumes Reliability]
+which is a subset of yours.  I am not sure to what degree one can develop
+guidelines concerning the other things on your list (I believe that
+standards for code shouldnt vary between one-shot and reuse intended).
+It can be very instructional to take the 4 item list above and go
+through a standard and catagorize each rule/guide (allowing for mulitple
+catagories per rule/guide).  I notice that in most debates concerning
+coding standards, debaters get wrapped up in the "where the brace goes"
+arguments (as noted by the previous poster).  Not but value there.
+However, on more important issues, people seem to trivialize their
+importance.  One such example is: should a brace be there at all?
+or the proper way to write a macro.  Consider the following:
+
+	if (condition)
+		one line of code
+	else
+		another line of code
+
+		vs
+
+	if (condition) {
+		one line of code
+	} else {
+		another line of code
+	}
+
+I state that the second version is "better" with respect to both
+maintainability and correctness (I don't care if the braces are on
+different lines or whatever, just as long as the braces are there
+somewhere).  Why is this?  The first version, for arguments sake, is
+correct and so is the second.  However, lets look at what can happen
+if someone comes in later and addes code to first example.  They
+will most likely get the indentation correct, but what about the braces
+to tell the compiler that the code goes with a particular branch of
+the conditional?  This is a common error.  The second version, while
+initially taking an extra bit of effort, prevents the error from
+occuring.  I am amazed at how much effort people will argue about
+where to put the braces in the second version, but then state that
+it is silly to have to put braces in for conditionals with only
+one statement!  
+
+People also argue that standards inhibit or eleminate creativity.
+My response to that is BULLSHIT!  Programmers are not being paid to
+be creative in how they spell variables, format code or use braces.
+If there are standard routines to do things, then they shouldn't be
+reinventing those things for themselves (if they have a better idea about
+how to handle error conditions, or whatever, tell the standards people
+so the standard can be improved and let everybody benefit).  Programmers
+are paid to develop and implement solutions which may be constrained
+by several explicit/implicit requirements concerning correctness,
+maintainability, performance, portability, etc.  These are the things
+that are HARD to do (standards should be telling peole how to handle
+the routine, the commonplace so people don't have to think about them,
+just do them).
+
+An acceptable standard doesn't just give a set of rules/guidelines, but
+also gives the rationale behind them and mentions exceptions to them.
+Good standards are hard to develop (I have seen good ones, but most
+are severally lacking with regards to telling WHY and providing exceptions).
+
+Well, thats my 2cents.
+
+David Wood
+AT&T Bell Labs
+These are my opinions only, not that anybody listens to me anyway!
+
+
+Article 13390 of comp.software-eng:
+Xref: uklirb comp.software-eng:13390 comp.lang.c:57824
+Path: uklirb!stepsun.uni-kl.de!rz.uni-karlsruhe.de!xlink.net!howland.reston.ans.net!math.ohio-state.edu!cs.utexas.edu!wupost!udel!news.intercon.com!panix!not-for-mail
+From: jbrann@panix.com (John Brann)
+Newsgroups: comp.software-eng,comp.lang.c
+Subject: Re: Coding Standards: Opinions please
+Date: 1 Aug 1993 13:10:22 -0400
+Organization: PANIX Public Access Internet and Unix, NYC
+Lines: 91
+Message-ID: <23gtdu$5u0@panix.com>
+References: <743598546snz@soliton.demon.co.uk> <hopps.743951353@mmm.com>
+NNTP-Posting-Host: panix.com
+
+In <hopps.743951353@mmm.com> hopps@yellow.mmm.com (Kevin J Hopps) writes:
+
+>ian@soliton.demon.co.uk (Ian Cargill) writes:
+
+[longish intro cut out...]
+
+>Before people can evaluate the usefulness or effectiveness of a coding
+>standard they must agree on the purpose of the standard.  I submit that
+>in nearly all cases the intent is to improve or enhance some area of
+>software development...
+
+Yes, or rather maybe.  Programming encompasses an extremely wide area of 
+disciplines from hobbyists to rocket scientists with all manner of us others
+in between.  The measure of excellence depends on the use to which the code
+is to be put.  It is not sensible to expect a single measure of quality to
+be suitable for launching the Space shuttle, running a video game or driving 
+your bank's ATMs.  
+
+
+>The effectiveness of a coding standard, or any other tool designed to
+>enhance software development, is determined largely by assessing its
+>effect on the attributes of software or software development.  I say
+>"largely" rather than "entirely" because it is also important to 
+>consider the effect of the standard on the people it is imposed on.
+>If people are crushed under its weight, producitivity will cease.
+
+Now we're getting somewhere.  Taking up my previous para., given that different
+quality measures are needed in different environments, who is to decide on the
+appropriate measure?  The answer I have used successfully in three major 
+developments is - the people doing the development.  In a commercial 
+environment, by and large, the people who write software are the ones who have 
+to live with it, long term.  Therefore, let them make the low-level decisions
+concerning the look of the code, commenting standards, naming conventions, 
+et al.  
+
+Radical stuff, huh.  The biggest danger in this type of set-up is 
+the encouragement of 'Experts' who write code no-one else can easily comprehend
+and thus put themselves into a position of professional invulnerability.  
+The way to avoid this, and most other, ills is to recognize that team software
+development is a SOCIAL activity.  Make the team make group decisions.  The
+basic tool for this is the code review (or walk-through).  I can almost hear
+the groans echoing across the Net as I raise this one.  I have attended a lot
+of formal walk-throughs, and found them all to be stultifying, and occasionally
+humiliating.  However, bringing the group together n a formal environment
+has benefits:
+
+	o	It forces a level of interaction among the team members
+	o	It means that everyone's code is looked at, critically, by
+		others in the team.
+	o	It can be a great educational tool.
+
+The method I have adopted is to place a very small number of rigid rules on
+walk-throughs:
+	o	Never longer than 1 hour.  If the meeting is still going on
+		after an hour, it has failed.  fix the issues raised and do
+		it again on another day.
+	o	Everybody comes prepared
+	o	The person whose code is being walked-through chairs the meeting
+	o	The chairman can exclude anyone who is being rude, is unprepared
+		or is wasting time
+	o	at the end, at least two people in the meeting must pass the
+		code, and none must reject it.
+
+These are more coherently written out in a document I don't have with me at the moment, but if anyone is interested, e-mail me and I'll get hold of it.
+
+The benefits I have observed from the extensive use of this technique are high-
+quality product, increased productivity (yes, even with the inevitable increase
+in meetings) and more cohesive teams.
+
+People (even programmers ;-) really LIKE being given some control over their
+work.  this technique really does give it.
+
+
+>Finally, [for now] I'll make a statement that I feel particularly strongly
+>about...
+
+>    *People* write good code.  Standards do not.
+
+
+EXACTLY!!
+
+
+>-- 
+>Kevin J. Hopps			e-mail:	kjhopps@mmm.com
+>3M Company			phone:	(612) 737-3300
+>3M Center, Bldg. 235-3B-16	fax:	(612) 737-2700
+>St. Paul, MN 55144-1000	     ** USE kjhopps@mmm.com FOR E-MAIL REPLIES **
+
+EXACTLY, couldn't put it better myself.
+
+John Brann	phone (212) 647 9767
+
+
+Article 13393 of comp.software-eng:
+Xref: uklirb comp.software-eng:13393 comp.lang.c:57851
+Newsgroups: comp.software-eng,comp.lang.c
+From: jes@grendel.demon.co.uk (Jim Segrave)
+Path: uklirb!stepsun.uni-kl.de!rz.uni-karlsruhe.de!xlink.net!sol.ctr.columbia.edu!usc!wupost!uunet!pipex!bnr.co.uk!demon!jes
+Subject: Re: Coding Standards: Opinions please
+Keywords: C Coding Standards, Creativity
+References: <hopps.743951353@mmm.com> <DWWX.93Aug1003158@cbnewsk.ATT.COM> <CB2u39.G9v@world.std.com>
+Organization: Segrave Software Services
+Date: Sun, 1 Aug 1993 15:41:05 +0000
+Message-ID: <1993Aug1.154105.283@grendel.demon.co.uk>
+Sender: usenet@demon.co.uk
+Lines: 22
+
+In article <CB2u39.G9v@world.std.com> tej@world.std.com (Thomas E Janzen) writes:
+>I agree with David Woods.  Coding standards are needed.  Creativity
+>in graphical look of code is not needed.
+(following on to several posts re. fromatting)
+
+If coding standards are a good idea - and I'm not sure that they are
+nearly as effective as code review or code exxchange within a working group,
+then I simply can not believe that code format has any place in such 
+standards. Tools such as indent can be used to put the code in whatever 
+format the reader prefers. If you find a particular indenting style or
+brace layout preferable, set up your indent profile to put the code into
+that format. Use a single house style for indenting code being put under a
+version control system. 
+
+QThere are things computers excel at, and the mechanical formatting of
+source code is one of them. Why bother with a standard and religious
+arguments about such things?
+
+
+-- 
+Jim Segrave        (Segrave Software Services jes@grendel.demon.co.uk)
+
+
+
+Article 13409 of comp.software-eng:
+Xref: uklirb comp.software-eng:13409 comp.lang.c:57941
+Newsgroups: comp.software-eng,comp.lang.c
+Path: uklirb!stepsun.uni-kl.de!rz.uni-karlsruhe.de!xlink.net!math.fu-berlin.de!news.netmbx.de!Germany.EU.net!mcsun!uunet!europa.eng.gtefsd.com!darwin.sura.net!news-feed-2.peachnet.edu!umn.edu!mmm.mmm.com!schwartz
+From: hopps@yellow.mmm.com (Kevin J Hopps)
+Subject: Re: Coding Standards: Opinions please
+Message-ID: <hopps.744388431@mmm.com>
+Sender: schwartz@mmm.mmm.com (William H. Schwartz)
+Reply-To: kjhopps@mmm.com
+Organization: 3M - St. Paul, MN  55144-1000 US
+References: <743598546snz@soliton.demon.co.uk> <hopps.743951353@mmm.com> <DWWX.93Aug1003158@cbnewsk.ATT.COM>
+Date: Tue, 3 Aug 93 15:20:59 GMT
+Lines: 90
+
+dwwx@cbnewsk.ATT.COM (david.w.wood) writes:
+
+>In article <hopps.743951353@mmm.com> hopps@yellow.mmm.com (Kevin J Hopps) writes:
+
+><long but necessary point on establishing WHAT the standards are to 
+>	accomplish deleted>
+
+[ example about whether to use braces elided ]
+
+>People also argue that standards inhibit or eleminate creativity.
+>My response to that is BULLSHIT!  Programmers are not being paid to
+>be creative in how they spell variables, format code or use braces.
+
+With a capital 'B' no less?  You feel strongly about this, I guess.
+
+It may be that you don't pay me for creativity in such areas, but to
+me software is an art form, and the screen is my canvas.  The look of
+the source code is an important part of my finished product, even if
+all you care about is the functionality.  Further, creativity is a
+personal thing.  It is simply impossible for you to tell me what limits
+my creativity.
+
+I know others who consider the beauty of software to extend only as far
+as the design and how it performs.  To me it is important that it look
+nice on the inside too.  And I have my own thoughts regarding what looks
+nice.  I pay particular attention to the naming of variables, formatting
+and even the placement of braces.
+
+As an employer, it is your prerogative to adopt policies which, in my
+own opinion, severely limit my creativity.  But know also that if I
+perceive the policies too limiting, I will go elsewhere.  If you
+consider me a good programmer with a tendency to worry excessively
+about unimportant matters, then you will be minus one good programmer.
+
+>If there are standard routines to do things, then they shouldn't be
+>reinventing those things for themselves (if they have a better idea about
+>how to handle error conditions, or whatever, tell the standards people
+>so the standard can be improved and let everybody benefit).  Programmers
+
+"Reinventing the wheel" is very definitely a time-waster in the short term.
+If someone is reinventing the wheel because he is too lazy to find out
+what tools are already available to solve his problem, then it seems like
+the wrong thing to do.  On the other hand, a good deal of learning comes
+about by solving already-solved problems (this is how school works, after
+all).  In many cases, the payoff for the exercise is a better engineer
+who may pay off in terms of greater productivity down the line.  Is the
+return worth the investement?  Sometimes.
+
+>are paid to develop and implement solutions which may be constrained
+>by several explicit/implicit requirements concerning correctness,
+>maintainability, performance, portability, etc.  These are the things
+>that are HARD to do (standards should be telling peole how to handle
+>the routine, the commonplace so people don't have to think about them,
+>just do them).
+
+Sounds like your view of a programming staff is something akin to a large
+machine that pounds out so many lines of code each day.  Sounds like you
+believe that relieving people of the burden of thinking is greasing up
+the machine and making it more efficient.  What if I like to think about
+these things as I solve the bigger problems?  What if attention to detail
+is important to me?
+
+>An acceptable standard doesn't just give a set of rules/guidelines, but
+>also gives the rationale behind them and mentions exceptions to them.
+>Good standards are hard to develop (I have seen good ones, but most
+>are severally lacking with regards to telling WHY and providing exceptions).
+
+On this point I wholeheartedly agree -- that the reasons behind the rules
+are important.  I don't just accept rules because somebody tells me I
+should (any more than I accept what's said from the pulpit without thinking
+about it).
+
+Another reason that the reasons behind the rules are important to know
+is so that exceptions can be justified.  Even if the standard lists
+exceptions to the rules, it should still be true that the exceptions
+further the goals already mentioned in the same standard.
+
+The purpose of laws is to help keep people closer to some one's idea of
+what correct principles are.  In this, laws and standards are only a means
+to an end -- not an end in themselves.  People who are driven by principles
+are typically law-abiding anyway, but just by coincidence.
+
+I value adherence to principles, not merely laws.  In software, these
+principles are the ones you would spell out in your standards as the
+reasons for the rules.
+-- 
+Kevin J. Hopps			e-mail:	kjhopps@mmm.com
+3M Company			phone:	(612) 737-3300
+3M Center, Bldg. 235-3B-16	fax:	(612) 737-2700
+St. Paul, MN 55144-1000	     ** USE kjhopps@mmm.com FOR E-MAIL REPLIES **
+
+
+Article 13418 of comp.software-eng:
+Xref: uklirb comp.software-eng:13418 comp.lang.c:57964
+Path: uklirb!stepsun.uni-kl.de!rz.uni-karlsruhe.de!xlink.net!howland.reston.ans.net!sol.ctr.columbia.edu!usc!elroy.jpl.nasa.gov!decwrl!olivea!sgigate!odin!news.csd.sgi.com!fido.asd.sgi.com!dblues!jackr
+From: jackr@dblues.wpd.sgi.com (John Jack Repenning)
+Newsgroups: comp.software-eng,comp.lang.c
+Subject: Re: Coding Standards: Opinions please
+Date: 3 Aug 1993 18:01:34 GMT
+Organization: Silicon Graphics, Inc.  Mountain View, CA
+Lines: 49
+Message-ID: <23m95u$22e@fido.asd.sgi.com>
+References: <743598546snz@soliton.demon.co.uk> <hopps.743951353@mmm.com> <RCOX.93Jul30125734@cad554.intel.com> <1993Aug3.161849.13092@mksol.dseg.ti.com>
+NNTP-Posting-Host: dblues.wpd.sgi.com
+
+
+Fred McCall mccall@mksol.dseg.ti.com writes:
+
+> Simple rules rarely describe or enforce good practices, which are what
+> 'rules' are supposed to be trying to do.  And once they become
+> 'rules', requiring justifications to break and overwhelming good
+> judgement (which is what I'd prefer the developers use), you wind up
+> back in the realm of shooting at the measure instead of shooting at
+> the target.  People will bend every which way to follow the 'rule' and
+> the thing the rule was put in place to try to do gets lost in the
+> shuffle. 
+
+This is an important (and common) argument, and I do not disagree with
+what's said in the slightest.  But there is another important
+argument, leading to opposite conclusions:  you can't apply good
+judgement on what you can't see.
+
+We can write more code than we can write well; we can write more good
+code than we can review; we can review more for a simple metric than
+we can review for a complex one;  we can review more for a single
+metric of any complexity than we can review for five or ten or a
+hundred metrics.  (I may have placed a couple of those inequalities in
+slightly the wrong order, but you get the drift, I'm sure.)  Further,
+we can extend our ability to review with tools, but though our tools
+are generally faster than our review, they're generally dumber.  All
+of this puts a premium on simple rules, and creates an unresolvable
+tension with the issues Fred raises.
+
+The place to break the tension is not actually in the character of the
+rules, but in their application: if rules and tools are used to
+supplement and train judgement, then they can be constructive - and,
+by the way, they don't need to be anywhere near as "perfect," since
+good judgement is always allowed to override the rules.  If they're
+used to supplant judgement, then they're destructive of judgement, and
+they need to be utterly perfect (and, by the way, in the presence of
+those intrinsically opposed needs listed above, they never can be!).
+In practical terms, this means you can't manage to the rules: they
+can't feed engineer evaluations, directly or indirectly; they can't
+become product release criteria, and so on.  Rather, you provide them
+to the engineers, conveniently (statistics collected and reported;
+code beautifiers that implement the style guides), and you try to
+establish a culture that approves good judgement.  Culture
+establishment is one of the fringe benefits of code review, by the
+way, so you might not need any extra efforts in this direction.
+
+
+Jack Repenning		      M/S 1-875	     jackr@wpd.sgi.com
+Silicon Graphics, Inc.	       x3-3027      Off:(415) 390-3027
+Visual Magic Division			    Fax:(415) 390-6056
+
+
